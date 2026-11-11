@@ -85,16 +85,24 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model-id", default=DEFAULT_MODEL_ID)
     parser.add_argument("--revision", help="Pinned model revision, if known")
+    parser.add_argument("--cache-dir", type=Path, help="Dedicated model cache directory")
     parser.add_argument("--text", default="Hello, world!")
     parser.add_argument("--output", type=Path, required=True, help="New report path (never overwritten)")
     parser.add_argument("--allow-download", action="store_true", help="Permit downloading model weights when explicitly authorized")
     args = parser.parse_args()
     if args.output.exists():
         parser.error(f"Output already exists: {args.output}")
+    if args.allow_download:
+        if args.revision is None or args.cache_dir is None:
+            parser.error("Downloading requires both --revision and --cache-dir")
+        try:
+            args.cache_dir.mkdir(parents=True, exist_ok=False)
+        except FileExistsError:
+            parser.error(f"Download cache must be a new, empty directory: {args.cache_dir}")
 
     try:
         model, tokenizer = load_model_and_tokenizer(
-            args.model_id, revision=args.revision, allow_download=args.allow_download
+            args.model_id, revision=args.revision, allow_download=args.allow_download, cache_dir=args.cache_dir
         )
     except OSError as exc:
         if not args.allow_download:
@@ -105,6 +113,7 @@ def main():
     report.update(
         model_id=args.model_id,
         requested_revision=args.revision,
+        cache_dir=str(args.cache_dir) if args.cache_dir is not None else None,
         packages={name: metadata.version(name) for name in ("torch", "transformers", "peft")},
         git_commit=subprocess.run(
             ["git", "rev-parse", "HEAD"],

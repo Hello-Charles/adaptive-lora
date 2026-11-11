@@ -1,0 +1,928 @@
+{
+  "model_type": "Qwen2ForCausalLM",
+  "configured_layers": 24,
+  "resolved_revision": null,
+  "tokenizer": {
+    "class": "Qwen2Tokenizer",
+    "is_fast": true,
+    "padding_side": "right",
+    "truncation_side": "right",
+    "pad_token_id": 151643,
+    "eos_token_id": 151643
+  },
+  "short_input": {
+    "text": "Hello, world!",
+    "input_ids": [
+      9707,
+      11,
+      1879,
+      0
+    ],
+    "prediction_position": 3,
+    "logits_shape": [
+      1,
+      4,
+      151936
+    ],
+    "predicted_token_id": 1096
+  },
+  "layers": [
+    {
+      "index": 0,
+      "block": "model.layers.0",
+      "attention": "model.layers.0.self_attn",
+      "mlp": "model.layers.0.mlp",
+      "projections": {
+        "q": "model.layers.0.self_attn.q_proj",
+        "k": "model.layers.0.self_attn.k_proj",
+        "v": "model.layers.0.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 1,
+      "block": "model.layers.1",
+      "attention": "model.layers.1.self_attn",
+      "mlp": "model.layers.1.mlp",
+      "projections": {
+        "q": "model.layers.1.self_attn.q_proj",
+        "k": "model.layers.1.self_attn.k_proj",
+        "v": "model.layers.1.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 2,
+      "block": "model.layers.2",
+      "attention": "model.layers.2.self_attn",
+      "mlp": "model.layers.2.mlp",
+      "projections": {
+        "q": "model.layers.2.self_attn.q_proj",
+        "k": "model.layers.2.self_attn.k_proj",
+        "v": "model.layers.2.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 3,
+      "block": "model.layers.3",
+      "attention": "model.layers.3.self_attn",
+      "mlp": "model.layers.3.mlp",
+      "projections": {
+        "q": "model.layers.3.self_attn.q_proj",
+        "k": "model.layers.3.self_attn.k_proj",
+        "v": "model.layers.3.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 4,
+      "block": "model.layers.4",
+      "attention": "model.layers.4.self_attn",
+      "mlp": "model.layers.4.mlp",
+      "projections": {
+        "q": "model.layers.4.self_attn.q_proj",
+        "k": "model.layers.4.self_attn.k_proj",
+        "v": "model.layers.4.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 5,
+      "block": "model.layers.5",
+      "attention": "model.layers.5.self_attn",
+      "mlp": "model.layers.5.mlp",
+      "projections": {
+        "q": "model.layers.5.self_attn.q_proj",
+        "k": "model.layers.5.self_attn.k_proj",
+        "v": "model.layers.5.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 6,
+      "block": "model.layers.6",
+      "attention": "model.layers.6.self_attn",
+      "mlp": "model.layers.6.mlp",
+      "projections": {
+        "q": "model.layers.6.self_attn.q_proj",
+        "k": "model.layers.6.self_attn.k_proj",
+        "v": "model.layers.6.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 7,
+      "block": "model.layers.7",
+      "attention": "model.layers.7.self_attn",
+      "mlp": "model.layers.7.mlp",
+      "projections": {
+        "q": "model.layers.7.self_attn.q_proj",
+        "k": "model.layers.7.self_attn.k_proj",
+        "v": "model.layers.7.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 8,
+      "block": "model.layers.8",
+      "attention": "model.layers.8.self_attn",
+      "mlp": "model.layers.8.mlp",
+      "projections": {
+        "q": "model.layers.8.self_attn.q_proj",
+        "k": "model.layers.8.self_attn.k_proj",
+        "v": "model.layers.8.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 9,
+      "block": "model.layers.9",
+      "attention": "model.layers.9.self_attn",
+      "mlp": "model.layers.9.mlp",
+      "projections": {
+        "q": "model.layers.9.self_attn.q_proj",
+        "k": "model.layers.9.self_attn.k_proj",
+        "v": "model.layers.9.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 10,
+      "block": "model.layers.10",
+      "attention": "model.layers.10.self_attn",
+      "mlp": "model.layers.10.mlp",
+      "projections": {
+        "q": "model.layers.10.self_attn.q_proj",
+        "k": "model.layers.10.self_attn.k_proj",
+        "v": "model.layers.10.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 11,
+      "block": "model.layers.11",
+      "attention": "model.layers.11.self_attn",
+      "mlp": "model.layers.11.mlp",
+      "projections": {
+        "q": "model.layers.11.self_attn.q_proj",
+        "k": "model.layers.11.self_attn.k_proj",
+        "v": "model.layers.11.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 12,
+      "block": "model.layers.12",
+      "attention": "model.layers.12.self_attn",
+      "mlp": "model.layers.12.mlp",
+      "projections": {
+        "q": "model.layers.12.self_attn.q_proj",
+        "k": "model.layers.12.self_attn.k_proj",
+        "v": "model.layers.12.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 13,
+      "block": "model.layers.13",
+      "attention": "model.layers.13.self_attn",
+      "mlp": "model.layers.13.mlp",
+      "projections": {
+        "q": "model.layers.13.self_attn.q_proj",
+        "k": "model.layers.13.self_attn.k_proj",
+        "v": "model.layers.13.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 14,
+      "block": "model.layers.14",
+      "attention": "model.layers.14.self_attn",
+      "mlp": "model.layers.14.mlp",
+      "projections": {
+        "q": "model.layers.14.self_attn.q_proj",
+        "k": "model.layers.14.self_attn.k_proj",
+        "v": "model.layers.14.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 15,
+      "block": "model.layers.15",
+      "attention": "model.layers.15.self_attn",
+      "mlp": "model.layers.15.mlp",
+      "projections": {
+        "q": "model.layers.15.self_attn.q_proj",
+        "k": "model.layers.15.self_attn.k_proj",
+        "v": "model.layers.15.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 16,
+      "block": "model.layers.16",
+      "attention": "model.layers.16.self_attn",
+      "mlp": "model.layers.16.mlp",
+      "projections": {
+        "q": "model.layers.16.self_attn.q_proj",
+        "k": "model.layers.16.self_attn.k_proj",
+        "v": "model.layers.16.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 17,
+      "block": "model.layers.17",
+      "attention": "model.layers.17.self_attn",
+      "mlp": "model.layers.17.mlp",
+      "projections": {
+        "q": "model.layers.17.self_attn.q_proj",
+        "k": "model.layers.17.self_attn.k_proj",
+        "v": "model.layers.17.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 18,
+      "block": "model.layers.18",
+      "attention": "model.layers.18.self_attn",
+      "mlp": "model.layers.18.mlp",
+      "projections": {
+        "q": "model.layers.18.self_attn.q_proj",
+        "k": "model.layers.18.self_attn.k_proj",
+        "v": "model.layers.18.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 19,
+      "block": "model.layers.19",
+      "attention": "model.layers.19.self_attn",
+      "mlp": "model.layers.19.mlp",
+      "projections": {
+        "q": "model.layers.19.self_attn.q_proj",
+        "k": "model.layers.19.self_attn.k_proj",
+        "v": "model.layers.19.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 20,
+      "block": "model.layers.20",
+      "attention": "model.layers.20.self_attn",
+      "mlp": "model.layers.20.mlp",
+      "projections": {
+        "q": "model.layers.20.self_attn.q_proj",
+        "k": "model.layers.20.self_attn.k_proj",
+        "v": "model.layers.20.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 21,
+      "block": "model.layers.21",
+      "attention": "model.layers.21.self_attn",
+      "mlp": "model.layers.21.mlp",
+      "projections": {
+        "q": "model.layers.21.self_attn.q_proj",
+        "k": "model.layers.21.self_attn.k_proj",
+        "v": "model.layers.21.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 22,
+      "block": "model.layers.22",
+      "attention": "model.layers.22.self_attn",
+      "mlp": "model.layers.22.mlp",
+      "projections": {
+        "q": "model.layers.22.self_attn.q_proj",
+        "k": "model.layers.22.self_attn.k_proj",
+        "v": "model.layers.22.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    },
+    {
+      "index": 23,
+      "block": "model.layers.23",
+      "attention": "model.layers.23.self_attn",
+      "mlp": "model.layers.23.mlp",
+      "projections": {
+        "q": "model.layers.23.self_attn.q_proj",
+        "k": "model.layers.23.self_attn.k_proj",
+        "v": "model.layers.23.self_attn.v_proj"
+      },
+      "attention_output": {
+        "type": "tuple",
+        "items": [
+          {
+            "type": "Tensor",
+            "shape": [
+              1,
+              4,
+              896
+            ],
+            "dtype": "torch.bfloat16"
+          },
+          {
+            "type": "NoneType"
+          }
+        ]
+      },
+      "mlp_output": {
+        "type": "Tensor",
+        "shape": [
+          1,
+          4,
+          896
+        ],
+        "dtype": "torch.bfloat16"
+      }
+    }
+  ],
+  "model_id": "Qwen/Qwen2.5-0.5B",
+  "requested_revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+  "cache_dir": "data\\models\\qwen2_5_0_5b_060db6499f32faf8b98477b0a26969ef7d8b9987",
+  "packages": {
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "peft": "0.21.2"
+  },
+  "git_commit": "dca6c804795e43421c99bc143f848064268a7167"
+}

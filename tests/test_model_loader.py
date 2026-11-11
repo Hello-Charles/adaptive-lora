@@ -1,7 +1,11 @@
 """Offline M1 unit tests; fake modules do not represent Qwen's measured structure."""
 
+from pathlib import Path
 from types import ModuleType, SimpleNamespace
+import os
+import subprocess
 import sys
+import tempfile
 import unittest
 from unittest.mock import Mock, patch
 
@@ -41,7 +45,12 @@ class FakeModel(FakeModule):
             if index == missing_projection:
                 names = ("q", "v")
             attention = FakeModule([(f"{name}_proj", FakeModule()) for name in names])
-            blocks.append((str(index), FakeModule([("self_attn", attention), ("mlp", FakeModule())])))
+            blocks.append((str(index), FakeModule([
+                ("self_attn", attention),
+                ("mlp", FakeModule()),
+                ("input_layernorm", FakeModule()),
+                ("post_attention_layernorm", FakeModule()),
+            ])))
         super().__init__([("model", FakeModule([("layers", ModuleList(blocks))]))])
         self.config = SimpleNamespace(num_hidden_layers=count)
 
@@ -80,9 +89,29 @@ class ModelInspectionTests(unittest.TestCase):
             from_pretrained=Mock(return_value=SimpleNamespace(eval=Mock()))
         )
         with patch.dict(sys.modules, {"transformers": transformer}):
-            load_model_and_tokenizer(revision="pinned-sha", allow_download=True)
+            load_model_and_tokenizer(revision="pinned-sha", allow_download=True, cache_dir=Path("data/models/m1"))
             self.assertFalse(transformer.AutoModelForCausalLM.from_pretrained.call_args.kwargs["local_files_only"])
             self.assertEqual(transformer.AutoModelForCausalLM.from_pretrained.call_args.kwargs["revision"], "pinned-sha")
+            self.assertEqual(transformer.AutoModelForCausalLM.from_pretrained.call_args.kwargs["cache_dir"], str(Path("data/models/m1")))
+
+    def test_download_cli_requires_pinned_revision_and_new_cache(self):
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "structure.json"
+            cache = Path(directory) / "cache"
+            env = {**os.environ, "PYTHONPATH": str(root / "src")}
+            command = [sys.executable, str(root / "scripts" / "inspect_model.py"), "--allow-download", "--output", str(output)]
+            missing = subprocess.run(command, cwd=directory, env=env, capture_output=True, text=True, check=False)
+            self.assertEqual(missing.returncode, 2)
+            self.assertIn("requires both --revision and --cache-dir", missing.stderr)
+            cache.mkdir()
+            existing = subprocess.run(
+                command + ["--revision", "pinned-sha", "--cache-dir", str(cache)],
+                cwd=directory, env=env, capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(existing.returncode, 2)
+            self.assertIn("new, empty directory", existing.stderr)
+            self.assertFalse(output.exists())
 
     def test_discovers_unique_layer_paths_and_qkv_in_fake_model(self):
         layers = discover_layer_modules(FakeModel())

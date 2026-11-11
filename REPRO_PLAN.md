@@ -51,7 +51,7 @@ adaptive-lora/
 - [x] 模型权重/数据/密钥/缓存已被 `.gitignore` 排除。
 - [x] 提交或记录首个 Git commit；论文待核验项已列入清单。
 
-M0 证据：`reports/m0_status.md`、`reports/m0_git_setup.md`、`reports/m0_venv_environment.json`；首个 commit 为 `1c7b0e8433c3669bcb463fc5a7ba1441efc3e0f5`。M0 包导入与测试使用系统 Python 的 `PYTHONPATH=src`；关键第三方包虽然安装且 `pip check` 通过，**运行时导入仍为 `not_checked`**（自动权限模式拒绝执行），不应据此声称 M1 模型已可加载。
+M0 证据：`reports/m0_status.md`、`reports/m0_git_setup.md`、`reports/m0_venv_environment.json`；首个 commit 为 `1c7b0e8433c3669bcb463fc5a7ba1441efc3e0f5`。M0 初始快照曾将第三方包导入标为 `not_checked`；随后在用户明确授权下，`reports/m1_verified_environment.json` 已验证关键依赖实际导入成功，虚拟环境测试通过。
 
 **门禁**：环境现状明确后才进入模型结构探查。
 
@@ -61,11 +61,11 @@ M0 证据：`reports/m0_status.md`、`reports/m0_git_setup.md`、`reports/m0_ven
 
 产出：`model_loader.py`、`inspect_model.py`、结构探查报告。
 
-- [ ] 证实模块路径，未凭经验硬编码。
-- [ ] 证实返回类型（tensor/tuple/其他）和有效预测位置。
-- [ ] 保存真实运行命令、输出和依赖版本。
+- [x] 证实模块路径，未凭经验硬编码。
+- [x] 证实返回类型（tensor/tuple/其他）和有效预测位置。
+- [x] 保存真实运行命令、输出和依赖版本。
 
-当前进度（未验收）：离线加载与结构探查代码、模拟模块单元测试已准备；本机未缓存 Qwen2.5-0.5B，第三方包导入受自动权限模式阻止，因此真实模块路径、Attention 返回类型和短输入前向均**未实测**。证据见 `reports/m1_progress.md`。
+M1 证据：`reports/m1_structure.json`、`reports/m1_verified_environment.json` 和 `reports/m1_validation.md`。固定模型仓库 revision `060db6499f32faf8b98477b0a26969ef7d8b9987` 是**复现决策**而非论文指定版本；Transformers 模型配置未暴露 `resolved_revision`，实际缓存快照目录与所请求 SHA 一致。首次结构探查误将 `post_attention_layernorm` 识别为 Attention，修正并补测试后从隔离缓存离线重跑成功；M1 没有实现 zero-ablation。
 
 **门禁**：模块返回结构未确认，不写 zero-ablation hook。
 

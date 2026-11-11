@@ -18,12 +18,14 @@ class LayerModules:
     mlp_module: object
 
 
-def load_model_and_tokenizer(model_id=DEFAULT_MODEL_ID, *, revision=None, allow_download=False):
+def load_model_and_tokenizer(model_id=DEFAULT_MODEL_ID, *, revision=None, allow_download=False, cache_dir=None):
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     source = {"local_files_only": not allow_download, "trust_remote_code": False}
     if revision is not None:
         source["revision"] = revision
+    if cache_dir is not None:
+        source["cache_dir"] = str(cache_dir)
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, **source)
     model = AutoModelForCausalLM.from_pretrained(model_id, use_safetensors=True, **source)
     model.eval()
@@ -49,7 +51,7 @@ def discover_layer_modules(model, expected_layers=EXPECTED_LAYERS):
     discovered = []
     for index, (_, block) in enumerate(blocks):
         children = list(block.named_children())
-        attention = [(name, module) for name, module in children if "attn" in name.lower() or "attention" in name.lower()]
+        attention = [(name, module) for name, module in children if name.lower().endswith(("attn", "attention"))]
         mlps = [(name, module) for name, module in children if "mlp" in name.lower()]
         if len(attention) != 1 or len(mlps) != 1:
             raise ValueError(f"Layer {index} has unexpected submodules: {[name for name, _ in children]}")
