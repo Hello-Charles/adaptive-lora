@@ -1,0 +1,48 @@
+# Python caches, build artifacts, and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+.claude/
+.codex/
+
+# Credentials must remain outside version control
+.env
+.env.*
+secrets/
+*.pem
+*.key
+*.p12
+credentials.json
+*credentials*.json
+
+# Local model weights, datasets, checkpoints, experiments, and caches
+data/
+results/
+models/
+checkpoints/
+outputs/
+.cache/
+.huggingface/
+wandb/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.gguf
+*.onnx
+*.parquet
+*.arrow
+*.jsonl
+
+# Paper PDF stays local; cite the public paper URL instead of publishing the binary
+papers/*.pdf

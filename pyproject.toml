@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adaptive-lora-reproduction"
+version = "0.0.0"
+description = "Stage-by-stage reproduction of Adaptive-LoRA"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+repro = ["torch", "transformers", "peft", "datasets", "accelerate", "pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

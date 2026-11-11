@@ -1,0 +1,50 @@
+{
+  "captured_at_utc": "2026-11-11T09:35:07.175207+00:00",
+  "python": {
+    "version": "3.12.8",
+    "executable": "D:\\vibecoding\\adaptive-lora\\.venv\\Scripts\\python.exe"
+  },
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "torch": {
+      "status": "not_checked",
+      "version": "2.15.0+cpu"
+    },
+    "transformers": {
+      "status": "not_checked",
+      "version": "5.22.2"
+    },
+    "peft": {
+      "status": "not_checked",
+      "version": "0.21.2"
+    },
+    "datasets": {
+      "status": "not_checked",
+      "version": "5.2.0"
+    },
+    "accelerate": {
+      "status": "not_checked",
+      "version": "1.15.0"
+    },
+    "pytest": {
+      "status": "not_checked",
+      "version": "9.2.0"
+    },
+    "setuptools": {
+      "status": "not_checked",
+      "version": "84.2.1"
+    },
+    "wheel": {
+      "status": "not_installed",
+      "version": null
+    },
+    "pip": {
+      "status": "not_checked",
+      "version": "24.3.1"
+    }
+  },
+  "git": {
+    "status": "no_commits",
+    "commit": null
+  }
+}

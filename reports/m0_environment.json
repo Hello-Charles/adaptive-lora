@@ -1,0 +1,50 @@
+{
+  "captured_at_utc": "2026-11-11T09:12:55.752227+00:00",
+  "python": {
+    "version": "3.12.8",
+    "executable": "C:\\Python312\\python.exe"
+  },
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "torch": {
+      "status": "not_installed",
+      "version": null
+    },
+    "transformers": {
+      "status": "not_installed",
+      "version": null
+    },
+    "peft": {
+      "status": "not_installed",
+      "version": null
+    },
+    "datasets": {
+      "status": "not_installed",
+      "version": null
+    },
+    "accelerate": {
+      "status": "not_installed",
+      "version": null
+    },
+    "pytest": {
+      "status": "not_installed",
+      "version": null
+    },
+    "setuptools": {
+      "status": "not_installed",
+      "version": null
+    },
+    "wheel": {
+      "status": "not_installed",
+      "version": null
+    },
+    "pip": {
+      "status": "ok",
+      "version": "25.0.1"
+    }
+  },
+  "git": {
+    "status": "not_repository",
+    "commit": null
+  }
+}
