@@ -2,9 +2,9 @@
 
 按阶段复现论文 *Mechanistic Insights into LoRA: Layer Sparsity for Adaptive Fine-Tuning via Path Patching*。算法事实与工程决策分别标注在 [PAPER_SPEC.md](PAPER_SPEC.md)，阶段门禁见 [REPRO_PLAN.md](REPRO_PLAN.md)，协作规范见 [CLAUDE.md](CLAUDE.md)。论文原文可从 [arXiv:2610.34756](https://arxiv.org/abs/2610.34756) 查阅；本地 `papers/adaptive_lora.pdf` 不上传至公开仓库。
 
-## 当前范围：M0
+## 当前范围：M0 已验收，M1 结构探查进行中
 
-目前只有 Python `src/` 包骨架、环境快照脚本、标准库单元测试和 Git 忽略规则。**尚未实现或验证**模型加载、zero-ablation、重要性评分、LoRA 训练或论文结果。用户批准后，仅在 `.venv/` 内安装 M0 所需的开发和后续阶段基础依赖；不下载模型/数据，也不运行训练。
+M0 的工程骨架、版本记录、基础测试和 Git 提交已验收，证据见 [REPRO_PLAN.md](REPRO_PLAN.md#m0--项目骨架和规格冻结)。M1 已建立默认离线的模型加载器、结构探查脚本与模拟模块单元测试；**尚未加载真实 Qwen 权重，未确认真实模块输出类型，也未执行前向**。用户批准后仅在 `.venv/` 内安装了开发与后续阶段的基础依赖；尚未下载模型或数据，更未实现 zero-ablation、重要性评分或训练。
 
 ## Python 环境与 M0 检查
 
@@ -25,6 +25,18 @@ PowerShell 下可用 `./.venv/Scripts/python.exe -I -m unittest discover -s test
 
 `.gitignore` 排除虚拟环境、本地 PDF、数据、结果、模型权重、checkpoint、缓存和典型密钥文件。忽略规则不能保护已被 Git 跟踪的文件；请勿把凭据放入仓库，推送前仍需人工检查待提交内容。后续阶段使用 Git 追踪变更并记录提交编号；创建新提交或公开推送仍以当次任务的授权为准。
 
+## M1：模型结构探查（尚未通过真实模型门禁）
+
+论文第 3.1 节报告机制分析使用 Qwen2.5-0.5B（24 层）。选择 Hugging Face 仓库 `Qwen/Qwen2.5-0.5B` 是 **[复现决策]**，权重 revision 仍 **[待核验]**。`scripts/inspect_model.py` 在成功加载后会动态列出各层 Attention、MLP 与 Q/K/V 模块路径，借助仅观察、不修改输出的临时 hooks 记录实际返回结构，并在短输入前向中验证有效预测位置；无论前向成功与否，hooks 都会被清理。**模拟模块测试的通过不等于真实 Qwen 结构已确认。**
+
+默认仅从本地缓存读取，不会静默下载模型权重。确认已获权重下载授权、具备执行第三方包代码的权限后，才可显式使用 `--allow-download`；例如已有权重时可运行：
+
+```bash
+.venv/Scripts/python.exe -I scripts/inspect_model.py --output reports/m1_structure.json
+```
+
+当前尚无 `reports/m1_structure.json`，不可把脚本存在误写为模型探查已完成。PDF 已通过文本提取核查第 3.1 节；已安装的 Transformers 源码显示 Qwen2Attention 以 tuple 返回，但只有真实模型前向才能验证本项目实际使用的返回类型。
+
 ## 后续阶段前的待核验清单
 
 以下条目均为 **[待核验]**，不是论文事实；详细状态见 [PAPER_SPEC.md 第 7 节](PAPER_SPEC.md#7-开放问题及处理)：
@@ -35,4 +47,4 @@ PowerShell 下可用 `./.venv/Scripts/python.exe -I -m unittest discover -s test
 - Q04：训练 loss mask、样本拼接方式与评估协议。
 - Q05：作者完整代码的发布状态。
 
-M0 没有核查论文中与后续算法或实验有关的章节。进入相应阶段前，应按 [CLAUDE.md 的论文原文使用规范](CLAUDE.md#论文原文使用规范) 核查 PDF；无法证实时明确标注工程假设。
+M0 没有核查论文算法章节；M1 已核查论文第 3.1 节的 0.5B 模型与 24 层描述。后续实现算法/实验前仍须按 [CLAUDE.md 的论文原文使用规范](CLAUDE.md#论文原文使用规范) 核查对应章节，无法证实时明确标注工程假设。

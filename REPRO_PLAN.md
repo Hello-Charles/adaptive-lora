@@ -2,7 +2,7 @@
 
 > 执行模型：Claude Code + CC Switch + Codex，**单 Agent**。算法和论文事实以 `PAPER_SPEC.md` 为准。
 >
-> 状态：默认全部未完成。完成一个里程碑必须记录真实执行命令、测试输出、实验产物和 Git commit；不能只凭代码生成就勾选。
+> 状态：以勾选项和真实证据为准。完成一个里程碑必须记录真实执行命令、测试输出、实验产物和 Git commit；不能只凭代码生成就勾选。
 
 ## 1. 工程目录（逐阶段创建，不必一次生成）
 
@@ -46,10 +46,12 @@ adaptive-lora/
 
 任务：建立 Python 工程、文档、`.gitignore`、基本环境探查；不训练、不下载大模型。
 
-- [ ] 项目可导入、基本测试工具可运行。
-- [ ] Python、PyTorch、Transformers、PEFT 等可用版本已记录（未装则如实标记）。
-- [ ] 模型权重/数据/密钥/缓存已被 `.gitignore` 排除。
-- [ ] 提交或记录首个 Git commit；论文待核验项已列入清单。
+- [x] 项目可导入、基本测试工具可运行。
+- [x] Python、PyTorch、Transformers、PEFT 等已安装版本已记录（未装则如实标记）。
+- [x] 模型权重/数据/密钥/缓存已被 `.gitignore` 排除。
+- [x] 提交或记录首个 Git commit；论文待核验项已列入清单。
+
+M0 证据：`reports/m0_status.md`、`reports/m0_git_setup.md`、`reports/m0_venv_environment.json`；首个 commit 为 `1c7b0e8433c3669bcb463fc5a7ba1441efc3e0f5`。M0 包导入与测试使用系统 Python 的 `PYTHONPATH=src`；关键第三方包虽然安装且 `pip check` 通过，**运行时导入仍为 `not_checked`**（自动权限模式拒绝执行），不应据此声称 M1 模型已可加载。
 
 **门禁**：环境现状明确后才进入模型结构探查。
 
@@ -62,6 +64,8 @@ adaptive-lora/
 - [ ] 证实模块路径，未凭经验硬编码。
 - [ ] 证实返回类型（tensor/tuple/其他）和有效预测位置。
 - [ ] 保存真实运行命令、输出和依赖版本。
+
+当前进度（未验收）：离线加载与结构探查代码、模拟模块单元测试已准备；本机未缓存 Qwen2.5-0.5B，第三方包导入受自动权限模式阻止，因此真实模块路径、Attention 返回类型和短输入前向均**未实测**。证据见 `reports/m1_progress.md`。
 
 **门禁**：模块返回结构未确认，不写 zero-ablation hook。
 
