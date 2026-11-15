@@ -140,7 +140,16 @@ class ModelInspectionTests(unittest.TestCase):
         self.assertEqual(layers[-1].mlp_path, "model.layers.23.mlp")
         self.assertEqual(layers[0].projections["k"], "model.layers.0.self_attn.k_proj")
 
-    def test_rejects_wrong_layer_count_or_missing_projection(self):
+    def test_discovers_28_layer_model_for_1_5b(self):
+        """M7 目标 1.5B 有 28 层；结构发现器须接受 expected_layers=28 而不报错。"""
+        layers = discover_layer_modules(FakeModel(count=28), expected_layers=28)
+        self.assertEqual(len(layers), 28)
+        self.assertEqual(layers[-1].mlp_path, "model.layers.27.mlp")
+        self.assertEqual(layers[-1].projections["v"], "model.layers.27.self_attn.v_proj")
+        with self.assertRaisesRegex(ValueError, "Expected 28 layers"):
+            discover_layer_modules(FakeModel(count=24), expected_layers=28)
+
+
         with self.assertRaisesRegex(ValueError, "Expected 24 layers"):
             discover_layer_modules(FakeModel(count=23))
         with self.assertRaisesRegex(ValueError, "k_proj"):

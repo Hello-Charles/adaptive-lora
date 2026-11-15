@@ -20,16 +20,17 @@ from adaptive_lora.model_loader import (
 )
 
 
-def inspect(model, tokenizer, text):
+def inspect(model, tokenizer, text, *, expected_layers=EXPECTED_LAYERS):
     """对兼容 Qwen 结构的模型记录一次单样本前向的形状和路径。
 
     调用者应传入短文本及彼此兼容的模型/tokenizer；此处不截断、不 padding，
     也不自动迁移输入设备，因而默认适用于 CPU 加载路径。模型会保持 eval 状态。
     子模块只保存输出元信息，不保留激活张量，不执行干预；异常时也必须移除 hook。
+    expected_layers 须与目标模型一致：0.5B=24，1.5B=28。
     """
     import torch
 
-    layers = discover_layer_modules(model)
+    layers = discover_layer_modules(model, expected_layers=expected_layers)
     inputs = tokenizer(text, return_tensors="pt", padding=False, truncation=False, add_special_tokens=True)
     position = prediction_position(inputs["input_ids"], inputs.get("attention_mask"))
     observed = {}
@@ -59,8 +60,8 @@ def inspect(model, tokenizer, text):
     logits = result.logits
     if len(logits.shape) != 3 or logits.shape[0] != 1 or logits.shape[1] != inputs["input_ids"].shape[1]:
         raise ValueError(f"Unexpected logits shape: {list(logits.shape)}")
-    if len(observed) != EXPECTED_LAYERS * 2:
-        raise ValueError(f"Expected outputs from both submodules in {EXPECTED_LAYERS} layers; found {len(observed)}")
+    if len(observed) != expected_layers * 2:
+        raise ValueError(f"Expected outputs from both submodules in {expected_layers} layers; found {len(observed)}")
 
     return {
         "model_type": type(model).__name__,
@@ -107,6 +108,8 @@ def main():
     parser.add_argument("--revision", help="Pinned model revision, if known")
     parser.add_argument("--cache-dir", type=Path, help="Dedicated model cache directory")
     parser.add_argument("--text", default="Hello, world!")
+    parser.add_argument("--expected-layers", type=int, default=EXPECTED_LAYERS,
+                        help="Expected number of Transformer layers (24 for 0.5B, 28 for 1.5B)")
     parser.add_argument("--output", type=Path, required=True, help="New report path (never overwritten)")
     parser.add_argument("--allow-download", action="store_true", help="Permit downloading model weights when explicitly authorized")
     args = parser.parse_args()
@@ -129,7 +132,7 @@ def main():
             parser.exit(2, f"Model unavailable locally; no weights downloaded: {exc}\n")
         raise
 
-    report = inspect(model, tokenizer, args.text)
+    report = inspect(model, tokenizer, args.text, expected_layers=args.expected_layers)
     report.update(
         model_id=args.model_id,
         requested_revision=args.revision,
