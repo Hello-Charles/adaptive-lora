@@ -176,6 +176,7 @@ Full 的24层实测 **1,474,560 个可训练元素、144个A/B张量**；Random7
   - [x] 实现标准库离线数据审计器及22项测试；经单独批准发布并在新数据目录检出完整SHA `2df16eb07bff7990cf9daf93bb189c9d91d06deb`；固定DATA_LICENSE/代码LICENSE字节通过，不代表数据内容已验收。
   - [ ] 完成9个JSON获取及实际离线审计（辅助README超时后停止；原窗口续接在获取前因到期拒绝；13:37 UTC核查全部JSON、audit、resume目录不存在，未改变seed/样本或重置时限）。
   - [x] **九文件获取与离线文本审计已实际完成（2026-11-15）**：9000秒窗口内实际1,320.791秒完成9/9三重核验并运行审计，`TEXT_GATE_PASS_TOKENIZER_PENDING`；训练170,420抽10,000、校准250、八任务各1,000（OBQA500），字段统一四字段；跨拆分sample_id与prompt哈希交集全为0。组内重复prompt（train 107、social_i_qa 8）记录未处理。仍不含真实tokenizer/截断/token级交集与语义去重。
+  - [x] **M7 真实 tokenizer 管线实现（2026-11-15）**：新增 `src/adaptive_lora/m7_tokenization.py`，含BPE边界核验（tokenize(prefix)须为tokenize(prefix+answer)前缀，不可猜切点）、EOS显式追加、右截断+无监督token报错、pad到8倍数、loss mask与token级身份交集比较；使用固定revision Qwen2.5-0.5B真实分词器，17项含12项真实分词测试通过，全套224项回归通过。
   - [x] 续轮另获批准的新900秒 `autodl` 窗口：890.0009秒仅写入一个部分训练文件13,631,488/96,529,722 bytes，审计未启动（该部分文件后续被下一窗口接管续传）。
   - [x] 已实现并本地测试**跨窗口累积获取工具**（Range续传+长度/Git blob/SHA256三重核验+state.json只登记已核验文件），17项合成测试通过、207项回归通过。
   - [x] v2 增补前缀接管与审计可重复进入；16项v2合成测试通过。首次9000秒执行曾被工具权限分类器拦截、未执行；经用户添加项目级Bash规则后按其原文执行成功。
