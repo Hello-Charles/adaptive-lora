@@ -2,9 +2,23 @@
 
 按阶段复现论文 *Mechanistic Insights into LoRA: Layer Sparsity for Adaptive Fine-Tuning via Path Patching*。算法事实与工程决策分别标注在 [PAPER_SPEC.md](PAPER_SPEC.md)，阶段门禁见 [REPRO_PLAN.md](REPRO_PLAN.md)，协作规范见 [CLAUDE.md](CLAUDE.md)。论文原文可从 [arXiv:2610.34756](https://arxiv.org/abs/2610.34756) 查阅；本地 `papers/adaptive_lora.pdf` 不上传至公开仓库。
 
-## 当前范围：M0–M6 已验收
+## 当前范围：M0–M6 已验收，M7 准备中
 
-M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输入和 M3 的独立子模块 zero-ablation 均已验收。M4 在30条输入上完成固定token校准、24层重要性和Top-7，最终零基排名为 **`[0, 1, 2, 5, 3, 8, 10]`**；M5完成选择性Q/K/V LoRA的真实三步CPU训练与fresh-base checkpoint恢复。M6已完成 **Full / Random7 / Adaptive7统一训练与评估接口**：每方法从相同基础权重新加载，统一数据/配置各训练3个短合成batch，共9步；实际可训练参数为 **1,474,560 / 430,080 / 430,080**，非同参数预算。最终 **162个测试通过**，三方法合成smoke exact-match均0/3，不能当作正式任务准确率。未进入M7或正式训练/效果实验。证据见 [阶段门禁](REPRO_PLAN.md)、[M1](reports/m1_validation.md)、[M2](reports/m2_validation.md)、[M3](reports/m3_validation.md)、[M4](reports/m4_validation.md)、[M5](reports/m5_validation.md) 和 [M6验收报告](reports/m6_validation.md)。
+M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输入和 M3 的独立子模块 zero-ablation 均已验收。M4 在30条输入上完成固定token校准、24层重要性和Top-7，最终零基排名为 **`[0, 1, 2, 5, 3, 8, 10]`**；M5完成选择性Q/K/V LoRA的真实三步CPU训练与fresh-base checkpoint恢复。M6已完成 **Full / Random7 / Adaptive7统一训练与评估接口**：每方法从相同基础权重新加载，统一数据/配置各训练3个短合成batch，共9步；实际可训练参数为 **1,474,560 / 430,080 / 430,080**，非同参数预算。最终 **162个测试通过**，三方法合成smoke exact-match均0/3，不能当作正式任务准确率。M7已开始首项协议核查并由用户确认，尚未执行GPU pilot或正式训练/效果实验。证据见 [阶段门禁](REPRO_PLAN.md)、[M1](reports/m1_validation.md)、[M2](reports/m2_validation.md)、[M3](reports/m3_validation.md)、[M4](reports/m4_validation.md)、[M5](reports/m5_validation.md) 和 [M6验收报告](reports/m6_validation.md)。
+
+## M7：协议已确认，尚未执行 GPU 实验
+
+用户已确认第一轮采用Qwen2.5-1.5B、N250、Top8、rank16/alpha32，比较Full/Random8/Adaptive8的8项commonsense任务。固定模型/数据来源、Alpaca纯文本前缀、答案loss mask、抽样、解析和单卡batch差异见 [M7协议](M7_PROTOCOL.md) 与 [配置JSON](configs/qwen2_5_1_5b_commonsense_r16.json)。这些复现决定不是论文未披露细节的还原声明。
+
+[离线检查器](scripts/check_m7_protocol.py) 和 [协议/评分模块](src/adaptive_lora/m7_protocol.py) 只使用标准库，可在未安装PyTorch等项目依赖时运行。它不是CUDA训练入口；已确认配置返回REVIEWED_NOT_EXECUTABLE，始终execution_authorized=false、runtime_validated=false。使用新输出目录：
+
+```bash
+.venv/Scripts/python.exe -I -S -B -X utf8 scripts/check_m7_protocol.py \
+  --config configs/qwen2_5_1_5b_commonsense_r16.json \
+  --output-dir results/m7-protocol-review-new
+```
+
+[Linux/CUDA候选直接依赖](requirements-linux-cu124-m7.in) 尚未安装或实测，也不是完整传递依赖锁。公开推送、远程部署、环境安装、权重/数据下载和付费GPU作业仍需相应批准；当前SSH与资源实测见 [重启后报告](reports/autodl_postrestart_20261115.md)，本项结果见 [M7首项报告](reports/m7_preflight_20261115.md)。
 
 ## 代码阅读与注释约定
 

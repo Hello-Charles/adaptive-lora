@@ -1,0 +1,20 @@
+# M7候选直接依赖：仅用于Linux x86_64 / CPython 3.12，尚未安装或完成兼容性验收。
+# 不是完整传递依赖锁文件；获批后必须在数据盘新建隔离环境，记录实际解析/安装报告及freeze。
+# 不用于Windows，不覆盖平台预装环境，不引入bitsandbytes/量化或未审查的额外索引。
+--index-url https://pypi.org/simple
+
+# 官方cu124索引已核验此cp312 Linux wheel的链接与SHA256；本轮未下载该wheel。
+# 直接固定GPU wheel与哈希，避免从普通PyPI误取其他CUDA/CPU构建。
+torch @ https://download-r2.pytorch.org/whl/cu124/torch-2.6.0%2Bcu124-cp312-cp312-linux_x86_64.whl#sha256=a393b506844035c0dac2f30ea8478c343b8e95a429f06f3b3cadfc7f53adb597
+
+# Transformers/PEFT版本及约束已读PyPI元数据；其余版本沿用本地锁定值，Linux组合仍待实测。
+transformers==5.22.2
+peft==0.21.2
+accelerate==1.15.0
+safetensors==0.8.0
+numpy==2.5.4
+tokenizers==0.23.3
+huggingface-hub==2.4.0
+datasets==5.2.0
+pyarrow==26.0.1
+pytest==9.2.0

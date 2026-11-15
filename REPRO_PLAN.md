@@ -171,9 +171,13 @@ Full 的24层实测 **1,474,560 个可训练元素、144个A/B张量**；Random7
 
 任务：Qwen2.5-1.5B、N=250、Top-8、rank16、alpha32、Q/K/V。先做 pilot 确认显存/吞吐，再跑完整训练与基线。
 
-- [ ] 执行前核对论文表格、数据版本、prompt、评估协议。
+- [x] 执行前核对论文表格、数据版本、prompt、评估协议（M7首项：文献/固定来源元数据与文本评分协议已核查，7项复现决定已由用户确认；不是数据或GPU运行验收）。
+- [ ] 实际数据下载后验收许可、字节、行数、抽样清单、真实分词/截断与拆分隔离；验证1.5B实际模块结构与输出。
+- [ ] 准备获批的独立Linux/CUDA环境，完成CUDA/AMP/梯度累积与GPU checkpoint实现及有界pilot。
 - [ ] 保存训练日志、GPU 耗时和峰值显存。
 - [ ] 完成统一评估；不人为追求论文数值而改动结果。
+
+M7首项进展（2026-11-15）：用户明确指令进入M7；重新读取PDF第7–9、18–19页及数据引用，形成 [已确认协议](M7_PROTOCOL.md)、[固定配置](configs/qwen2_5_1_5b_commonsense_r16.json)、[纯标准库协议与评分模块](src/adaptive_lora/m7_protocol.py) 和 [离线检查入口](scripts/check_m7_protocol.py)。用户仅确认7项复现决定，没有批准公开推送、依赖安装、模型/数据下载或付费GPU作业。预检器即使返回REVIEWED_NOT_EXECUTABLE，也始终不授予执行权限、不标记runtime通过；真实数据、CUDA训练与效果实验仍未执行。证据见 [M7首项报告](reports/m7_preflight_20261115.md)；SSH已恢复及实际资源见 [重启后盘点](reports/autodl_postrestart_20261115.md)。当前任务完成后停止，不自动进入下一验收任务或M8。
 
 ### M8 — 复现报告
 

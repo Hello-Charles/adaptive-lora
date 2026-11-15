@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "profile": "m7-commonsense-r16-single-gpu-v1",
+  "model": {
+    "id": "Qwen/Qwen2.5-1.5B",
+    "revision": "8faed761d45a263340a0528343f099c05c9a4323",
+    "layer_count": 28,
+    "hidden_size": 1536,
+    "attention_heads": 12,
+    "kv_heads": 2,
+    "config_git_blob_sha1": "169d606d5cf502a5628a52381586679a6d0caaab",
+    "weights_file": "model.safetensors",
+    "weights_bytes": 3087467144,
+    "weights_lfs_sha256": "a961db72e75d52b18e6b0c9d379e51a26973b233385e0e127fdda7d648aec796",
+    "metadata_source": "mirror_only_not_independently_authenticated"
+  },
+  "dataset": {
+    "repository": "AGI-Edgerunners/LLM-Adapters",
+    "revision": "816657208af4db747803f87ba40a4c71383fed7a",
+    "train_file": {
+      "path": "ft-training_set/commonsense_170k.json",
+      "git_blob_sha1": "529e426b33d4cdb1d0c4a275a1a7245ad081fd91",
+      "size_bytes": 96529722
+    },
+    "evaluation_files": [
+      {"task": "boolq", "path": "dataset/boolq/test.json", "git_blob_sha1": "6d7edb0a8e8a6566b546ccf0d98d24e48db3fdf3", "size_bytes": 899151, "sample_count": 1000},
+      {"task": "piqa", "path": "dataset/piqa/test.json", "git_blob_sha1": "f7a1c260692ef31796d4763cb6334f316a754fed", "size_bytes": 913157, "sample_count": 1000},
+      {"task": "social_i_qa", "path": "dataset/social_i_qa/test.json", "git_blob_sha1": "eadf221799ca394367b144c0f86ee0436db409d2", "size_bytes": 843748, "sample_count": 1000},
+      {"task": "hellaswag", "path": "dataset/hellaswag/test.json", "git_blob_sha1": "183c4920415f83ba4b793c4873a33e7e10bd1be5", "size_bytes": 11099046, "sample_count": 1000},
+      {"task": "winogrande", "path": "dataset/winogrande/test.json", "git_blob_sha1": "21257263593dd4d00546e1918c88ca0f357b08ad", "size_bytes": 497409, "sample_count": 1000},
+      {"task": "ARC-Easy", "path": "dataset/ARC-Easy/test.json", "git_blob_sha1": "6c0d30aaedaeca148df6bcd7aaacf7c31e6ad70f", "size_bytes": 1157216, "sample_count": 1000},
+      {"task": "ARC-Challenge", "path": "dataset/ARC-Challenge/test.json", "git_blob_sha1": "9540685439144200b5a7e48dab9ca4655be2af09", "size_bytes": 622510, "sample_count": 1000},
+      {"task": "openbookqa", "path": "dataset/openbookqa/test.json", "git_blob_sha1": "a6e69676104bcb77237388c3b5a3f0dcbb81d1e2", "size_bytes": 202545, "sample_count": 500}
+    ],
+    "train_samples": 10000,
+    "calibration_samples": 250,
+    "train_sampling_seed": 42,
+    "calibration_sampling_seed": 42,
+    "evaluation_sampling_seed": 42
+  },
+  "training": {
+    "rank": 16,
+    "alpha": 32,
+    "top_k": 8,
+    "target_projections": ["q", "k", "v"],
+    "epochs": 3,
+    "train_seed": 42,
+    "random_layer_seed": 20261115,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.01,
+    "betas": [0.9, 0.999],
+    "eps": 1e-8,
+    "warmup_steps": 0,
+    "lora_dropout": 0.0,
+    "lora_bias": "none",
+    "micro_batch_size": 8,
+    "gradient_accumulation": 8,
+    "world_size": 1,
+    "base_dtype": "float16",
+    "adapter_master_dtype": "float32",
+    "amp_dtype": "float16",
+    "max_length": 512,
+    "pad_to_multiple_of": 8,
+    "quantization": null,
+    "use_cache": false
+  },
+  "protocol": {
+    "methods": ["full", "random_k", "adaptive_k"],
+    "scope": "commonsense_only",
+    "prompt_format": "alpaca_canonical_v1",
+    "loss_mask": "answer_and_eos_only",
+    "truncation": "right_full_sequence_fail_if_no_supervised_token",
+    "padding_side": "right",
+    "calibration_mode": "frozen_eval_zero_ablation_fixed_original_token",
+    "metric": "eight_task_macro_accuracy",
+    "answer_parser": "bounded_unique_casefold_v1",
+    "max_new_tokens": 32,
+    "do_sample": false,
+    "temperature": 0.0,
+    "num_beams": 1,
+    "eos_token_id": 151643
+  },
+  "environment_candidate": {
+    "python_series": "3.12",
+    "torch": "2.6.0+cu124",
+    "transformers": "5.22.2",
+    "peft": "0.21.2",
+    "requirements_file": "requirements-linux-cu124-m7.in",
+    "installed_or_verified_by_this_checker": false
+  },
+  "decisions": [
+    {"id": "scope", "status": "confirmed", "proposal": "第一轮仅做8项commonsense任务的Full/Random8/Adaptive8；暂不做math、LoRA+或DoRA。"},
+    {"id": "prompt", "status": "confirmed", "proposal": "统一规范化Alpaca纯文本前缀，不使用Qwen chat/system模板；校准和生成只接instruction/input，不接答案。"},
+    {"id": "supervision", "status": "confirmed", "proposal": "只监督答案及显式EOS；整条序列右截断到512，截断后没有可预测监督token即报错，不静默丢弃或重抽。"},
+    {"id": "sampling", "status": "confirmed", "proposal": "训练抽10000条，再从该子集抽250条校准；各评估test抽1000条、OBQA500条；分别使用局部seed42并保存实际索引与身份哈希。"},
+    {"id": "answer_parser", "status": "confirmed", "proposal": "仅解析生成续文；标签大小写不敏感且有词边界，不同标签冲突判无效，解析失败仍计入分母；8任务等权宏平均。"},
+    {"id": "single_gpu_batch", "status": "confirmed", "proposal": "单卡micro-batch8、accumulation8，有效batch64；明确不同于论文4卡DDP的256，显存不足时停下申请配置变更。"},
+    {"id": "mirror_source", "status": "confirmed", "proposal": "官方HF端点不可达；候选模型版本及LFS哈希来自镜像，后续下载核对固定字节，保留未独立认证官方来源的局限。"}
+  ]
+}

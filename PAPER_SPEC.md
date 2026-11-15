@@ -144,6 +144,18 @@ M6 按需核查 **Table 2 / Section 5.3（PDF 第 8 页）、Section 5.4（第 9
 - 各方法独立保存 adapter-only safetensors，复用 M5 已验收保存器；M6 不额外验证三方法 fresh-base恢复或 optimizer/RNG断点续跑。仅在三方法实际数据/配置/基础/评估身份一致、输入/源码未变后写整体完成标记；失败保留部分结果，不自动重试或覆盖。配置、seed/IDs、源码/依赖、预测/评分和JSON/CSV对照均保存在新目录。
 - 另以不导入项目训练/评估/协议模块的脚本，独立核对存档来源、输入身份/拆分、评分和真实safetensors形状/数量/两种命名域指纹。该核验不重新执行前向/反向，不独立重建梯度；直接输入交集为零不代表排除了语义改写、原始题面内嵌答案或预训练污染。正式数据/模板/答案抽取和成本仍需用户确认，M6完成后不自动进入M7。
 
+### M7 首轮协议核查（2026-11-15）
+
+本轮已重新核查PDF第7–9页Section 4.5/5.1、Table 1及Section 5.4，第18–19页Appendix C.1–C.3，以及参考文献[14]。首轮选择Table 1的1.5B/28层/N250/Top8/rank16，而非Table 2的N30；用户已确认 [M7_PROTOCOL.md](M7_PROTOCOL.md) 中7项复现决定，机器可读配置见 [配置JSON](configs/qwen2_5_1_5b_commonsense_r16.json)。
+
+- **[论文]** 训练10,000条commonsense、3 epochs、max512、pad到8倍数，AdamW lr1e-4/weight_decay0.01/betas(0.9,0.999)/eps1e-8，无warmup；Q/K/V LoRA rank16/alpha32；冻结FP16基础权重、FP32 adapter初始化及FP16 AMP；每卡batch8、accumulation8。单卡64不同于4卡DDP256。
+- **[复现决策，用户已确认]** 第一轮仅做8项commonsense的Full/Random8/Adaptive8；规范化Alpaca纯文本前缀，不使用M2–M6的Qwen chat/system模板；只监督答案+显式EOS，完整序列右截断512，无可预测监督token即报错，不静默丢弃或重抽。
+- **[复现决策，用户已确认]** 固定LLM-Adapters提交并分别以局部seed42抽10,000训练、其内250校准、各任务1,000评估（OBQA500）；实际索引与输入身份尚待下载后验收。来源路径名test.json不自动证明与原始benchmark官方test split同一。
+- **[复现决策，用户已确认]** greedy最多32新tokens，仅解析生成续文；合法标签大小写归一化及词边界匹配，多个不同合法标签冲突判无效，失败保留分母，8任务等权宏平均。引用库无边界首匹配/4 beams并非论文明确协议，不照搬。
+- **[复现决策，用户已确认]** 候选Qwen1.5B固定revision/LFS哈希来自镜像，保留官方端点不可达、未独立认证官方来源的局限；权重未下载，实际字节仍待核对。所选数据仓库commit不是论文公开的原始commit。
+- **[待核验]** 实际数据许可/字节/行数/样本身份、真实BPE与长输入处置、28层模块返回值、CUDA/AMP/梯度累积与GPU checkpoint/评估尚未验收。新检查器仅标准库离线审查，不是正式训练入口；confirmed字段不提供推送/安装/下载/付费计算授权。
+- **[工程候选，未安装]** Linux隔离环境候选torch2.6.0+cu124搭配Transformers5.22.2/PEFT0.21.2，见 [候选直接依赖](requirements-linux-cu124-m7.in)。已核查Transformers/PEFT需求与官方cp312 Linux GPU wheel元数据，但不是完整传递依赖锁，也未以当前Linux组合完成导入或运行验证。
+
 ## 6. 必须通过的正确性测试
 
 | 编号 | 验收项 |
