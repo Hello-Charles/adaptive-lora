@@ -1,4 +1,8 @@
-"""Inspect Qwen layer structure and one short forward pass without ablation."""
+"""单样本模型结构探查；观察 hook 不得替换或原地改动子模块输出。
+
+命令默认离线。下载需显式授权标志、revision 和新的独立缓存目录；报告拒绝覆盖。
+脚本应从项目目录运行，不应把下载目录作为工作目录或 Python 脚本搜索路径。
+"""
 
 import argparse
 from importlib import metadata
@@ -17,6 +21,12 @@ from adaptive_lora.model_loader import (
 
 
 def inspect(model, tokenizer, text):
+    """对兼容 Qwen 结构的模型记录一次单样本前向的形状和路径。
+
+    调用者应传入短文本及彼此兼容的模型/tokenizer；此处不截断、不 padding，
+    也不自动迁移输入设备，因而默认适用于 CPU 加载路径。模型会保持 eval 状态。
+    子模块只保存输出元信息，不保留激活张量，不执行干预；异常时也必须移除 hook。
+    """
     import torch
 
     layers = discover_layer_modules(model)
@@ -26,21 +36,26 @@ def inspect(model, tokenizer, text):
     handles = []
 
     def capture(index, component):
+        """每个回调绑定自己的层号/组件名，避免循环闭包都引用最后一层。"""
         def record(_module, _inputs, output):
+            # 观察 hook 必须返回 None；返回非 None 会替换模块输出，改变被测前向。
             observed[(index, component)] = describe_output(output)
         return record
 
+    # 注册阶段也可能在中途失败；已成功注册的观察者不能泄漏到模型后续前向中。
     try:
         for layer in layers:
             handles.append(layer.attention_module.register_forward_hook(capture(layer.index, "attention")))
             handles.append(layer.mlp_module.register_forward_hook(capture(layer.index, "mlp")))
         model.eval()
+        # eval 控制 dropout 等模块行为；inference_mode 才禁止本次前向记录自动求导图。
         with torch.inference_mode():
             result = model(**inputs)
     finally:
         for handle in handles:
             handle.remove()
 
+    # logits 的序列维须保留全部输入位置，不能是生成接口只返回的最后一列。
     logits = result.logits
     if len(logits.shape) != 3 or logits.shape[0] != 1 or logits.shape[1] != inputs["input_ids"].shape[1]:
         raise ValueError(f"Unexpected logits shape: {list(logits.shape)}")
@@ -82,6 +97,11 @@ def inspect(model, tokenizer, text):
 
 
 def main():
+    """下载开关只表示许可；可重复实验仍须由调用者提供不可变提交 SHA。
+
+    下载只能用新缓存目录；已有缓存的复核应走默认离线路径。
+    输出在探查成功后独占创建，模型加载或前向失败不应留下成功报告。
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model-id", default=DEFAULT_MODEL_ID)
     parser.add_argument("--revision", help="Pinned model revision, if known")
@@ -115,6 +135,7 @@ def main():
         requested_revision=args.revision,
         cache_dir=str(args.cache_dir) if args.cache_dir is not None else None,
         packages={name: metadata.version(name) for name in ("torch", "transformers", "peft")},
+        # HEAD 只是版本基线，不包含工作区改动；报告中的 SHA 不能证明代码树是干净的。
         git_commit=subprocess.run(
             ["git", "rev-parse", "HEAD"],
             cwd=Path(__file__).resolve().parents[1],
@@ -124,6 +145,7 @@ def main():
         ).stdout.strip() or None,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    # 预检查与写文件之间也可能出现同名文件，独占创建确保历史报告不会被覆盖。
     with args.output.open("x", encoding="utf-8") as output:
         json.dump(report, output, indent=2, ensure_ascii=False)
         output.write("\n")

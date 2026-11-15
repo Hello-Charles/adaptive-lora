@@ -1,4 +1,7 @@
-"""Offline M1 unit tests; fake modules do not represent Qwen's measured structure."""
+"""模型加载契约的离线测试；模拟模块不包含真实权重或前向计算。
+
+这些测试约束加载选项、路径匹配及预测位置算法，不能替代真实 Qwen 结构实测。
+"""
 
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
@@ -19,6 +22,8 @@ from adaptive_lora.model_loader import (
 
 
 class FakeModule:
+    """仅模拟 named_children/named_modules 的树遍历契约，不是 torch.nn.Module。"""
+
     def __init__(self, children=()):
         self.children = list(children)
 
@@ -33,11 +38,18 @@ class FakeModule:
 
 
 class ModuleList(FakeModule):
+    """类名是结构发现器的识别条件，替身须保留 ModuleList 名称。"""
+
     def __len__(self):
         return len(self.children)
 
 
 class FakeModel(FakeModule):
+    """归一化层也含 attention 字样，模块匹配不能把它当作 Attention 目标。
+
+    missing_projection 指定缺少 K 投影的层号，用于拒绝不完整结构的测试。
+    """
+
     def __init__(self, count=24, missing_projection=None):
         blocks = []
         for index in range(count):
@@ -56,6 +68,8 @@ class FakeModel(FakeModule):
 
 
 class FakeMask:
+    """仅模拟一行二值 mask 的 shape 和 tolist，不具备一般张量索引语义。"""
+
     def __init__(self, values):
         self.values = values
         self.shape = (1, len(values))
@@ -65,7 +79,10 @@ class FakeMask:
 
 
 class ModelInspectionTests(unittest.TestCase):
+    """真实库加载器由 mock 替代；断言选项并不证明模型或 tokenizer 实际可加载。"""
+
     def test_loader_is_offline_by_default_and_uses_safe_model_loading(self):
+        """默认路径不得联网或启用远端代码；限制只通过调用参数检查。"""
         transformer = ModuleType("transformers")
         model = SimpleNamespace(eval=Mock())
         transformer.AutoTokenizer = SimpleNamespace(from_pretrained=Mock(return_value="tokenizer"))
@@ -83,6 +100,7 @@ class ModelInspectionTests(unittest.TestCase):
             model.eval.assert_called_once_with()
 
     def test_download_requires_explicit_flag(self):
+        """显式许可仅改变 mock 调用参数；这里不访问 Hub，也不下载权重。"""
         transformer = ModuleType("transformers")
         transformer.AutoTokenizer = SimpleNamespace(from_pretrained=Mock(return_value="tokenizer"))
         transformer.AutoModelForCausalLM = SimpleNamespace(
@@ -95,6 +113,7 @@ class ModelInspectionTests(unittest.TestCase):
             self.assertEqual(transformer.AutoModelForCausalLM.from_pretrained.call_args.kwargs["cache_dir"], str(Path("data/models/m1")))
 
     def test_download_cli_requires_pinned_revision_and_new_cache(self):
+        """错误参数须在模型加载前退出，不能在已有目录混入新下载或留下成功报告。"""
         root = Path(__file__).resolve().parents[1]
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "structure.json"

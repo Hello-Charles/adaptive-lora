@@ -1,0 +1,831 @@
+{
+  "stage": "M4",
+  "status": "PASS",
+  "captured_at_utc": "2026-11-14T15:11:28.672505+00:00",
+  "milestone_a_completed": true,
+  "m5_started": false,
+  "training_performed": false,
+  "gates": {
+    "fixed_original_token": "PASS",
+    "n1_and_n_greater_than_one_math": "PASS",
+    "24_layer_scores_top7_and_sample_list": "PASS",
+    "environment_source_version_and_timing": "PASS"
+  },
+  "paper": {
+    "source": "papers/adaptive_lora.pdf",
+    "page": 6,
+    "sections": [
+      "4.3",
+      "4.4"
+    ],
+    "equations": [
+      4,
+      5
+    ],
+    "algorithm_1_lines": "3-12",
+    "selection_mode": "accuracy/all layers",
+    "claim_scope": "0.5B Alpaca smoke; not a main-table or downstream performance reproduction"
+  },
+  "model": {
+    "id": "Qwen/Qwen2.5-0.5B",
+    "requested_revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+    "config_resolved_revision": null,
+    "layer_count": 24,
+    "device": "cpu",
+    "logits_dtype": "torch.bfloat16",
+    "probability_dtype": "torch.float32",
+    "attention_implementation": "sdpa",
+    "parameter_fingerprint": {
+      "sha256": "3e59c59f388044257c042e93b86fc1a0064dd9af6cd106c102cc685469427db3",
+      "parameter_elements": 494032768
+    },
+    "parameter_fingerprint_scope": "named parameter names/dtypes/shapes/raw bytes, excludes buffers"
+  },
+  "calibration_data": {
+    "dataset": {
+      "id": "tatsu-lab/alpaca",
+      "revision": "dce01c9b08f87459cf36a430d809084718273017",
+      "split": "train",
+      "population_size": 52002,
+      "source": {
+        "file": "data/train-00000-of-00001-a09b74b3ef9c3b56.parquet",
+        "sha256": "06391b656a06fd3fb9d213160ef2398796c3b7f3dc75ef1e3ced30d461517073",
+        "size_bytes": 24246638
+      }
+    },
+    "manifest_path": "results/m2-20261114/manifest.json",
+    "manifest_content_sha256": "7c829ccb4c332291ea432c62b3a256bf8459d5a901e4eb9a575b0818aedfedc9",
+    "manifest_file_sha256": "ad15abe28ca3fc05da0f09146b448e1383cbb438f2f7ab0251fc535fddf5df13",
+    "n": 30,
+    "sampling_seed": 20261112,
+    "sample_indices": [
+      13808,
+      51747,
+      33114,
+      13465,
+      25067,
+      48122,
+      16371,
+      39587,
+      7591,
+      49829,
+      15956,
+      28532,
+      23207,
+      11527,
+      31082,
+      35580,
+      13599,
+      15169,
+      32352,
+      28242,
+      28667,
+      1660,
+      34056,
+      19956,
+      6004,
+      34609,
+      45074,
+      16373,
+      43934,
+      7809
+    ],
+    "input_token_count_min": 26,
+    "input_token_count_max": 64,
+    "template_sha256": "44d5f08f3f72b837eaad09f13a54c1f9f4eb58d75240334548b7fd52a5437fa5",
+    "source_fields": [
+      "instruction",
+      "input"
+    ],
+    "source_boundary": "M2 fixed manifest; mirror byte hash matched, official source not independently authenticated",
+    "license_from_dataset_card": "CC-BY-NC-4.0"
+  },
+  "numerics_and_runtime_decisions": {
+    "probabilities": "FP32 softmax at the final active input position",
+    "reference_token": "argmax of original unablated logits, fixed for all interventions",
+    "formula": "I_l = mean_x(abs(q-q_l_attention)+abs(q-q_l_mlp))",
+    "accumulation": "Python float/math.fsum",
+    "tie_break": "descending importance, ascending zero-based layer index",
+    "inference_seed": 20261114,
+    "cpu_threads": 4,
+    "batch_size": 1,
+    "use_cache": false,
+    "deterministic_algorithms": true,
+    "extra_full_logits_restore_checks": 30,
+    "classification": {
+      "paper_requirements": [
+        "formula",
+        "reference_token"
+      ],
+      "reproduction_decisions": [
+        "probabilities",
+        "accumulation",
+        "tie_break",
+        "inference_seed",
+        "cpu_threads",
+        "batch_size",
+        "use_cache",
+        "deterministic_algorithms",
+        "extra_full_logits_restore_checks"
+      ]
+    }
+  },
+  "results": {
+    "layer_importance": [
+      {
+        "layer_index": 0,
+        "attention_mean_abs_delta": 0.3302892079518642,
+        "mlp_mean_abs_delta": 0.3435164509408473,
+        "importance": 0.6738056588927115,
+        "rank": 1,
+        "selected": true
+      },
+      {
+        "layer_index": 1,
+        "attention_mean_abs_delta": 0.34322075781047445,
+        "mlp_mean_abs_delta": 0.28255461299074036,
+        "importance": 0.6257753708012148,
+        "rank": 2,
+        "selected": true
+      },
+      {
+        "layer_index": 2,
+        "attention_mean_abs_delta": 0.22707008485061428,
+        "mlp_mean_abs_delta": 0.3652362831291687,
+        "importance": 0.592306367979783,
+        "rank": 3,
+        "selected": true
+      },
+      {
+        "layer_index": 3,
+        "attention_mean_abs_delta": 0.15531780781845253,
+        "mlp_mean_abs_delta": 0.30498457255440975,
+        "importance": 0.4603023803728623,
+        "rank": 5,
+        "selected": true
+      },
+      {
+        "layer_index": 4,
+        "attention_mean_abs_delta": 0.1999126745853573,
+        "mlp_mean_abs_delta": 0.11720741471896569,
+        "importance": 0.317120089304323,
+        "rank": 14,
+        "selected": false
+      },
+      {
+        "layer_index": 5,
+        "attention_mean_abs_delta": 0.20529618704070648,
+        "mlp_mean_abs_delta": 0.28139040792011655,
+        "importance": 0.48668659496082306,
+        "rank": 4,
+        "selected": true
+      },
+      {
+        "layer_index": 6,
+        "attention_mean_abs_delta": 0.08325764375428359,
+        "mlp_mean_abs_delta": 0.20051861947091917,
+        "importance": 0.2837762632252028,
+        "rank": 15,
+        "selected": false
+      },
+      {
+        "layer_index": 7,
+        "attention_mean_abs_delta": 0.11758212825904289,
+        "mlp_mean_abs_delta": 0.2760377639904618,
+        "importance": 0.3936198922495047,
+        "rank": 8,
+        "selected": false
+      },
+      {
+        "layer_index": 8,
+        "attention_mean_abs_delta": 0.23319527737330645,
+        "mlp_mean_abs_delta": 0.1775643292348832,
+        "importance": 0.41075960660818966,
+        "rank": 6,
+        "selected": true
+      },
+      {
+        "layer_index": 9,
+        "attention_mean_abs_delta": 0.16134915743023157,
+        "mlp_mean_abs_delta": 0.2181640695159634,
+        "importance": 0.379513226946195,
+        "rank": 12,
+        "selected": false
+      },
+      {
+        "layer_index": 10,
+        "attention_mean_abs_delta": 0.25575714331741134,
+        "mlp_mean_abs_delta": 0.150814030940334,
+        "importance": 0.40657117425774536,
+        "rank": 7,
+        "selected": true
+      },
+      {
+        "layer_index": 11,
+        "attention_mean_abs_delta": 0.1412765166411797,
+        "mlp_mean_abs_delta": 0.11339654165009658,
+        "importance": 0.2546730582912763,
+        "rank": 18,
+        "selected": false
+      },
+      {
+        "layer_index": 12,
+        "attention_mean_abs_delta": 0.1327489915614327,
+        "mlp_mean_abs_delta": 0.18551582815125583,
+        "importance": 0.31826481971268855,
+        "rank": 13,
+        "selected": false
+      },
+      {
+        "layer_index": 13,
+        "attention_mean_abs_delta": 0.0729668731490771,
+        "mlp_mean_abs_delta": 0.18384720225197573,
+        "importance": 0.25681407540105283,
+        "rank": 17,
+        "selected": false
+      },
+      {
+        "layer_index": 14,
+        "attention_mean_abs_delta": 0.13727562874555588,
+        "mlp_mean_abs_delta": 0.2539190509405065,
+        "importance": 0.39119467968606236,
+        "rank": 9,
+        "selected": false
+      },
+      {
+        "layer_index": 15,
+        "attention_mean_abs_delta": 0.12076238679389159,
+        "mlp_mean_abs_delta": 0.14476990678037208,
+        "importance": 0.26553229357426367,
+        "rank": 16,
+        "selected": false
+      },
+      {
+        "layer_index": 16,
+        "attention_mean_abs_delta": 0.05651850576202075,
+        "mlp_mean_abs_delta": 0.14605337226142487,
+        "importance": 0.20257187802344562,
+        "rank": 22,
+        "selected": false
+      },
+      {
+        "layer_index": 17,
+        "attention_mean_abs_delta": 0.12013257192447782,
+        "mlp_mean_abs_delta": 0.09863002415125569,
+        "importance": 0.2187625960757335,
+        "rank": 21,
+        "selected": false
+      },
+      {
+        "layer_index": 18,
+        "attention_mean_abs_delta": 0.03268711653848489,
+        "mlp_mean_abs_delta": 0.0772070089355111,
+        "importance": 0.109894125473996,
+        "rank": 24,
+        "selected": false
+      },
+      {
+        "layer_index": 19,
+        "attention_mean_abs_delta": 0.08466058255483706,
+        "mlp_mean_abs_delta": 0.11223546328643957,
+        "importance": 0.19689604584127665,
+        "rank": 23,
+        "selected": false
+      },
+      {
+        "layer_index": 20,
+        "attention_mean_abs_delta": 0.21058405799170335,
+        "mlp_mean_abs_delta": 0.1763030393437172,
+        "importance": 0.38688709733542054,
+        "rank": 10,
+        "selected": false
+      },
+      {
+        "layer_index": 21,
+        "attention_mean_abs_delta": 0.16183118627329046,
+        "mlp_mean_abs_delta": 0.08252633151908716,
+        "importance": 0.24435751779237763,
+        "rank": 19,
+        "selected": false
+      },
+      {
+        "layer_index": 22,
+        "attention_mean_abs_delta": 0.09823515824973583,
+        "mlp_mean_abs_delta": 0.13702088991800945,
+        "importance": 0.23525604816774529,
+        "rank": 20,
+        "selected": false
+      },
+      {
+        "layer_index": 23,
+        "attention_mean_abs_delta": 0.18591627261290947,
+        "mlp_mean_abs_delta": 0.19615544616632785,
+        "importance": 0.38207171877923735,
+        "rank": 11,
+        "selected": false
+      }
+    ],
+    "selected_layer_indices": [
+      0,
+      1,
+      2,
+      5,
+      3,
+      8,
+      10
+    ],
+    "selected_layer_indices_ascending": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      8,
+      10
+    ],
+    "ranked_layer_indices": [
+      0,
+      1,
+      2,
+      5,
+      3,
+      8,
+      10,
+      7,
+      14,
+      20,
+      23,
+      9,
+      12,
+      4,
+      6,
+      15,
+      13,
+      11,
+      21,
+      22,
+      17,
+      16,
+      19,
+      18
+    ],
+    "forward_evaluations": 1500,
+    "fixed_token_measurements": 1440,
+    "full_logits_restorations": 30,
+    "n1": {
+      "status": "PASS",
+      "created_at_utc": "2026-11-14T14:40:04.003071+00:00",
+      "n": 1,
+      "forward_evaluations": 50,
+      "selected_layer_indices": [
+        0,
+        1,
+        2,
+        20,
+        23,
+        16,
+        10
+      ],
+      "model_load_elapsed_seconds": 4.441608699999051,
+      "calibration_elapsed_seconds": 57.18532399999094,
+      "total_elapsed_seconds": 63.4104538000247,
+      "completed_samples": 1,
+      "files_sha256": {
+        "calibration.json": "dce513b200d9c2c9b71805955b0416b685d5799ec95b18f0b1dbb71e61b2eb82",
+        "environment.json": "dc91b3d58068302951cfe2c3703cbac5f0128b18e9f803e358a236ee77c5e50d",
+        "git_commit.txt": "4fd0ded30ca57167fcf3827bb7b53a08b99e330cefbbdd98703fcb817045597e",
+        "importance.html": "1b44b4bf90cef9e1f45c2190b6219fe73e6fd11ff3db0b91b4dbb4c025698c9a",
+        "importance.svg": "5788f2e2cc4259a945ab4619ae3622554a59daf1e7d09d890aeeca9e732a41e9",
+        "layer_importance.csv": "186f8cbdd08a195aad3b2f07861e64fd79c74648ef26412be89f0d92283be19d",
+        "layer_importance.json": "8a665fce106c1ceea31e0bfc8c5dc09903238768d65a75a8b16b044af8dc3328",
+        "model_runtime.json": "094c86e1854c5e1874e61035ab7ec2a08eb6f25428a8a81052f7eabb52f18232",
+        "provenance.json": "ed7e6e62f10f103b4d09d20e9701250c4764708b9b4400dd12aee7fa5b8754fa",
+        "resolved_config.json": "bfa28fe1a93df3ae786319a5ad5596e6de9ae7fe00ec468a1b91664d6c3927e0",
+        "sample_ids.json": "1cc3cf13279be3ef080ed688a4a389e04e2271a30eea03bfcf6648f974d220a0",
+        "samples.jsonl": "dec22997f1ccf428a4c5c95422dec70496c5d2678736682a6e1a9fba38c936c8",
+        "selected_layers.json": "59bb264062fcb39ae6d10ec12bc4e7b581d721d1e2181eebc439b2bcc2fca165"
+      },
+      "timing_scope": "CPU wall-clock; calibration includes parameter fingerprints, all ablations, restores and flushed sample logs; not a paper benchmark"
+    },
+    "n30": {
+      "status": "PASS",
+      "created_at_utc": "2026-11-14T14:59:31.554955+00:00",
+      "n": 30,
+      "forward_evaluations": 1500,
+      "selected_layer_indices": [
+        0,
+        1,
+        2,
+        5,
+        3,
+        8,
+        10
+      ],
+      "model_load_elapsed_seconds": 3.9277898000145797,
+      "calibration_elapsed_seconds": 1107.8819432000164,
+      "total_elapsed_seconds": 1113.4761956000002,
+      "completed_samples": 30,
+      "files_sha256": {
+        "calibration.json": "e3e59ef75b9bec0f6f796ae799320df83cbefb795364f925245a2c3782f49f3b",
+        "environment.json": "578e79daa4f70ae4bb4be028ef1898542d59d7d856dbe66b48cea0e9a0ebe027",
+        "git_commit.txt": "4fd0ded30ca57167fcf3827bb7b53a08b99e330cefbbdd98703fcb817045597e",
+        "importance.html": "cdf1b9cb854fdaea28317f174959d22cc345400a369ff791ea95e1ab35b3adb0",
+        "importance.svg": "5fc70e1b556575b59abb5283fec1a1ce2c7d9956a38ecdbb60c0f633c4b6d7b9",
+        "layer_importance.csv": "1dade44ce9630ddb1f9b8ab7592aea054cc23ffc09180b965ebcfa58f4cada16",
+        "layer_importance.json": "722ff27fc09a6873f7640a921bec29abb085e4ca7b8bf3bcbde27a00e9da3fd7",
+        "model_runtime.json": "094c86e1854c5e1874e61035ab7ec2a08eb6f25428a8a81052f7eabb52f18232",
+        "provenance.json": "3d1f8616315be5bb7dd01b234c19786e1b3d2545efd2af685ab2a1f6f33c9dd7",
+        "resolved_config.json": "cd2b2c191ac564adfc753915a2ae0be4ebf8522b9aa1348b02e67ed2f41c32f9",
+        "sample_ids.json": "afbfc10946e602dabb421fab3808b25b507ecc1da99d26fef7f86551bc114640",
+        "samples.jsonl": "cd26adebe4ba1f009d5790478e20f8248a331de6ff3cff1940fea4a78946187f",
+        "selected_layers.json": "0f5db68e4451ade4f92bc4353ca1c8c40226f9165f81a009ab129f962c640bdb"
+      },
+      "timing_scope": "CPU wall-clock; calibration includes parameter fingerprints, all ablations, restores and flushed sample logs; not a paper benchmark"
+    }
+  },
+  "tests": {
+    "status": "PASS",
+    "total": 92,
+    "pre_m4_baseline": 48,
+    "m4_added": 44,
+    "skipped": 0,
+    "elapsed_seconds": 20.727,
+    "log": "results/m4-20261114-evidence/tests-final.log",
+    "m4_breakdown": {
+      "calibration": 19,
+      "selection": 5,
+      "artifacts": 7,
+      "cli_manifest": 9,
+      "independent_audit": 4
+    },
+    "compileall": "PASS",
+    "pip_check": "PASS",
+    "git_diff_check": "PASS",
+    "expected_red_failures_preserved": true
+  },
+  "independent_verification": {
+    "n1_path": "results/m4-20261114-audit/n1.json",
+    "n30_path": "results/m4-20261114-audit/n30.json",
+    "n30_verified_artifacts": 13,
+    "recorded_runtime_source_count": 21,
+    "current_runtime_source_hashes_match": true,
+    "repeatability": {
+      "full_n30_repeated": false,
+      "n1_matches_first_sample": true,
+      "scope": "Independent N=1 vs the first full-run sample; not a repeated N=30 calibration",
+      "comparison_directory": "results\\m4-20261114-n1"
+    }
+  },
+  "visual_verification": {
+    "status": "PASS",
+    "n1": {
+      "status": "PASS",
+      "source": "file:///d:/vibecoding/adaptive-lora/results/m4-20261114-n1/importance.html",
+      "browser": {
+        "protocolVersion": "1.3",
+        "product": "Chrome/157.0.8103.78",
+        "revision": "@4b3d0dabb8250b6f152d2d85d79e7706e309d087",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "jsVersion": "15.7.112.43"
+      },
+      "layout": {
+        "marks": 24,
+        "tableRows": 24,
+        "horizontalOverflow": false,
+        "labelOverflow": [],
+        "lightSeries": "#2a78d6",
+        "bodyTheme": "light"
+      },
+      "dark": {
+        "theme": "dark",
+        "series": "#3987e5"
+      },
+      "texture": true,
+      "keyboard": {
+        "active": "mark",
+        "hidden": false,
+        "text": "Layer 0 | I_l = 0.293952534 | selected"
+      },
+      "hover": {
+        "hidden": false,
+        "text": "Layer 23 | I_l = 0.233620651 | selected"
+      },
+      "pageExceptions": [],
+      "externalPageRequests": []
+    },
+    "n30": {
+      "status": "PASS",
+      "source": "file:///d:/vibecoding/adaptive-lora/results/m4-20261114-n30/importance.html",
+      "browser": {
+        "protocolVersion": "1.3",
+        "product": "Chrome/157.0.8103.78",
+        "revision": "@4b3d0dabb8250b6f152d2d85d79e7706e309d087",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "jsVersion": "15.7.112.43"
+      },
+      "layout": {
+        "marks": 24,
+        "tableRows": 24,
+        "horizontalOverflow": false,
+        "labelOverflow": [],
+        "lightSeries": "#2a78d6",
+        "bodyTheme": "light"
+      },
+      "dark": {
+        "theme": "dark",
+        "series": "#3987e5"
+      },
+      "texture": true,
+      "keyboard": {
+        "active": "mark",
+        "hidden": false,
+        "text": "Layer 0 | I_l = 0.673805659 | selected"
+      },
+      "hover": {
+        "hidden": false,
+        "text": "Layer 23 | I_l = 0.382071719 | not selected"
+      },
+      "pageExceptions": [],
+      "externalPageRequests": []
+    },
+    "palettes": {
+      "light": {
+        "series": "#2a78d6",
+        "surface": "#fcfcfb"
+      },
+      "dark": {
+        "series": "#3987e5",
+        "surface": "#1a1a19"
+      }
+    },
+    "palette_checks": "ALL CHECKS PASS; pairwise separation n/a for a single series",
+    "driver": "results/m4-20261114-evidence/render_chart.cjs",
+    "node_version": "v22.13.1",
+    "screenshots_visually_reviewed": [
+      "n1/light-full.png",
+      "n1/dark-full.png",
+      "n1/keyboard-focus.png",
+      "n1/texture.png",
+      "n30/light-full.png",
+      "n30/dark-full.png",
+      "n30/hover.png"
+    ],
+    "scope": "Local Chrome only, not a cross-browser or full WCAG audit"
+  },
+  "environment": {
+    "captured_at_utc": "2026-11-14T14:40:59.583847+00:00",
+    "python": {
+      "version": "3.12.8",
+      "executable": "D:\\vibecoding\\adaptive-lora\\.venv\\Scripts\\python.exe"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "package_metadata_versions": {
+      "torch": "2.15.0+cpu",
+      "transformers": "5.22.2",
+      "peft": "0.21.2",
+      "datasets": "5.2.0",
+      "accelerate": "1.15.0",
+      "tokenizers": "0.23.3",
+      "pyarrow": "26.0.1",
+      "huggingface-hub": "2.4.0",
+      "pytest": "9.2.0"
+    },
+    "device": "cpu",
+    "torch_num_threads": 4,
+    "torch_num_interop_threads": 4,
+    "deterministic_algorithms": true,
+    "mkldnn_enabled": true
+  },
+  "git_at_runtime": {
+    "baseline_commit": "577527ad0ec343941bbed0b6519ff3544e301cc7",
+    "branch": "repro/m4-calibration-selection",
+    "dirty": true,
+    "status": [
+      "M CLAUDE.md",
+      " M PAPER_SPEC.md",
+      " M README.md",
+      " M REPRO_PLAN.md",
+      " M scripts/inspect_model.py",
+      " M scripts/record_environment.py",
+      " M src/adaptive_lora/__init__.py",
+      " M src/adaptive_lora/model_loader.py",
+      " M tests/test_m0.py",
+      " M tests/test_model_loader.py",
+      "?? reports/code_comments_20261113.md",
+      "?? reports/m2_progress.md",
+      "?? reports/m2_validation.json",
+      "?? reports/m2_validation.md",
+      "?? reports/m3_validation.json",
+      "?? reports/m3_validation.md",
+      "?? scripts/prepare_calibration.py",
+      "?? scripts/run_calibration.py",
+      "?? scripts/validate_ablation.py",
+      "?? src/adaptive_lora/ablation.py",
+      "?? src/adaptive_lora/artifacts.py",
+      "?? src/adaptive_lora/calibration.py",
+      "?? src/adaptive_lora/data.py",
+      "?? src/adaptive_lora/selection.py",
+      "?? tests/test_ablation.py",
+      "?? tests/test_artifacts.py",
+      "?? tests/test_calibration.py",
+      "?? tests/test_data.py",
+      "?? tests/test_prepare_calibration.py",
+      "?? tests/test_run_calibration.py",
+      "?? tests/test_selection.py"
+    ]
+  },
+  "git_at_report": {
+    "baseline_commit": "577527ad0ec343941bbed0b6519ff3544e301cc7",
+    "branch": "repro/m4-calibration-selection",
+    "dirty": true,
+    "status": [
+      " M CLAUDE.md",
+      " M PAPER_SPEC.md",
+      " M README.md",
+      " M REPRO_PLAN.md",
+      " M scripts/inspect_model.py",
+      " M scripts/record_environment.py",
+      " M src/adaptive_lora/__init__.py",
+      " M src/adaptive_lora/model_loader.py",
+      " M tests/test_m0.py",
+      " M tests/test_model_loader.py",
+      "?? reports/code_comments_20261113.md",
+      "?? reports/m2_progress.md",
+      "?? reports/m2_validation.json",
+      "?? reports/m2_validation.md",
+      "?? reports/m3_validation.json",
+      "?? reports/m3_validation.md",
+      "?? reports/m4_validation.md",
+      "?? scripts/prepare_calibration.py",
+      "?? scripts/run_calibration.py",
+      "?? scripts/validate_ablation.py",
+      "?? scripts/validate_calibration.py",
+      "?? src/adaptive_lora/ablation.py",
+      "?? src/adaptive_lora/artifacts.py",
+      "?? src/adaptive_lora/calibration.py",
+      "?? src/adaptive_lora/data.py",
+      "?? src/adaptive_lora/selection.py",
+      "?? tests/test_ablation.py",
+      "?? tests/test_artifacts.py",
+      "?? tests/test_calibration.py",
+      "?? tests/test_data.py",
+      "?? tests/test_prepare_calibration.py",
+      "?? tests/test_run_calibration.py",
+      "?? tests/test_selection.py",
+      "?? tests/test_validate_calibration.py"
+    ],
+    "m4_commit_created": false,
+    "push_performed": false
+  },
+  "runtime_code_sha256": {
+    "scripts/inspect_model.py": "f23b3092d370cf310752bdf4bf035e01e00f2cb6ea10737c9410c9a5c92db3ff",
+    "scripts/prepare_calibration.py": "001c4bb79a8df3246363d05629ae30980e12fdb465b640fd8477630ee9250f52",
+    "scripts/record_environment.py": "60695f36f6f4a3843c1a9212706e6f7e5b8e7b80b96c51a117266b0e4b9823c2",
+    "scripts/run_calibration.py": "a350463d726e6e33eace0a1a03ec6cddf137c870eb52c345ed880c6324680a76",
+    "scripts/validate_ablation.py": "dab8e39c87836b1db4d646d26390e91c556aa50f9f24006f7e850d42471500dd",
+    "src/adaptive_lora/__init__.py": "57fc4c417c9cb02c58ec9f91d3db68ff7542ff7b240f05d60e20cc85949cfcd8",
+    "src/adaptive_lora/ablation.py": "8ebd623d5806a2b6b1b98d54e9213e7ea43018aaad9b28be1d94583eae7b40eb",
+    "src/adaptive_lora/artifacts.py": "19786de31580df5440e30b5735be9e32e7a835ca543a8ebd14dd55e5e42b310d",
+    "src/adaptive_lora/calibration.py": "1b1b041a5737a90ab0b73709a86283168f7057b36df11bedd098c0e8580ec8a2",
+    "src/adaptive_lora/data.py": "899fd5333ee9b3ae2348b7e1f4c270af6844ce5dcd7bae54611c96b08622e80b",
+    "src/adaptive_lora/model_loader.py": "aed9d0ff34b8557c88e545c35757c4e02a5459416adeae1d225918bc82fda995",
+    "src/adaptive_lora/selection.py": "10334e0a920b89ede3457aed2be08539ff736e78720126960dffc0b2cb38113c",
+    "tests/test_ablation.py": "fd539550ae788c0b761bac19fd582e4cb79a803feb7f2975079285c75f4767be",
+    "tests/test_artifacts.py": "6330a9bdccc3e3b6e62dd5337a3c7457e5dee49387ee8976528a7a6e8be83f6d",
+    "tests/test_calibration.py": "b6d20d77a658f9ce683e556d69ec129ad67c55eaa95bdeac8292a48f0959bdf5",
+    "tests/test_data.py": "84f7275f05c55a8e13a3fa9f0ad285c184bb938255a08ae4e7f69f0faeb983ab",
+    "tests/test_m0.py": "c8ea053388cf6b4924fc17a16d13a718ae88ba85eb00ed1476c4a15725a5ba7d",
+    "tests/test_model_loader.py": "e02591f7185d0a627137cbc64a47c0bd5582d84989d5d7fa65fa85bbbae60048",
+    "tests/test_prepare_calibration.py": "4c5d6d36ac755d7bcfc005ea50b4a7026e8ebd5759853d474402f63fa6058fe4",
+    "tests/test_run_calibration.py": "4a96281ae09644696350541a1a2b2f1319c60e241f86534fd161ad7223ab0f33",
+    "tests/test_selection.py": "0cde6b01b88198fc22956b3cec36dfa3da74cdb252c1ae254147d27972376ae5"
+  },
+  "current_project_python_sha256": {
+    "scripts/inspect_model.py": "f23b3092d370cf310752bdf4bf035e01e00f2cb6ea10737c9410c9a5c92db3ff",
+    "scripts/prepare_calibration.py": "001c4bb79a8df3246363d05629ae30980e12fdb465b640fd8477630ee9250f52",
+    "scripts/record_environment.py": "60695f36f6f4a3843c1a9212706e6f7e5b8e7b80b96c51a117266b0e4b9823c2",
+    "scripts/run_calibration.py": "a350463d726e6e33eace0a1a03ec6cddf137c870eb52c345ed880c6324680a76",
+    "scripts/validate_ablation.py": "dab8e39c87836b1db4d646d26390e91c556aa50f9f24006f7e850d42471500dd",
+    "scripts/validate_calibration.py": "72382506a5ba7d7c1e2b19a7f89a6d7d9764570eed870f6d0b8f5d1e0e72fe00",
+    "src/adaptive_lora/__init__.py": "57fc4c417c9cb02c58ec9f91d3db68ff7542ff7b240f05d60e20cc85949cfcd8",
+    "src/adaptive_lora/ablation.py": "8ebd623d5806a2b6b1b98d54e9213e7ea43018aaad9b28be1d94583eae7b40eb",
+    "src/adaptive_lora/artifacts.py": "19786de31580df5440e30b5735be9e32e7a835ca543a8ebd14dd55e5e42b310d",
+    "src/adaptive_lora/calibration.py": "1b1b041a5737a90ab0b73709a86283168f7057b36df11bedd098c0e8580ec8a2",
+    "src/adaptive_lora/data.py": "899fd5333ee9b3ae2348b7e1f4c270af6844ce5dcd7bae54611c96b08622e80b",
+    "src/adaptive_lora/model_loader.py": "aed9d0ff34b8557c88e545c35757c4e02a5459416adeae1d225918bc82fda995",
+    "src/adaptive_lora/selection.py": "10334e0a920b89ede3457aed2be08539ff736e78720126960dffc0b2cb38113c",
+    "tests/test_ablation.py": "fd539550ae788c0b761bac19fd582e4cb79a803feb7f2975079285c75f4767be",
+    "tests/test_artifacts.py": "6330a9bdccc3e3b6e62dd5337a3c7457e5dee49387ee8976528a7a6e8be83f6d",
+    "tests/test_calibration.py": "b6d20d77a658f9ce683e556d69ec129ad67c55eaa95bdeac8292a48f0959bdf5",
+    "tests/test_data.py": "84f7275f05c55a8e13a3fa9f0ad285c184bb938255a08ae4e7f69f0faeb983ab",
+    "tests/test_m0.py": "c8ea053388cf6b4924fc17a16d13a718ae88ba85eb00ed1476c4a15725a5ba7d",
+    "tests/test_model_loader.py": "e02591f7185d0a627137cbc64a47c0bd5582d84989d5d7fa65fa85bbbae60048",
+    "tests/test_prepare_calibration.py": "4c5d6d36ac755d7bcfc005ea50b4a7026e8ebd5759853d474402f63fa6058fe4",
+    "tests/test_run_calibration.py": "4a96281ae09644696350541a1a2b2f1319c60e241f86534fd161ad7223ab0f33",
+    "tests/test_selection.py": "0cde6b01b88198fc22956b3cec36dfa3da74cdb252c1ae254147d27972376ae5",
+    "tests/test_validate_calibration.py": "2df445c73216f228fd135dec6be39d03ff0d79fb62f16f8dce0f30e57c779287"
+  },
+  "postprocessing_source_sha256": {
+    "scripts/validate_calibration.py": "72382506a5ba7d7c1e2b19a7f89a6d7d9764570eed870f6d0b8f5d1e0e72fe00",
+    "tests/test_validate_calibration.py": "2df445c73216f228fd135dec6be39d03ff0d79fb62f16f8dce0f30e57c779287",
+    ".cache/m4-20261114/summarize_results.py": "46872d043b1530ce950e3f30bfe8d43db109bba4432cf915ae717beb6ac5a347"
+  },
+  "document_sha256": {
+    "CLAUDE.md": "094e7cae0d44b232c2c58b343a491f9554699419700b12d63d9571191706f2ea",
+    "PAPER_SPEC.md": "0fa5bfc1a58244bdb04fe4dacbdefb74a4c26e6bc88dd1bbbf1176c2e64f0199",
+    "REPRO_PLAN.md": "ca37867548e97d016e61e15b7991cb02ae729d641b8c787e15214c4b14ad7854",
+    "README.md": "30a6bc36402432597ad645693dd3108bdc2b488b76469a62cf4d459e88ce7839",
+    "reports/m4_validation.md": "c4f8f153e40e273c4fd166c986690c8acfad7bd781d4c778b892e710e02edc15"
+  },
+  "evidence_sha256": {
+    "results/m4-20261114-audit/n1.json": "59ee347a80145a2c73d55b78688055b48ad8cdfd5cfbfc06373d65398c7a5bdc",
+    "results/m4-20261114-audit/n30.json": "30e3447d7c3adf7da5dad5d77717f56415b80bf3473940abeb07b6b5287a7e02",
+    "results/m4-20261114-evidence/audit-n1-console.log": "6d43166111a0d5b16392fd01721f174eef6e0608c8d7eeaa05ee466323669daa",
+    "results/m4-20261114-evidence/audit-n30-console.log": "f01cff8af5f856f3f87cddf5b4cc1ffbf464acfeb988bf1b999ba431785e11cf",
+    "results/m4-20261114-evidence/compileall.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "results/m4-20261114-evidence/final-git-diff-check.log": "dc8e03ee03d1a8b5c6c8ca3aa20bade67b31c0fc478f2e67d5597cf68c480893",
+    "results/m4-20261114-evidence/git-diff-check.log": "dc8e03ee03d1a8b5c6c8ca3aa20bade67b31c0fc478f2e67d5597cf68c480893",
+    "results/m4-20261114-evidence/index-syntax-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "results/m4-20261114-evidence/initial_evidence_sha256.json": "ca5ed6af56a20f9238ba9fdbad6e3c9042727a8170db231c0338db5248d1b54d",
+    "results/m4-20261114-evidence/n1-console.log": "fb7101f8f3d45b502e2ea9ee56f3ecdacb6beb2d1566a620649224009e3c3b3f",
+    "results/m4-20261114-evidence/n30-console.log": "baa1699034aa2c84933f5824f2fcc1d3cd2ba2df2cf023019f2c75d4c7c54a49",
+    "results/m4-20261114-evidence/palette-dark.log": "1211e869b98e8d4ee37a4a2e0d8cc3a6b88e17efac593b4bb8159e49dfe2d5ba",
+    "results/m4-20261114-evidence/palette-light.log": "83b086e49a06f299c9b5a569c605e356119807d7e2f54abe6d553848913286f9",
+    "results/m4-20261114-evidence/palette_commands.txt": "88ea0ac26ee6ee487dad84e58d24b11da2298c4702646e63543a1797e3c86896",
+    "results/m4-20261114-evidence/paper-method-utf8.txt": "030cf6e1b5ce154c4b397beee31f1d8b887c4565d35124e24f29cf08d07b4eb1",
+    "results/m4-20261114-evidence/pip-check.log": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+    "results/m4-20261114-evidence/render_chart.cjs": "fd02e8dde16d746670763de535fb9852a46f356a0c258ef79a15aa06c02abd84",
+    "results/m4-20261114-evidence/run-calibration-help.log": "fefc2156a87730c8a2e9fe526cb69b7c93ad098873de0910e927478126c6c12f",
+    "results/m4-20261114-evidence/summarize_results.py": "46872d043b1530ce950e3f30bfe8d43db109bba4432cf915ae717beb6ac5a347",
+    "results/m4-20261114-evidence/tests-artifacts-red.log": "f5230d0cd94f04eaaf83bfe58b1a21a477030106c7023459852cc57ea26dd412",
+    "results/m4-20261114-evidence/tests-baseline.log": "896584620cbcd45f3d26c3620254e6985e8b90bd9ba2262616650ddd6168a3c4",
+    "results/m4-20261114-evidence/tests-calibration-core.log": "7789f8d80fed6c9809e3c5146cefe949a5244175e36a5d600b11648f8fb7d880",
+    "results/m4-20261114-evidence/tests-calibration-guards-red.log": "790c085a93650d95f9e66d17db6f7213f227792e0e1a01fa1d8dd10db0650973",
+    "results/m4-20261114-evidence/tests-calibration-red.log": "e5fc2b2b674633b12606526fe536622c438c3b3d817769cd9ff1207ad76ba1b1",
+    "results/m4-20261114-evidence/tests-final.log": "f9866fbd7e7f5522df7aaddf0e6b8c6a5188b1bf951658f9d73d99c3691a275e",
+    "results/m4-20261114-evidence/tests-integration.log": "d7fe793a8c526924d51412a8bcf3cfaa413e5750a43d3343b602574fab47e9aa",
+    "results/m4-20261114-evidence/tests-run-calibration-red.log": "38a44b0e11bd25be264765993ea8eed9155e3ba8a2f662e51c786811915c1a77",
+    "results/m4-20261114-evidence/tests-selection-core.log": "0c39d8f6db8e388c41d41bf824406fc932f7df6f8902b9f1d694da41ba9c249a",
+    "results/m4-20261114-evidence/tests-selection-red.log": "ef6599b306a9213c1ce73aece23d4ff01fc41f6e6bc9d0892ba4417c03dfd6c1",
+    "results/m4-20261114-evidence/tests-validator-red.log": "0bd3b67aaefa6b9584283ea7e1328fdc3019db8fbd0d85080b2dee5349455c7a",
+    "results/m4-20261114-evidence/tests-validator.log": "f7879285912291f986cf1dfec5ae34273224f5a82e56c131387cdd463c332c23",
+    "results/m4-20261114-evidence/validate-calibration-help.log": "005713c105adc31182507189fe55c57b5da41d175409b16f8e508d0d5a80e016",
+    "results/m4-20261114-evidence/visual-n1-console.log": "164cffcd66716b6317b2ab65b2f30b93073422d32a3ac1ec35465b786bffe97c",
+    "results/m4-20261114-evidence/visual-n30-console.log": "9f37aa0cf02e3815c31cff86e7095b3174b05a4b4ddf436be9cd46c7ab284851",
+    "results/m4-20261114-n1/calibration.json": "dce513b200d9c2c9b71805955b0416b685d5799ec95b18f0b1dbb71e61b2eb82",
+    "results/m4-20261114-n1/environment.json": "dc91b3d58068302951cfe2c3703cbac5f0128b18e9f803e358a236ee77c5e50d",
+    "results/m4-20261114-n1/git_commit.txt": "4fd0ded30ca57167fcf3827bb7b53a08b99e330cefbbdd98703fcb817045597e",
+    "results/m4-20261114-n1/importance.html": "1b44b4bf90cef9e1f45c2190b6219fe73e6fd11ff3db0b91b4dbb4c025698c9a",
+    "results/m4-20261114-n1/importance.svg": "5788f2e2cc4259a945ab4619ae3622554a59daf1e7d09d890aeeca9e732a41e9",
+    "results/m4-20261114-n1/layer_importance.csv": "186f8cbdd08a195aad3b2f07861e64fd79c74648ef26412be89f0d92283be19d",
+    "results/m4-20261114-n1/layer_importance.json": "8a665fce106c1ceea31e0bfc8c5dc09903238768d65a75a8b16b044af8dc3328",
+    "results/m4-20261114-n1/model_runtime.json": "094c86e1854c5e1874e61035ab7ec2a08eb6f25428a8a81052f7eabb52f18232",
+    "results/m4-20261114-n1/provenance.json": "ed7e6e62f10f103b4d09d20e9701250c4764708b9b4400dd12aee7fa5b8754fa",
+    "results/m4-20261114-n1/resolved_config.json": "bfa28fe1a93df3ae786319a5ad5596e6de9ae7fe00ec468a1b91664d6c3927e0",
+    "results/m4-20261114-n1/run.log": "2c7563c45a75b49259bb048d25eb5235367956518cce832fc141b5cc1d5dab58",
+    "results/m4-20261114-n1/run_summary.json": "6f974b3addc4014f3eb26bd606c00495ba97ee33cddb1c3714923096147a2492",
+    "results/m4-20261114-n1/sample_ids.json": "1cc3cf13279be3ef080ed688a4a389e04e2271a30eea03bfcf6648f974d220a0",
+    "results/m4-20261114-n1/samples.jsonl": "dec22997f1ccf428a4c5c95422dec70496c5d2678736682a6e1a9fba38c936c8",
+    "results/m4-20261114-n1/selected_layers.json": "59bb264062fcb39ae6d10ec12bc4e7b581d721d1e2181eebc439b2bcc2fca165",
+    "results/m4-20261114-n30/calibration.json": "e3e59ef75b9bec0f6f796ae799320df83cbefb795364f925245a2c3782f49f3b",
+    "results/m4-20261114-n30/environment.json": "578e79daa4f70ae4bb4be028ef1898542d59d7d856dbe66b48cea0e9a0ebe027",
+    "results/m4-20261114-n30/git_commit.txt": "4fd0ded30ca57167fcf3827bb7b53a08b99e330cefbbdd98703fcb817045597e",
+    "results/m4-20261114-n30/importance.html": "cdf1b9cb854fdaea28317f174959d22cc345400a369ff791ea95e1ab35b3adb0",
+    "results/m4-20261114-n30/importance.svg": "5fc70e1b556575b59abb5283fec1a1ce2c7d9956a38ecdbb60c0f633c4b6d7b9",
+    "results/m4-20261114-n30/layer_importance.csv": "1dade44ce9630ddb1f9b8ab7592aea054cc23ffc09180b965ebcfa58f4cada16",
+    "results/m4-20261114-n30/layer_importance.json": "722ff27fc09a6873f7640a921bec29abb085e4ca7b8bf3bcbde27a00e9da3fd7",
+    "results/m4-20261114-n30/model_runtime.json": "094c86e1854c5e1874e61035ab7ec2a08eb6f25428a8a81052f7eabb52f18232",
+    "results/m4-20261114-n30/provenance.json": "3d1f8616315be5bb7dd01b234c19786e1b3d2545efd2af685ab2a1f6f33c9dd7",
+    "results/m4-20261114-n30/resolved_config.json": "cd2b2c191ac564adfc753915a2ae0be4ebf8522b9aa1348b02e67ed2f41c32f9",
+    "results/m4-20261114-n30/run.log": "dfb1a406134ed7449c9bd8f52788e1c93f6567af5e088bbdf179578f27dc55c9",
+    "results/m4-20261114-n30/run_summary.json": "5515c3cab3d5647ee1c8823c37beb34c30b039c863bedb6bfbeb7a29ecda6344",
+    "results/m4-20261114-n30/sample_ids.json": "afbfc10946e602dabb421fab3808b25b507ecc1da99d26fef7f86551bc114640",
+    "results/m4-20261114-n30/samples.jsonl": "cd26adebe4ba1f009d5790478e20f8248a331de6ff3cff1940fea4a78946187f",
+    "results/m4-20261114-n30/selected_layers.json": "0f5db68e4451ade4f92bc4353ca1c8c40226f9165f81a009ab129f962c640bdb",
+    "results/m4-20261114-visual-n1/dark-full.png": "cfdb81bb2aff634587c24f844c746fe41fea837c5c68007b99f34ea2ecec77c9",
+    "results/m4-20261114-visual-n1/hover.png": "0e92771c9291b252e31e0ab37a3bec106d4170fcd68dee2088b7d809e72d494a",
+    "results/m4-20261114-visual-n1/keyboard-focus.png": "45ef5dfd77b7992ff0fcf1ff386817a6d2bb1ab8e7843ba895ff99c83fd64402",
+    "results/m4-20261114-visual-n1/light-full.png": "1e446892dd3776255c2322fa6b13ab91a22bce60ef3ef77d9634644db0e81cfe",
+    "results/m4-20261114-visual-n1/texture.png": "da1ba5cd52c9c7070b1ea36aeea11e745bf1949a32f7ca9994d07f939ee35e74",
+    "results/m4-20261114-visual-n1/visual_checks.json": "164cffcd66716b6317b2ab65b2f30b93073422d32a3ac1ec35465b786bffe97c",
+    "results/m4-20261114-visual-n30/dark-full.png": "c0206c1f668f31781cf338b0ebbc4d06037e374ad5a9ebb35e7ce56cbe46f15d",
+    "results/m4-20261114-visual-n30/hover.png": "4a30e4af2592dfd195c6ce936aba3250b242ffae170983a2f79a9e2bac5425e8",
+    "results/m4-20261114-visual-n30/keyboard-focus.png": "301922b115dfe8b1bae533811defc3426b0be742181777bf58f2ea6179d6e823",
+    "results/m4-20261114-visual-n30/light-full.png": "850d91a189116e8762981b72577570dd919f0907b0129d4a209b5402c84464dc",
+    "results/m4-20261114-visual-n30/texture.png": "7801ffe8aaae08f640626b1ac6e19d9348041cfc93d267b117bbd346d6b0f13d",
+    "results/m4-20261114-visual-n30/visual_checks.json": "9f37aa0cf02e3815c31cff86e7095b3174b05a4b4ddf436be9cd46c7ab284851"
+  },
+  "not_run": [
+    "full N=30 repeated calibration",
+    "N=100 calibration",
+    "different sampling seed/Jaccard stability",
+    "LoRA injection",
+    "training",
+    "downstream evaluation"
+  ],
+  "unresolved": [
+    "Author exact data/prompt/model revision and training/evaluation protocol Q01-Q05",
+    "No downstream accuracy or speed claim from smoke importance scores"
+  ],
+  "index_generation_command": ".venv/Scripts/python.exe -I -X utf8 .cache/m4-20261114/summarize_results.py"
+}

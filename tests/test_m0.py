@@ -1,4 +1,8 @@
-"""M0 checks that do not require model or training dependencies."""
+"""工程骨架测试不执行模型前向，也不下载模型或数据。
+
+测试逻辑使用标准库；环境快照子进程会尝试导入当前解释器中的已安装包。
+包缺失或导入失败可以是合法快照内容，测试通过不等于机器学习运行环境可用。
+"""
 
 import importlib
 import json
@@ -14,7 +18,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ProjectSkeletonTests(unittest.TestCase):
+    """只验证工程入口与证据格式；不把环境状态的记录误作模型可运行保证。"""
+
     def test_package_imports_from_src(self):
+        """必须导入当前源码，不能误用其他目录中同名的已安装包。"""
         package = importlib.import_module("adaptive_lora")
         self.assertEqual(
             Path(package.__file__).resolve(),
@@ -22,6 +29,7 @@ class ProjectSkeletonTests(unittest.TestCase):
         )
 
     def test_environment_snapshot_reports_missing_packages_and_git(self):
+        """脚本在非项目工作目录也应定位项目，合法的缺包状态不能使记录过程崩溃。"""
         with tempfile.TemporaryDirectory() as directory:
             destination = Path(directory) / "environment.json"
             result = subprocess.run(
@@ -49,6 +57,7 @@ class ProjectSkeletonTests(unittest.TestCase):
                 self.assertIsNone(snapshot["git"]["commit"])
 
     def test_metadata_only_snapshot_records_versions_without_importing_packages(self):
+        """仅查元数据时应标记 not_checked；这里检查报告状态，并非拦截所有导入。"""
         with tempfile.TemporaryDirectory() as directory:
             destination = Path(directory) / "environment.json"
             result = subprocess.run(
@@ -70,6 +79,7 @@ class ProjectSkeletonTests(unittest.TestCase):
             self.assertIsNotNone(snapshot["packages"]["pip"]["version"])
 
     def test_gitignore_excludes_local_artifacts_but_keeps_sources_and_reports(self):
+        """忽略规则只在临时仓库评估，不改项目索引，也不能保护已被跟踪的敏感文件。"""
         git = shutil.which("git")
         if git is None:
             self.skipTest("Git is unavailable")

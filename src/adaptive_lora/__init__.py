@@ -1,1 +1,1 @@
-"""Adaptive-LoRA reproduction package; M0 provides only the project skeleton."""
+"""Adaptive-LoRA 复现工具；导入包本身不应加载模型、下载数据或初始化训练。"""

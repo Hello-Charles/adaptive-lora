@@ -1,0 +1,340 @@
+{
+  "verified_at_utc": "2026-11-14T12:26:37.303405+00:00",
+  "status": "PASS",
+  "checks": {
+    "source_matches_hub_revision_size_and_lfs_sha256": "PASS",
+    "n30_seed_indices_and_unique_ids": "PASS",
+    "all_sample_row_input_and_prompt_hashes": "PASS",
+    "user_only_template_excludes_answer_fields": "PASS",
+    "all_30_native_chat_template_tokenizations_equal_saved_ids": "PASS",
+    "no_truncation_and_assistant_generation_suffix_retained": "PASS",
+    "all_30_batch_padding_masks_and_prediction_positions": "PASS",
+    "two_offline_runs_same_samples_configuration_and_content_hash": "PASS",
+    "runtime_source_hashes_equal_current_files": "PASS"
+  },
+  "limitations": [
+    "答案字段隔离不保证原始 instruction/input 自身不含答案或敏感内容。",
+    "本验证不运行模型，不证明批量 logits 数值等价；未实现 frozen-base zero-ablation。",
+    "镜像提供元数据和文件，内容匹配其固定 SHA/LFS 哈希，但未独立通过官方域名核验。"
+  ],
+  "dataset": {
+    "id": "tatsu-lab/alpaca",
+    "revision": "dce01c9b08f87459cf36a430d809084718273017",
+    "split": "train",
+    "population_size": 52002,
+    "source": {
+      "file": "data/train-00000-of-00001-a09b74b3ef9c3b56.parquet",
+      "sha256": "06391b656a06fd3fb9d213160ef2398796c3b7f3dc75ef1e3ced30d461517073",
+      "size_bytes": 24246638
+    }
+  },
+  "dataset_license": "cc-by-nc-4.0",
+  "model_id": "Qwen/Qwen2.5-0.5B",
+  "model_revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+  "sampling": {
+    "n": 30,
+    "seed": 20261112,
+    "index_base": 0,
+    "method": "random.Random(seed).sample(range(population_size), n)"
+  },
+  "token_count_min": 26,
+  "token_count_max": 64,
+  "truncated_samples": 0,
+  "right_padded_rows_in_batch": 29,
+  "content_sha256": "7c829ccb4c332291ea432c62b3a256bf8459d5a901e4eb9a575b0818aedfedc9",
+  "template_sha256": "44d5f08f3f72b837eaad09f13a54c1f9f4eb58d75240334548b7fd52a5437fa5",
+  "manifest_files": {
+    "results\\m2-20261114\\manifest.json": "ad15abe28ca3fc05da0f09146b448e1383cbb438f2f7ab0251fc535fddf5df13",
+    "results\\m2-20261114\\manifest-repeat.json": "359473781f4db564063bba85daa6b9b9332f04be060a968e7daba9f915061bc1"
+  },
+  "git_baseline_commit": "577527ad0ec343941bbed0b6519ff3544e301cc7",
+  "git_dirty_at_generation": true,
+  "code_sha256": {
+    "src/adaptive_lora/data.py": "899fd5333ee9b3ae2348b7e1f4c270af6844ce5dcd7bae54611c96b08622e80b",
+    "scripts/prepare_calibration.py": "001c4bb79a8df3246363d05629ae30980e12fdb465b640fd8477630ee9250f52",
+    "tests/test_data.py": "84f7275f05c55a8e13a3fa9f0ad285c184bb938255a08ae4e7f69f0faeb983ab",
+    "tests/test_prepare_calibration.py": "4c5d6d36ac755d7bcfc005ea50b4a7026e8ebd5759853d474402f63fa6058fe4"
+  },
+  "verifier_sha256": "1d0f465f29db09f43bc0489135a44eee6d9d54893f5ed4e288a18d603928c389",
+  "packages": {
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2",
+    "tokenizers": "0.23.3",
+    "peft": "0.21.2",
+    "datasets": "5.2.0",
+    "pyarrow": "26.0.1",
+    "huggingface-hub": "2.4.0"
+  },
+  "samples": [
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/13808",
+      "index": 13808,
+      "row_hash": "16770efa3b72412b1af2126f0871a0a62dc2ef37ec8fbc6645e8dd041cf4bc65",
+      "input_hash": "fd45a6a62947a3d2cdd0806b074909721ba2cedfc26f99ce74c02a9956077003",
+      "prompt_hash": "ce9f7866c60ffc76694647a686e1fa1232a69e81f27d2d52403f138dc27fec92",
+      "token_count": 53,
+      "prediction_position": 52
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/51747",
+      "index": 51747,
+      "row_hash": "a0d87af9201a456851760ca1ca5cbd266ba98d35f4c2b171a9e08e4b471c51f9",
+      "input_hash": "74c8112617b85daaba121a5bffe99e39bfa8a41d937e12ef05fae569363c800c",
+      "prompt_hash": "d956062ea490a1ea3cb0b966e25f0323b80e8673bf39d456de984d9f7f211470",
+      "token_count": 46,
+      "prediction_position": 45
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/33114",
+      "index": 33114,
+      "row_hash": "ca92514e1c14dd7a18c3179934f4b9104b7d98b6e2b003c21fe9d766a3101380",
+      "input_hash": "cd8bb41b846cd5be04cfff87ee46cda5fbb5561754e30e46cf22f380bde50fb9",
+      "prompt_hash": "912d6a445ef5590db1608bc677125c4f0d47f32b57445ef84bbf0bf5c0c53c11",
+      "token_count": 31,
+      "prediction_position": 30
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/13465",
+      "index": 13465,
+      "row_hash": "75a7ae7f4322229b96d75cf876527cf6877ce65d61f9936d0c4a13f592e614a0",
+      "input_hash": "4e32175009817e2325eed4d4fc9261f71b4a2980119e9fe7e7284e7ca08fc77e",
+      "prompt_hash": "49f89b62c919e4408519e47860eb2e0da8a4cb6a47dd86df9c63827a40d00b8b",
+      "token_count": 30,
+      "prediction_position": 29
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/25067",
+      "index": 25067,
+      "row_hash": "817e7a093a3113d25fd832f3b9c4bf017b4a55207aa5de651196646c1b5eb5ee",
+      "input_hash": "cf813d8649894f59d0dda114fbd15376dc89b2632e227e5bcf34c198ba7d5418",
+      "prompt_hash": "bb5853bd2f136ed4d42f7699e60f806d45326c8dbaacc3526c4634c9415ebd63",
+      "token_count": 31,
+      "prediction_position": 30
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/48122",
+      "index": 48122,
+      "row_hash": "194a66f9d67493bd04c8d28b6090d389093871de44bc4b89c9c989a2b4e762bd",
+      "input_hash": "68d5fcfe152850745f2aac32db531caa40c1f64067d6807e6ef2102155d90d3e",
+      "prompt_hash": "2b1feabe4b293670afd63a984f8b905d269aecd4dc7537338f4e4435e14a7a8f",
+      "token_count": 46,
+      "prediction_position": 45
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/16371",
+      "index": 16371,
+      "row_hash": "bae2d7be145f3a311fada31deaa0ede2604dbd2102e7708d790ce7252d8a95ef",
+      "input_hash": "f5cb984b6fa2aa3ffe2b8729ba5e1e297ae07069b0a82bb5cabd582f48537d60",
+      "prompt_hash": "1051ec8245ddfdf8d606e2a8d476ce32e4f5286ea353601d5055eb92008c27f7",
+      "token_count": 32,
+      "prediction_position": 31
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/39587",
+      "index": 39587,
+      "row_hash": "c86627dc746d76773091e3a4e1ea510301471de8a4aa8ff1a4b361c99b6a9f38",
+      "input_hash": "7b41dd11aa6fa3bf3c37a77586929f3c381ec30866f1416930ae791189067112",
+      "prompt_hash": "b35d6a00916548acfd5356597b1ede844eac2921949959824fae19367df75a49",
+      "token_count": 54,
+      "prediction_position": 53
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/7591",
+      "index": 7591,
+      "row_hash": "4f47a300dca057416cf437f9b2faba6be7c623b945896799b404b2312ed5e8b8",
+      "input_hash": "97421459c7bfd1577d7bc25b16df25c9cea1456cf63b38c1b1eddebadb0851f8",
+      "prompt_hash": "caca2e1808c755045959febacbb313084971b0a0c3b895a338aa38a4410dd8bf",
+      "token_count": 64,
+      "prediction_position": 63
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/49829",
+      "index": 49829,
+      "row_hash": "523ccad8a962e3a4e0035d49286efbc5a038878994c1f460f56526cc9d70030a",
+      "input_hash": "2020cfaa9cb0d6f985089d192b61cc2bdaf2e9c5021084fc7a6153e27687d3d2",
+      "prompt_hash": "bd5baa663472abc9e1cc6fe997f73384505173023c367cb6ba48c146d09b4bbb",
+      "token_count": 55,
+      "prediction_position": 54
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/15956",
+      "index": 15956,
+      "row_hash": "b52a2f7b748317bac3722a5e2c4e2ef3dfe9bd9fa2faa19ffbd66a93e387b8a1",
+      "input_hash": "fdcddb3ce41eab7683e32460afd455f83e5a37c4ccdfcf58767f0533bdf1f3b3",
+      "prompt_hash": "bb77ae54a2155c4b1d4cf535dff91706c191e126f0d1ff59bbd6f78e66abf10b",
+      "token_count": 35,
+      "prediction_position": 34
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/28532",
+      "index": 28532,
+      "row_hash": "d03f06dcb00c0590433fe11a63f5261a6049b750dbb555c04eb12852f8393c65",
+      "input_hash": "0739d4262269540ba7379e65fd22090adfaae183d68b5f2d29ac3f859bad85ae",
+      "prompt_hash": "5e760146c2bfc973e4fd96a04432c1bab2600175ddeb5ef7575e930e82a2f5db",
+      "token_count": 41,
+      "prediction_position": 40
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/23207",
+      "index": 23207,
+      "row_hash": "084330a1f0fc3c96af69834654f066ce9ae8ca7e59c2170f5f13af20eca94605",
+      "input_hash": "33cdfd6d67c05557c28e57418c00469a2cf232613b8febc3c7b9d4a0f4941630",
+      "prompt_hash": "726846806e8fb12eafd32fac976b14e06d3bd34ee3b66e1a646a07bf60be3b7e",
+      "token_count": 27,
+      "prediction_position": 26
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/11527",
+      "index": 11527,
+      "row_hash": "905ae7c01551a83795a0571a51fc32573f3c9a063f95d28509b4ea1d28eb247d",
+      "input_hash": "ee8cf7f1e14133002c120c6157fbf6ec8605b3f943d8408d32eaa734e4966369",
+      "prompt_hash": "b26e6d04189e83bbea3a37da616b5d31ed6c2c7ab5b9ba37baac07aa5ffd4e9d",
+      "token_count": 27,
+      "prediction_position": 26
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/31082",
+      "index": 31082,
+      "row_hash": "505872ae6419bb12f240fcd1881f5b4192e403f03d384c5be4c7942fea62007b",
+      "input_hash": "d1e184a6c4dd08f5b53d5d20643e856a713764d46ab23e78bf7b592c03a2196a",
+      "prompt_hash": "a746fe48e96de1ef1346d2fd1d7c57d2dd461a56457e2be71402cddc2b620255",
+      "token_count": 42,
+      "prediction_position": 41
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/35580",
+      "index": 35580,
+      "row_hash": "d5ce54c37f1bf43116c5de3c19e46ec95f3dbef7c30a6ad9d54c9c32dd5146bb",
+      "input_hash": "d7873610eba051daf70f24c304e52d338543d2ce9e49871b9944411952c8fdcc",
+      "prompt_hash": "622692bd1f65d98b6647ac21300ecc68f07c90e29f72079ed1d4447954b274b4",
+      "token_count": 33,
+      "prediction_position": 32
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/13599",
+      "index": 13599,
+      "row_hash": "6ced01c55194b8635eb4cf31f3bb5bd472d10ae4a73c156ce04dcea02c7f9344",
+      "input_hash": "7c930ec8aadfcbbbb5970a7a0e76fa81b68c26e9369fd14d472612c96ba8bffd",
+      "prompt_hash": "c3eb0f0ed9cd930b97089c4608d786fb5336d6d4c699b3a650762e806a5470d9",
+      "token_count": 26,
+      "prediction_position": 25
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/15169",
+      "index": 15169,
+      "row_hash": "f00bd6da56bc802068d3334492767f837b79784ffad3349f387821f03134151d",
+      "input_hash": "db329591a24e3dbbd227ee7f8a9d0ec1097d02b81882a9f718ec83a4e738e896",
+      "prompt_hash": "7f15002e8c1b75e0037f2cbce787046d972c1881e55bf8431fb1a71090bf1d76",
+      "token_count": 35,
+      "prediction_position": 34
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/32352",
+      "index": 32352,
+      "row_hash": "1645a113f33e2c771cca3cd78ba5071f6e17270c0aac26194cfeead8afabf9b0",
+      "input_hash": "df7c1c880a134cf8794d849c85c698f7f1229faebab845af00675b0a12a380a8",
+      "prompt_hash": "90aa6c2d268ae1517a602250d409c2f313915f438680e162ca2deaf2f153ff2d",
+      "token_count": 37,
+      "prediction_position": 36
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/28242",
+      "index": 28242,
+      "row_hash": "84aa8bd8b893976727c242d9c820e2eeb62e5584aefece0c97b68ac76b1a5714",
+      "input_hash": "6821c94c718aa8d34769b6802c860e64eccf3f5070574d46c8bfcfb535c41484",
+      "prompt_hash": "112dfaef79738683981b2211b8e873545c45f8c0fa74974adbe68d4b53616743",
+      "token_count": 31,
+      "prediction_position": 30
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/28667",
+      "index": 28667,
+      "row_hash": "543c44242998ef101582ded2744497bb9f043e367e88c3fb1638839b0bbbe356",
+      "input_hash": "4a30a20c8cd6c08e3105aadfb64986ce48888565c1ac60bc9305372407e99360",
+      "prompt_hash": "4ae71cc363d594ed45143391e7d02decfc34c9c5e58db2f3af6f627c8bf531a3",
+      "token_count": 29,
+      "prediction_position": 28
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/1660",
+      "index": 1660,
+      "row_hash": "ce88b83be384de3bd43d0ec5739016792da182da68cf0bb49a3cffabbd490d99",
+      "input_hash": "37c73402b63e8fbc39c5e47a05015e46e583e46f20a5ac837f55399a369d12ec",
+      "prompt_hash": "094727c78c32219e5c3b3ec346f681d9e869d34ea7195c0bfae598c6c02cde8c",
+      "token_count": 48,
+      "prediction_position": 47
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/34056",
+      "index": 34056,
+      "row_hash": "57395aecb45b52fa4cda7aa1d21fc6b66b56be211d4f5ae182e392c41000a5e8",
+      "input_hash": "2ba5b6298a863527937c3280cf7a7819261c5dffd62bffa18536d7f5ffcfcc28",
+      "prompt_hash": "4bb96cdfb5e4c109cec95999b02c20a9b9e0bba2ada3626b13d938055e06d7fe",
+      "token_count": 39,
+      "prediction_position": 38
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/19956",
+      "index": 19956,
+      "row_hash": "7fd23044c45f2a10603512ce8346eaa1da0a6613c25c217b9ace8f1500f6b0c0",
+      "input_hash": "690e4007aa47eee543750753b62d54a65021c426929a74b4b8e4d14d4c44d6c6",
+      "prompt_hash": "411089407f468add70b3a0cafc0727aca604c476c3c3e5ce4bdc260d3b837e57",
+      "token_count": 28,
+      "prediction_position": 27
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/6004",
+      "index": 6004,
+      "row_hash": "127f7a84a2ccc66412bc6c80413c1d9c7a365fe8060d829e067cbddc307a15fb",
+      "input_hash": "cf296fc5cfebd8b4f658844afc5af60a952af6cc111eae93c162ed1ad2a228e5",
+      "prompt_hash": "82405583e3e502c7539a5a3880db6ad7989e40195e11652359b09fa7c523589e",
+      "token_count": 62,
+      "prediction_position": 61
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/34609",
+      "index": 34609,
+      "row_hash": "631263071b9bd46643e4af1cbc0a12e1afb4a3f1d535c6a11d91261cdaaaee99",
+      "input_hash": "6ac45ecfbc2f54f0cf35298d6fb77edcfda41b4187bbe93b67e25982902a8399",
+      "prompt_hash": "a8d26cfeb8c78011649a13a692c7af975779cb2f4e99cde27808cf038207a564",
+      "token_count": 28,
+      "prediction_position": 27
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/45074",
+      "index": 45074,
+      "row_hash": "6f29f6e33f983cbc71246a3ad49665b26614aeb8755693a07c4cd91bd202bbfe",
+      "input_hash": "6675a25e585e0aafeabc23be15faafbaee0b5b732ef0e5fa341dbde59a6fbf74",
+      "prompt_hash": "e136b6006dbbe02a85bf4e43a44cb5344fc3a8d30cb28934478b7ebf958f9a50",
+      "token_count": 30,
+      "prediction_position": 29
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/16373",
+      "index": 16373,
+      "row_hash": "16e51ef6fc1679750c6d937a501c2e51e1395e3cd6d04a296e0845ac175ecd33",
+      "input_hash": "01fa556389250c2aaaf5978b25259afc8bc80638428580dc5774212ac7fe7019",
+      "prompt_hash": "da661927a8e6e4bf569e9558edf4c898e48bacfcdcef0a0a717b2bee058d225a",
+      "token_count": 28,
+      "prediction_position": 27
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/43934",
+      "index": 43934,
+      "row_hash": "ddcca78040b444ba021d12fc5e833eedf96d0aee76be68f0f00424fae0967a90",
+      "input_hash": "a4ea5a9841e8e4e247de503827a46ffb1b54489cef50b182870f9ea694367511",
+      "prompt_hash": "6334c82cefe6ba4d29d312eaf76eb52c76fd853f100d90aa63ea8b418f97693b",
+      "token_count": 53,
+      "prediction_position": 52
+    },
+    {
+      "sample_id": "tatsu-lab/alpaca@dce01c9b08f87459cf36a430d809084718273017/train/7809",
+      "index": 7809,
+      "row_hash": "9d178d01e9f81a4344db8d9f43b384e6d822e3badc3d305a86011b84bfe8b3d7",
+      "input_hash": "54de1e3365264c00c3627db35e3ba4af9b639de7daaa07d94ee6b013cd8e7610",
+      "prompt_hash": "87bd63ff2c82db1dcb6e852d89e2852a2e815de86f456d9c0d0e313e05e618d0",
+      "token_count": 33,
+      "prediction_position": 32
+    }
+  ]
+}
