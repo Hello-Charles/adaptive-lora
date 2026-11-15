@@ -24,6 +24,8 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
 
 远端代码仍为已发布的完整SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，见 [repro/m7-run-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-run-preflight)；源码字节、Git clean和平台包元数据复查通过。此前官方源超时、核验器vendor误判及工具拒绝记录保留在 [历史恢复报告](reports/m7_environment_resume_20261115.md)，旧截止未重置、未绕过权限或覆盖失败证据。[首轮SSH阻塞](reports/m7_environment_20261115.md)和[较早盘点](reports/autodl_postrestart_20261115.md)也保留历史。未下载正式模型/数据，未执行CUDA、pilot、正式训练/评估或新push。
 
+最新资源门禁：用户另行批准固定模型/数据及CPU结构检查后，许可预检的模型LICENSE resolve路径返回HTTP403；另获批准的有界诊断中raw许可仍403、固定revision API可达，但未满足原许可字节先核验的条件，已停止。**尚未下载权重/正式数据或执行真实1.5B前向，M7仍未完成**；既有CPU环境通过状态不变。详见[资源阻塞报告](reports/m7_assets_blocked_20261115.md)与[机器索引](reports/m7_assets_blocked_20261115.json)。
+
 ## 代码阅读与注释约定
 
 源码、脚本和测试使用中文注释/docstring，重点说明预测位置、padding/截断、答案隔离、hook 生命周期、离线加载和结果保留等隐含约束。后续新增或修改代码也必须遵循 [CLAUDE.md 的代码注释规范](CLAUDE.md#代码注释规范现有代码及后续新增修改代码均适用)；关键逻辑详细解释，简单语句不逐行复述。

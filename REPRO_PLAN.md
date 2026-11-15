@@ -189,6 +189,8 @@ M7环境恢复续轮（2026-11-15，用户“已重新打开，继续”）：08
 
 M7环境CPU验收续轮（2026-11-15）：用户另行批准一次最多1800秒的缓存核验/离线安装/CPU操作，旧09:28:32 UTC截止及失败记录保留，不更改权限或绕过拒绝。12:01 UTC预检确认67个wheel字节与此前证据相同、venv仍pip-only；12:07–12:09 UTC在118.765724秒内完成67项全批官方核验（复用52份官方JSON、仅补14份小JSON及固定Torch哈希）、离线依赖/项目安装、pip check与固定版本导入。Linux适用单测183项8.851s通过，另2项真实tokenizer用例NOT RUN；Windows本地185项21.435s通过，续接门禁14项、原核验11项、解码器4项通过。12:10 UTC只读确认HEAD仍为批准SHA、clean、源码字节与平台包元数据不变，79份证据传输及独立核验通过。状态为PASS_APPLICABLE_CPU，M7整体仍未完成；无新wheel/正式模型/数据下载，无CUDA/pilot、正式训练/评估或push。详见 [CPU环境验收报告](reports/m7_environment_cpu_20261115.md) 与 [机器索引](reports/m7_environment_cpu_20261115.json)。
 
+M7资源/结构门禁预检（2026-11-15，用户“继续完成M7”）：另获固定1.5B/对应tokenizer及9个数据JSON、许可与一次短CPU结构前向批准（单次30分钟/3.3GB、不含CUDA/训练/push）。首个模型LICENSE resolve请求经重定向返回HTTP403；未创建资源目录或启动获取。另获120秒/最多4请求的同镜像raw/API只读诊断批准，实际2请求：raw许可403、固定revision API200（revision/LFS哈希一致、许可标签apache-2.0），但未取得固定许可原文字节，继续条件未满足即停止。12:34 UTC只读确认资源目录仍不存在、源码/Git clean/平台包/venv69项/前次CPU结果哈希未变。本地预检诊断8项0.006s和项目185项18.765s通过；实际资源/数据内容/1.5B结构/所有GPU及正式实验均NOT RUN。既有环境PASS_APPLICABLE_CPU保留，资源门禁BLOCKED_LICENSE_HTTP403，M7整体仍未完成。详见[资源阻塞报告](reports/m7_assets_blocked_20261115.md)与[机器索引](reports/m7_assets_blocked_20261115.json)。
+
 ### M8 — 复现报告
 
 - [ ] 记录模型/环境/数据/配置/命令/commit。

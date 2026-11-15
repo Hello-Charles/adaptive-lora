@@ -2,7 +2,7 @@
 
 面向复现实验实现者与执行者。本文件区分论文事实、候选复现决定和运行授权，不代表GPU作业已经开始。
 
-**当前状态：2026-11-15用户已确认7项复现决定，协议记录已冻结；仅完成离线协议核查。M7整体未验收，尚未安装远程依赖、下载权重/训练数据或运行CUDA。确认协议不构成这些操作的授权。**
+**协议状态：2026-11-15用户已确认7项复现决定，协议记录已冻结；确认协议不构成下载、付费GPU或完整训练授权。M7整体未验收。** 后续独立环境已安装并通过适用Linux CPU验收（183项通过、2项真实tokenizer用例NOT RUN），见[CPU环境报告](reports/m7_environment_cpu_20261115.md)。最新资源门禁在模型LICENSE的resolve/raw路径返回HTTP403，未下载权重/正式数据或运行真实1.5B前向，见[资源阻塞报告](reports/m7_assets_blocked_20261115.md)。尚未运行CUDA或正式训练。
 
 机器可读配置：[qwen2_5_1_5b_commonsense_r16.json](configs/qwen2_5_1_5b_commonsense_r16.json)。预检入口：[check_m7_protocol.py](scripts/check_m7_protocol.py)。
 
@@ -110,6 +110,8 @@ greedy固定do_sample=False、num_beams=1、temperature语义为0；**不要把l
 - 后续CUDA/AMP/GradScaler、梯度累积归一化、批量padding、fresh-base三方法隔离、基础权重/评估不变、GPU checkpoint及显存/吞吐必须另作实现与验收。
 
 ## 5. 候选Linux/CUDA环境，不是安装授权
+
+> 本节以下“当前”“未安装/未导入”等措辞保留协议冻结时的候选来源快照，不代表后续安装状态；实际独立venv的固定版本安装、导入、哈希锁和适用CPU验收见[环境CPU报告](reports/m7_environment_cpu_20261115.md)。本节仍不提供CUDA/训练授权。
 
 当前远端仅元数据确认Python3.12.3、torch2.5.1+cu124、numpy2.1.3；本轮未import torch。Transformers/PEFT等所查项目包未在该解释器找到元数据。
 
