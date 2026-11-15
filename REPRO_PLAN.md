@@ -174,10 +174,14 @@ Full 的24层实测 **1,474,560 个可训练元素、144个A/B张量**；Random7
 - [x] 执行前核对论文表格、数据版本、prompt、评估协议（M7首项：文献/固定来源元数据与文本评分协议已核查，7项复现决定已由用户确认；不是数据或GPU运行验收）。
 - [ ] 实际数据下载后验收许可、字节、行数、抽样清单、真实分词/截断与拆分隔离；验证1.5B实际模块结构与输出。
 - [ ] 准备获批的独立Linux/CUDA环境，完成CUDA/AMP/梯度累积与GPU checkpoint实现及有界pilot。
+  - [x] 环境准备范围另获用户批准；已公开发布代码SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，并核验GitHub分支引用。
+  - [ ] 远端指定SHA检出、隔离环境安装/导入与CPU验收（本轮两次SSH均为TCP连接拒绝，尚未执行；本轮授权不含CUDA/pilot）。
 - [ ] 保存训练日志、GPU 耗时和峰值显存。
 - [ ] 完成统一评估；不人为追求论文数值而改动结果。
 
-M7首项进展（2026-11-15）：用户明确指令进入M7；重新读取PDF第7–9、18–19页及数据引用，形成 [已确认协议](M7_PROTOCOL.md)、[固定配置](configs/qwen2_5_1_5b_commonsense_r16.json)、[纯标准库协议与评分模块](src/adaptive_lora/m7_protocol.py) 和 [离线检查入口](scripts/check_m7_protocol.py)。用户仅确认7项复现决定，没有批准公开推送、依赖安装、模型/数据下载或付费GPU作业。预检器即使返回REVIEWED_NOT_EXECUTABLE，也始终不授予执行权限、不标记runtime通过；真实数据、CUDA训练与效果实验仍未执行。证据见 [M7首项报告](reports/m7_preflight_20261115.md)；SSH已恢复及实际资源见 [重启后盘点](reports/autodl_postrestart_20261115.md)。当前任务完成后停止，不自动进入下一验收任务或M8。
+M7首项进展（2026-11-15）：用户明确指令进入M7；重新读取PDF第7–9、18–19页及数据引用，形成 [已确认协议](M7_PROTOCOL.md)、[固定配置](configs/qwen2_5_1_5b_commonsense_r16.json)、[纯标准库协议与评分模块](src/adaptive_lora/m7_protocol.py) 和 [离线检查入口](scripts/check_m7_protocol.py)。首项审查当时仅确认7项复现决定，没有批准公开推送、依赖安装、模型/数据下载或付费GPU作业；后续范围授权见下述环境准备进展。预检器即使返回REVIEWED_NOT_EXECUTABLE，也始终不授予执行权限、不标记runtime通过；真实数据、CUDA训练与效果实验仍未执行。证据见 [M7首项报告](reports/m7_preflight_20261115.md)；同日较早的SSH成功与资源快照见 [重启后盘点](reports/autodl_postrestart_20261115.md)。
+
+M7交付/环境准备进展（2026-11-15，首项之后）：用户另行批准公开推送、指定SHA部署、新隔离环境依赖安装和离线CPU验收。批准SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba` 已发布至repro/m7-run-preflight，包含6个此前未发布提交；推送前审查99个唯一Git文件对象，本地185项测试18.466s通过、无跳过。但两次SSH均在TCP阶段返回Connection refused，未进入公钥认证；本轮未取得新资源快照，未远端检出、创建环境或安装依赖。当前环境验收为BLOCKED而非PASS，详见 [交付与环境准备报告](reports/m7_environment_20261115.md)。本轮不下载模型/数据、不调用CUDA、不训练或正式评估；不自动重启实例或变更SSH配置。
 
 ### M8 — 复现报告
 

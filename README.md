@@ -18,7 +18,11 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
   --output-dir results/m7-protocol-review-new
 ```
 
-[Linux/CUDA候选直接依赖](requirements-linux-cu124-m7.in) 尚未安装或实测，也不是完整传递依赖锁。公开推送、远程部署、环境安装、权重/数据下载和付费GPU作业仍需相应批准；当前SSH与资源实测见 [重启后报告](reports/autodl_postrestart_20261115.md)，本项结果见 [M7首项报告](reports/m7_preflight_20261115.md)。
+[Linux/CUDA候选直接依赖](requirements-linux-cu124-m7.in) 尚未安装或实测，也不是完整传递依赖锁。协议核查结果见 [M7首项报告](reports/m7_preflight_20261115.md)。
+
+2026-11-15后续授权：用户另行批准公开推送、指定SHA部署、数据盘新隔离环境安装与离线CPU验收。已将 `9051fdfe86379aa3502e66bf1a586d4eb00565ba` 发布到 [repro/m7-run-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-run-preflight)，并查询远端引用核验一致；但当前两次SSH连接均在TCP阶段返回Connection refused，远端克隆、环境创建和安装均未执行。详见 [M7交付与环境准备报告](reports/m7_environment_20261115.md)。
+
+[重启后资源盘点](reports/autodl_postrestart_20261115.md)仅是同日较早的历史快照，不能替代本轮连通性/可用资源复查。模型/数据下载、CUDA调用、训练和正式评估不在本轮授权范围内。
 
 ## 代码阅读与注释约定
 
