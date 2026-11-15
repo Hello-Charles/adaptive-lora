@@ -153,7 +153,7 @@ M6 按需核查 **Table 2 / Section 5.3（PDF 第 8 页）、Section 5.4（第 9
 - **[复现决策，用户已确认]** 固定LLM-Adapters提交并分别以局部seed42抽10,000训练、其内250校准、各任务1,000评估（OBQA500）；实际索引与输入身份尚待下载后验收。来源路径名test.json不自动证明与原始benchmark官方test split同一。
 - **[复现决策，用户已确认]** greedy最多32新tokens，仅解析生成续文；合法标签大小写归一化及词边界匹配，多个不同合法标签冲突判无效，失败保留分母，8任务等权宏平均。引用库无边界首匹配/4 beams并非论文明确协议，不照搬。
 - **[复现决策，用户已确认]** 候选Qwen1.5B固定revision/LFS哈希来自镜像，保留官方端点不可达、未独立认证官方来源的局限；权重未下载，实际字节仍待核对。所选数据仓库commit不是论文公开的原始commit。
-- **[待核验]** 实际数据许可/字节/行数/样本身份、真实BPE与长输入处置、28层模块返回值、CUDA/AMP/梯度累积与GPU checkpoint/评估尚未验收。新检查器仅标准库离线审查，不是正式训练入口；confirmed字段不提供推送/安装/下载/付费计算授权。
+- **[待核验]** 实际数据字节/行数/样本身份、真实BPE与长输入处置、28层模块返回值、CUDA/AMP/梯度累积与GPU checkpoint/评估尚未验收。独立数据门禁已核验固定DATA_LICENSE（ODC-By，不全面覆盖内容权利）与代码LICENSE；九JSON及实际审计因README网络超时、原窗口续接到期仍NOT RUN，见[数据门禁报告](reports/m7_data_gate_20261115.md)。新协议检查器及文本审计器仅标准库离线审查，不是正式训练入口；confirmed字段不提供推送/安装/下载/付费计算授权。
 - **[工程状态，已通过适用Linux CPU验收]** 原候选torch2.6.0+cu124搭配Transformers5.22.2/PEFT0.21.2等11项版本已在独立Linux环境离线安装、通过pip check和导入；Linux183项CPU测试通过，2项真实tokenizer用例因缺缓存NOT RUN。原[候选直接依赖](requirements-linux-cu124-m7.in)字节未改，仍不是完整传递依赖锁；实际67项wheel官方哈希锁与freeze见[环境CPU报告](reports/m7_environment_cpu_20261115.md)所列私有证据。此状态不证明CUDA/AMP、真实1.5B模块或正式训练已通过。
 
 ## 6. 必须通过的正确性测试

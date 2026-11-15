@@ -173,6 +173,8 @@ Full 的24层实测 **1,474,560 个可训练元素、144个A/B张量**；Random7
 
 - [x] 执行前核对论文表格、数据版本、prompt、评估协议（M7首项：文献/固定来源元数据与文本评分协议已核查，7项复现决定已由用户确认；不是数据或GPU运行验收）。
 - [ ] 实际数据下载后验收许可、字节、行数、抽样清单、真实分词/截断与拆分隔离；验证1.5B实际模块结构与输出。
+  - [x] 实现标准库离线数据审计器及22项测试；经单独批准发布并在新数据目录检出完整SHA `2df16eb07bff7990cf9daf93bb189c9d91d06deb`；固定DATA_LICENSE/代码LICENSE字节通过，不代表数据内容已验收。
+  - [ ] 完成9个JSON获取及实际离线审计（辅助README超时后停止；原窗口续接在获取前因到期拒绝；13:37 UTC核查全部JSON、audit、resume目录不存在，未改变seed/样本或重置时限）。
 - [ ] 准备获批的独立Linux/CUDA环境，完成CUDA/AMP/梯度累积与GPU checkpoint实现及有界pilot。
   - [x] 环境准备范围另获用户批准；已公开发布代码SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，并核验GitHub分支引用。
   - [x] SSH恢复后在数据盘新目录检出完整批准SHA，创建不继承平台site-packages的隔离venv，确认平台包元数据与源码字节未变。
@@ -190,6 +192,8 @@ M7环境恢复续轮（2026-11-15，用户“已重新打开，继续”）：08
 M7环境CPU验收续轮（2026-11-15）：用户另行批准一次最多1800秒的缓存核验/离线安装/CPU操作，旧09:28:32 UTC截止及失败记录保留，不更改权限或绕过拒绝。12:01 UTC预检确认67个wheel字节与此前证据相同、venv仍pip-only；12:07–12:09 UTC在118.765724秒内完成67项全批官方核验（复用52份官方JSON、仅补14份小JSON及固定Torch哈希）、离线依赖/项目安装、pip check与固定版本导入。Linux适用单测183项8.851s通过，另2项真实tokenizer用例NOT RUN；Windows本地185项21.435s通过，续接门禁14项、原核验11项、解码器4项通过。12:10 UTC只读确认HEAD仍为批准SHA、clean、源码字节与平台包元数据不变，79份证据传输及独立核验通过。状态为PASS_APPLICABLE_CPU，M7整体仍未完成；无新wheel/正式模型/数据下载，无CUDA/pilot、正式训练/评估或push。详见 [CPU环境验收报告](reports/m7_environment_cpu_20261115.md) 与 [机器索引](reports/m7_environment_cpu_20261115.json)。
 
 M7资源/结构门禁预检（2026-11-15，用户“继续完成M7”）：另获固定1.5B/对应tokenizer及9个数据JSON、许可与一次短CPU结构前向批准（单次30分钟/3.3GB、不含CUDA/训练/push）。首个模型LICENSE resolve请求经重定向返回HTTP403；未创建资源目录或启动获取。另获120秒/最多4请求的同镜像raw/API只读诊断批准，实际2请求：raw许可403、固定revision API200（revision/LFS哈希一致、许可标签apache-2.0），但未取得固定许可原文字节，继续条件未满足即停止。12:34 UTC只读确认资源目录仍不存在、源码/Git clean/平台包/venv69项/前次CPU结果哈希未变。本地预检诊断8项0.006s和项目185项18.765s通过；实际资源/数据内容/1.5B结构/所有GPU及正式实验均NOT RUN。既有环境PASS_APPLICABLE_CPU保留，资源门禁BLOCKED_LICENSE_HTTP403，M7整体仍未完成。详见[资源阻塞报告](reports/m7_assets_blocked_20261115.md)与[机器索引](reports/m7_assets_blocked_20261115.json)。
+
+M7独立数据门禁续轮（2026-11-15，用户“继续”）：按需重读PDF Section5.1/Table1及AppendixC.2–C.3；官方HF许可/权重HEAD本地超时、远端Network is unreachable，固定GitHub DATA_LICENSE则可达。用户另批15分钟/120MB数据门禁；实现标准库离线字节/字段/固定抽样/文本交集审计器与22项测试，本地全套207项22.336s通过。SSH Git bundle交付被工具拒绝、未执行；未换打包方式绕过。另获公开发布批准后，将完整2df16eb07bff7990cf9daf93bb189c9d91d06deb（共5个此前未公开提交）推至既有origin新分支并核验引用；远端新目录从公开origin检出精确SHA，旧repo9051fdfe…及venv不替换。13:14:24 UTC启动，固定DATA_LICENSE/代码LICENSE共31,186 bytes通过；辅助README读超时，26.455797秒停止，9个JSON请求尚未发出。用户批准跳过README、仅用原窗口剩余时间续接，但实际入口因13:29:24.449360 UTC原截止已过而拒绝，未重置预算。13:37 UTC只读确认九JSON/audit/resume目录不存在、原失败与两份通知字节不变、新旧Git clean/源码及平台与69包元数据不变；归档核验PASS_ARCHIVE_ONLY，收尾8项0.044s通过。数据状态BLOCKED_NETWORK_TIMEOUT_WINDOW_EXPIRED，实际行数/抽样/文本交集及tokenizer/1.5B结构/CUDA/训练均NOT RUN，不将超时误记为数据重叠；M7整体不勾选。详见[数据门禁报告](reports/m7_data_gate_20261115.md)与[机器索引](reports/m7_data_gate_20261115.json)。本地报告提交不自动push或替换远端批准SHA。
 
 ### M8 — 复现报告
 

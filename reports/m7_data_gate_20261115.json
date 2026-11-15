@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-15",
+  "status": "BLOCKED_NETWORK_TIMEOUT_WINDOW_EXPIRED",
+  "m7_complete": false,
+  "approved_code_commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+  "preserved_environment_commit": "9051fdfe86379aa3502e66bf1a586d4eb00565ba",
+  "dataset_revision": "816657208af4db747803f87ba40a4c71383fed7a",
+  "publication": {
+    "performed_after_separate_approval": true,
+    "branch": "repro/m7-data-preflight",
+    "origin": "https://github.com/Hello-Charles/adaptive-lora.git",
+    "commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "previously_unpublished_commits_including_target": 5,
+    "finite_review_changed_paths": 16,
+    "finite_review_unique_blobs": 25,
+    "raw_data_or_private_evidence_published": false,
+    "this_report_push_authorized": false
+  },
+  "bundle_transport": {
+    "denied": true,
+    "executed": false,
+    "repackaging_bypass": false
+  },
+  "original_operation": {
+    "recorded_at_utc": "2026-11-15T13:14:24.449360+00:00",
+    "finished_at_utc": "2026-11-15T13:14:50.905130+00:00",
+    "elapsed_seconds": 26.455797370523214,
+    "status": "FAIL",
+    "stage": "fixed_source_notices",
+    "maximum_seconds": 900,
+    "maximum_resource_bytes": 120000000,
+    "downloaded_resource_bytes": 31186,
+    "error_type": "TimeoutError",
+    "error": "The read operation timed out"
+  },
+  "notices": [
+    {
+      "path": "DATA_LICENSE",
+      "size_bytes": 19790,
+      "git_blob_sha1": "fc5b567da08fbcf8f2e2c3532b7a50a31d3de16a",
+      "sha256": "d0661a893a508739e49514a80f7629633846f1f4ac889fcf638c94a15ff92e9c",
+      "source_url": "https://raw.githubusercontent.com/AGI-Edgerunners/LLM-Adapters/816657208af4db747803f87ba40a4c71383fed7a/DATA_LICENSE"
+    },
+    {
+      "path": "LICENSE",
+      "size_bytes": 11396,
+      "git_blob_sha1": "f723680d9880aa77cdb663dd1f19e0df32148629",
+      "sha256": "df825c8e037af50d35015f3dc941f6565a7c28c3bbd8d4b85e5da4b494612024",
+      "source_url": "https://raw.githubusercontent.com/AGI-Edgerunners/LLM-Adapters/816657208af4db747803f87ba40a4c71383fed7a/LICENSE"
+    }
+  ],
+  "license": {
+    "name": "Open Data Commons Attribution License (ODC-By)",
+    "individual_content_rights_comprehensively_cleared": false,
+    "sections": [
+      "2.4",
+      "4.2",
+      "4.3"
+    ]
+  },
+  "continuation": {
+    "approval": "remaining original window only; skip README; no deadline reset",
+    "original_deadline_utc": "2026-11-15T13:29:24.449360+00:00",
+    "active_deadline_utc": "2026-11-15T13:29:14.449360+00:00",
+    "ssh_exit_code": 1,
+    "error": "TimeoutError: original resource window expired",
+    "stdout_size_bytes": 0,
+    "remote_result_created": false,
+    "deadline_reset": false,
+    "readme_retried": false,
+    "socket_timeout_cap_seconds_configured_but_not_reached": 60,
+    "pre_execution_validation": "AST syntax only; behavioral guards tested during closeout",
+    "script": {
+      "size_bytes": 18210,
+      "sha256": "f93aeffbfd18a5b6f96bb16f9fa85f7b327a837b65d24a1f3b96a5bbd01a88c5"
+    }
+  },
+  "remote_final": {
+    "recorded_at_utc": "2026-11-15T13:37:23.446932+00:00",
+    "new_git_head": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "old_git_head": "9051fdfe86379aa3502e66bf1a586d4eb00565ba",
+    "new_git_status": "",
+    "old_git_status": "",
+    "source_bytes_unchanged": true,
+    "old_source_bytes_unchanged": true,
+    "platform_package_metadata_unchanged": true,
+    "venv_packages_unchanged": true,
+    "resume_directory_exists": false,
+    "audit_directory_exists": false,
+    "free_bytes": 34267762688,
+    "raw_dataset_json_transferred": false
+  },
+  "dataset_file_inventory": {
+    "ft-training_set/commonsense_170k.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    },
+    "dataset/boolq/test.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    },
+    "dataset/piqa/test.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    },
+    "dataset/social_i_qa/test.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    },
+    "dataset/hellaswag/test.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    },
+    "dataset/winogrande/test.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    },
+    "dataset/ARC-Easy/test.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    },
+    "dataset/ARC-Challenge/test.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    },
+    "dataset/openbookqa/test.json": {
+      "exists": false,
+      "is_file": false,
+      "size_bytes": null
+    }
+  },
+  "tests": {
+    "dataset_focused": {
+      "status": "PASS",
+      "count": 22,
+      "seconds": 0.665,
+      "log": "dataset-focused.log",
+      "size_bytes": 4084,
+      "sha256": "3436b494822c5bc5855552bf6d2709ce6bd647bfd0cb6cfc900cf5f05d5c88e7"
+    },
+    "local_regression_code": {
+      "status": "PASS",
+      "count": 207,
+      "seconds": 22.336,
+      "log": "local-regression-code.log",
+      "size_bytes": 38419,
+      "sha256": "8e017b516f8e98297c09aa7c6aee604eaf569c7299f59bb8097a8b73a991c2ac"
+    },
+    "local_regression_closeout": {
+      "status": "PASS",
+      "count": 207,
+      "seconds": 15.022,
+      "log": "local-regression-closeout.log",
+      "size_bytes": 38419,
+      "sha256": "d94cf07ec280ba160028cf1a469a495d46fc8265088ac31710082c50f8b86d7d"
+    },
+    "driver_helpers": {
+      "status": "PASS",
+      "count": 7,
+      "seconds": 0.023,
+      "log": "driver-tests.log",
+      "size_bytes": 882,
+      "sha256": "838cb83235d50047c4c3be194bbe78f99dec0ce2d84b40fe896b0fa50e888423"
+    },
+    "public_driver_helpers": {
+      "status": "PASS",
+      "count": 7,
+      "seconds": 0.016,
+      "log": "public-driver-tests.log",
+      "size_bytes": 882,
+      "sha256": "cf48787778ca15e62367d0cf19cb207ae8ebc55770e234fdf7c7ee815e664e1b"
+    },
+    "closeout_guards": {
+      "status": "PASS",
+      "count": 8,
+      "seconds": 0.044,
+      "log": "closeout-tests.log",
+      "size_bytes": 803,
+      "sha256": "ae2318ec4f67b139c5b66ad6628338e21a753afe0146413bfe49fe07fb2a6f37"
+    }
+  },
+  "existing_linux_cpu": {
+    "status": "PASS_APPLICABLE_CPU",
+    "passed": 183,
+    "real_tokenizer_not_run": 2
+  },
+  "not_run": [
+    "nine_dataset_json_downloads",
+    "actual_schema_and_row_counts",
+    "actual_sampling_and_text_overlap",
+    "real_tokenizer_and_truncation",
+    "token_identity_overlap",
+    "real_1_5b_structure",
+    "cuda_amp_accumulation_gpu_checkpoint",
+    "pilot",
+    "calibration",
+    "training",
+    "evaluation"
+  ],
+  "paper_basis": [
+    "Section 5.1",
+    "Table 1",
+    "Appendix C.2",
+    "Appendix C.3"
+  ],
+  "engineering_assumptions": [
+    "pinned LLM-Adapters commit is a project choice, not an author-disclosed version",
+    "separate local Python seed42 sampling; Python version recorded when actual audit runs",
+    "user-only canonical prompt; source IDs alone do not establish text disjointness",
+    "overlap blocks with unchanged original sample indices; no resampling",
+    "text-only audit does not establish token or semantic isolation"
+  ],
+  "private_evidence_root": ".cache/m7-20261115-assets-02/",
+  "archive": {
+    "status": "PASS_ARCHIVE_ONLY",
+    "index": {
+      "size_bytes": 7335,
+      "sha256": "a43a614d7a09aaf1637252ecec64f1070163d7061f41d5a9ebcf8a419b79f7c5"
+    }
+  },
+  "evidence": {
+    "remote-public-data-result.json": {
+      "size_bytes": 14697,
+      "sha256": "984edcb31c923237f991b1c224159e8d064799f461d8d1091c2397d449631835"
+    },
+    "data-evidence-final.json": {
+      "size_bytes": 67687,
+      "sha256": "a1721b8c52df7b8457cba273280e1a294eca2ec731b32eaac6d96e9c09ccf28b"
+    },
+    "data-resume-ssh.log": {
+      "size_bytes": 158,
+      "sha256": "282564f9aed9d11f94a38d07f35615669c0a0cd934eb070ee389823a9e00a7a5"
+    },
+    "run_public_data_gate.py": {
+      "size_bytes": 17860,
+      "sha256": "f5fa8c7a0d71b80f2d70ef68251cbe911ddd5b02fb140341f1c9c1da41a2833e"
+    },
+    "resume_data_gate.py": {
+      "size_bytes": 18210,
+      "sha256": "f93aeffbfd18a5b6f96bb16f9fa85f7b327a837b65d24a1f3b96a5bbd01a88c5"
+    },
+    "verify_data_archive.py": {
+      "size_bytes": 5424,
+      "sha256": "448118d151c4700d82680f237c54e57e4d4b98403c74f3dd9291e974b345ec28"
+    },
+    "test_closeout.py": {
+      "size_bytes": 4421,
+      "sha256": "6e962f5afd18cec721da86901f2f93b8a1fee0f4fad8fe49794cca2233e1f64b"
+    }
+  }
+}

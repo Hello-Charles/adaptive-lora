@@ -22,9 +22,11 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
 
 2026-11-15最新环境状态：另获一次最多30分钟的缓存续接授权后，**118.766秒内完成全67个缓存wheel官方核验、离线依赖/项目安装、pip check、固定版本导入与适用Linux CPU验收**，新下载wheel为0。Linux单测 **183项通过、2项真实tokenizer测试NOT RUN**（缺少固定缓存，未下载）；本地Windows185项回归通过。范围状态为 **PASS_APPLICABLE_CPU，不是185项Linux全通过、CUDA通过或M7完成**。最新证据见 [CPU环境验收报告](reports/m7_environment_cpu_20261115.md) 和 [机器索引](reports/m7_environment_cpu_20261115.json)。
 
-远端代码仍为已发布的完整SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，见 [repro/m7-run-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-run-preflight)；源码字节、Git clean和平台包元数据复查通过。此前官方源超时、核验器vendor误判及工具拒绝记录保留在 [历史恢复报告](reports/m7_environment_resume_20261115.md)，旧截止未重置、未绕过权限或覆盖失败证据。[首轮SSH阻塞](reports/m7_environment_20261115.md)和[较早盘点](reports/autodl_postrestart_20261115.md)也保留历史。未下载正式模型/数据，未执行CUDA、pilot、正式训练/评估或新push。
+环境仓库保留已发布完整SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，见 [repro/m7-run-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-run-preflight)；未用新的数据审计代码替换其editable安装。此前官方源超时、核验器vendor误判及工具拒绝记录保留在 [历史恢复报告](reports/m7_environment_resume_20261115.md)，旧截止未重置、未绕过权限或覆盖失败证据。[首轮SSH阻塞](reports/m7_environment_20261115.md)和[较早盘点](reports/autodl_postrestart_20261115.md)也保留历史。
 
-最新资源门禁：用户另行批准固定模型/数据及CPU结构检查后，许可预检的模型LICENSE resolve路径返回HTTP403；另获批准的有界诊断中raw许可仍403、固定revision API可达，但未满足原许可字节先核验的条件，已停止。**尚未下载权重/正式数据或执行真实1.5B前向，M7仍未完成**；既有CPU环境通过状态不变。详见[资源阻塞报告](reports/m7_assets_blocked_20261115.md)与[机器索引](reports/m7_assets_blocked_20261115.json)。
+模型门禁仍阻塞：固定LICENSE在镜像resolve/raw返回HTTP403；本轮官方HF小请求本地超时、服务器Network is unreachable。API标签不能替代固定许可原文。**尚未下载1.5B权重/真实tokenizer或执行真实1.5B前向、CUDA、pilot、正式训练/评估，M7仍未完成**。历史证据见[资源阻塞报告](reports/m7_assets_blocked_20261115.md)。
+
+2026-11-15独立数据门禁：新增[标准库离线审计器](scripts/audit_m7_dataset.py)，固定Git blob/字段/seed42抽样/答案隔离与prompt文本交集，22项新增测试、本地全套207项通过。经单独批准，完整SHA `2df16eb07bff7990cf9daf93bb189c9d91d06deb`（连同自身共5个原未公开提交）已发布至[repro/m7-data-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-data-preflight)，服务器在另一新目录从公开origin精确检出该SHA，原环境保留。固定DATA_LICENSE（ODC-By，**不覆盖每条内容的独立权利**）及代码LICENSE共31,186 bytes匹配；辅助README读超时，操作26.456秒停止，尚未发出9个JSON请求。获批跳过README的续接随后因原13:29:24.449360 UTC截止已过，在获取前拒绝；13:37 UTC只读核查九个JSON/audit/resume目录均不存在，源码与包元数据未变。**状态为BLOCKED_NETWORK_TIMEOUT_WINDOW_EXPIRED，实际行数/样本/文本隔离审计NOT RUN**，不是发现了数据重叠。详见[数据门禁报告](reports/m7_data_gate_20261115.md)与[机器索引](reports/m7_data_gate_20261115.json)。本报告提交不自动公开推送。
 
 ## 代码阅读与注释约定
 
