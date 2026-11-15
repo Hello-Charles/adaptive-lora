@@ -18,11 +18,11 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
   --output-dir results/m7-protocol-review-new
 ```
 
-[Linux/CUDA候选直接依赖](requirements-linux-cu124-m7.in) 尚未安装完成或实测，也不是完整传递依赖锁。协议核查结果见 [M7首项报告](reports/m7_preflight_20261115.md)。
+[Linux/CUDA候选直接依赖](requirements-linux-cu124-m7.in) 的固定版本现已在独立Linux环境安装并通过适用CPU验收；该.in仍不是完整传递依赖锁，其初始“未安装”注释保留原批准字节。实际67项wheel哈希锁、安装报告和Linux freeze另存私有证据。协议核查结果见 [M7首项报告](reports/m7_preflight_20261115.md)。
 
-2026-11-15环境准备续轮：SSH已恢复，远端数据盘新目录已检出批准的完整SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，并创建不继承平台site-packages的独立venv；该SHA此前已发布到 [repro/m7-run-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-run-preflight)。官方源安装超时后，经单独批准使用TUNA下载并要求逐wheel匹配官方哈希。现有67个完整缓存wheel（3,179,040,252 bytes），但核验器误计setuptools内嵌vendor元数据而停止；规则已在本地修正并通过11项测试，缓存核验续接准备随后被工具权限拦截，未安装。本地185项离线回归通过；远端venv仍只有pip24.0，导入/CPU验收未执行，**环境验收仍为BLOCKED，不是PASS**。
+2026-11-15最新环境状态：另获一次最多30分钟的缓存续接授权后，**118.766秒内完成全67个缓存wheel官方核验、离线依赖/项目安装、pip check、固定版本导入与适用Linux CPU验收**，新下载wheel为0。Linux单测 **183项通过、2项真实tokenizer测试NOT RUN**（缺少固定缓存，未下载）；本地Windows185项回归通过。范围状态为 **PASS_APPLICABLE_CPU，不是185项Linux全通过、CUDA通过或M7完成**。最新证据见 [CPU环境验收报告](reports/m7_environment_cpu_20261115.md) 和 [机器索引](reports/m7_environment_cpu_20261115.json)。
 
-真实状态、原30分钟预算、失败证据与恢复门禁见 [环境恢复报告](reports/m7_environment_resume_20261115.md) 和 [机器可读索引](reports/m7_environment_resume_20261115.json)。[首轮SSH阻塞报告](reports/m7_environment_20261115.md)及[较早重启后盘点](reports/autodl_postrestart_20261115.md)保留历史，不代表当前SSH仍不可达。平台包元数据与远端源码字节未变；模型/数据下载、CUDA调用、训练和正式评估均未执行，也不在本轮授权范围内。
+远端代码仍为已发布的完整SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，见 [repro/m7-run-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-run-preflight)；源码字节、Git clean和平台包元数据复查通过。此前官方源超时、核验器vendor误判及工具拒绝记录保留在 [历史恢复报告](reports/m7_environment_resume_20261115.md)，旧截止未重置、未绕过权限或覆盖失败证据。[首轮SSH阻塞](reports/m7_environment_20261115.md)和[较早盘点](reports/autodl_postrestart_20261115.md)也保留历史。未下载正式模型/数据，未执行CUDA、pilot、正式训练/评估或新push。
 
 ## 代码阅读与注释约定
 

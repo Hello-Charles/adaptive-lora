@@ -176,7 +176,8 @@ Full 的24层实测 **1,474,560 个可训练元素、144个A/B张量**；Random7
 - [ ] 准备获批的独立Linux/CUDA环境，完成CUDA/AMP/梯度累积与GPU checkpoint实现及有界pilot。
   - [x] 环境准备范围另获用户批准；已公开发布代码SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，并核验GitHub分支引用。
   - [x] SSH恢复后在数据盘新目录检出完整批准SHA，创建不继承平台site-packages的隔离venv，确认平台包元数据与源码字节未变。
-  - [ ] 隔离环境依赖/项目安装、导入与CPU验收（官方源超时；获批TUNA缓存下载完成但核验器误计vendor元数据而停止，修正经本地测试，续接准备被工具权限拦截；venv仍只有pip24.0，未安装。本轮不含CUDA/pilot）。
+  - [x] 隔离环境依赖/项目安装、导入与适用CPU验收：另获有限缓存续接授权后，67个wheel全批官方哈希通过，离线安装/pip check/11项固定版本导入通过；Linux183项CPU单测通过、2项真实tokenizer用例NOT RUN，不含CUDA/pilot。
+  - [ ] 补验Linux两项真实tokenizer用例（固定0.5B缓存缺失，本轮未下载，不将183项通过写成185项全通过）。
 - [ ] 保存训练日志、GPU 耗时和峰值显存。
 - [ ] 完成统一评估；不人为追求论文数值而改动结果。
 
@@ -185,6 +186,8 @@ M7首项进展（2026-11-15）：用户明确指令进入M7；重新读取PDF第
 M7交付/环境准备首轮记录（2026-11-15，首项之后）：用户另行批准公开推送、指定SHA部署、新隔离环境依赖安装和离线CPU验收。批准SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba` 已发布至repro/m7-run-preflight，包含6个此前未发布提交；推送前审查99个唯一Git文件对象，本地185项测试18.466s通过、无跳过。当时两次SSH均在TCP阶段返回Connection refused，未进入公钥认证，未远端检出或安装；该历史记录见 [交付与环境准备报告](reports/m7_environment_20261115.md)，不再代表当前SSH状态。
 
 M7环境恢复续轮（2026-11-15，用户“已重新打开，继续”）：08:17 UTC严格SSH与实时盘点通过；在数据盘新目录detached checkout批准SHA并新建隔离venv。官方PyPI安装540秒超时；另获单一TUNA镜像、逐wheel官方哈希及一次30分钟尝试批准，67个wheel共3,179,040,252 bytes已缓存。安装前核验因自编工具误计setuptools内嵌vendor元数据而失败，不是已发现hash不符；本地回归先红后绿，修正后11项通过。缓存续接准备被工具权限拦截，未重试安装或重置时限；09:21 UTC只读复查确认venv仍只有pip24.0、平台包元数据和远端源码字节不变。本地项目185项离线测试19.699s通过、无跳过；远端导入/CPU验收仍NOT RUN。环境验收仍BLOCKED，无模型/数据下载、CUDA或训练；详见 [恢复报告](reports/m7_environment_resume_20261115.md) 与 [机器索引](reports/m7_environment_resume_20261115.json)。
+
+M7环境CPU验收续轮（2026-11-15）：用户另行批准一次最多1800秒的缓存核验/离线安装/CPU操作，旧09:28:32 UTC截止及失败记录保留，不更改权限或绕过拒绝。12:01 UTC预检确认67个wheel字节与此前证据相同、venv仍pip-only；12:07–12:09 UTC在118.765724秒内完成67项全批官方核验（复用52份官方JSON、仅补14份小JSON及固定Torch哈希）、离线依赖/项目安装、pip check与固定版本导入。Linux适用单测183项8.851s通过，另2项真实tokenizer用例NOT RUN；Windows本地185项21.435s通过，续接门禁14项、原核验11项、解码器4项通过。12:10 UTC只读确认HEAD仍为批准SHA、clean、源码字节与平台包元数据不变，79份证据传输及独立核验通过。状态为PASS_APPLICABLE_CPU，M7整体仍未完成；无新wheel/正式模型/数据下载，无CUDA/pilot、正式训练/评估或push。详见 [CPU环境验收报告](reports/m7_environment_cpu_20261115.md) 与 [机器索引](reports/m7_environment_cpu_20261115.json)。
 
 ### M8 — 复现报告
 
