@@ -2,7 +2,7 @@
 
 面向复现实验实现者与执行者。本文件区分论文事实、候选复现决定和运行授权，不代表GPU作业已经开始。
 
-**协议状态：2026-11-15用户已确认7项复现决定，协议记录已冻结；确认协议不构成下载、付费GPU或完整训练授权。M7整体未验收。** 后续独立环境已安装并通过适用Linux CPU验收（183项通过、2项真实tokenizer用例NOT RUN），见[CPU环境报告](reports/m7_environment_cpu_20261115.md)。模型LICENSE的镜像resolve/raw仍403，官方HF本轮小请求本地超时、远端不可达，见[历史资源报告](reports/m7_assets_blocked_20261115.md)。单独批准的数据门禁已取得固定DATA_LICENSE/代码LICENSE并部署审计代码，但辅助README超时后原窗口续接到期拒绝；九个JSON与实际审计仍NOT RUN，见[最新数据门禁报告](reports/m7_data_gate_20261115.md)。未下载1.5B权重/真实tokenizer，未运行真实1.5B前向、CUDA或正式训练。
+**协议状态：2026-11-15用户已确认7项复现决定，协议记录已冻结；确认协议不构成下载、付费GPU或完整训练授权。M7整体未验收。** 后续独立环境已安装并通过适用Linux CPU验收（183项通过、2项真实tokenizer用例NOT RUN），见[CPU环境报告](reports/m7_environment_cpu_20261115.md)。模型LICENSE的镜像resolve/raw仍403，官方HF本轮小请求本地超时、远端不可达，见[历史资源报告](reports/m7_assets_blocked_20261115.md)。单独批准的数据门禁已取得固定DATA_LICENSE/代码LICENSE并部署审计代码，但辅助README超时后原窗口续接到期拒绝；九个JSON与实际审计仍NOT RUN，见[数据门禁报告](reports/m7_data_gate_20261115.md)。此后另获批准的新900秒窗口在 `autodl` 执行，890.0009秒内只写入一个部分训练文件13,631,488/96,529,722 bytes，审计未启动，状态为BLOCKED_TRANSFER_BUDGET_EXHAUSTED，见[续轮报告](reports/m7_data_gate_resume_20261115.md)。未下载1.5B权重/真实tokenizer，未运行真实1.5B前向、CUDA或正式训练。
 
 机器可读配置：[qwen2_5_1_5b_commonsense_r16.json](configs/qwen2_5_1_5b_commonsense_r16.json)。预检入口：[check_m7_protocol.py](scripts/check_m7_protocol.py)。
 
@@ -60,6 +60,8 @@
 **后续工程状态（2026-11-15）：** 固定DATA_LICENSE已在本地/服务器从上述GitHub commit获取，19,790 bytes、Git blob `fc5b567da08fbcf8f2e2c3532b7a50a31d3de16a`一致；内容为Open Data Commons Attribution License（ODC-By），须遵守署名/通知条件。Section2.4不覆盖每条Contents的独立版权、隐私/人格等权利，Section4.2–4.3涉及数据库/Produced Work公开传播的通知；本项目未逐条清理原benchmark内容权利。代码LICENSE的11,396 bytes及固定blob也匹配，二者不混同。辅助README网络超时，九个JSON未请求；原窗口续接因到期拒绝，不能声称实际行数/字段/样本隔离通过。
 
 [离线数据审计CLI](scripts/audit_m7_dataset.py)及[模块](src/adaptive_lora/m7_dataset.py)已实现并在完整SHA `2df16eb07bff7990cf9daf93bb189c9d91d06deb`经批准发布/部署。它仅核对固定JSON、字段、seed42逐样本索引与user-only prompt哈希交集，不分词或运行模型；即使以后返回TEXT_GATE_PASS_TOKENIZER_PENDING，真实tokenizer/截断/token身份仍须独立验收。当前仅合成夹具22项通过，**真实数据运行NOT RUN**；未来若发现重叠，保留原抽样并BLOCKED，不自动过滤或重抽。
+
+2026-11-15续轮实测：在该固定路径获取下，890.0009秒仅完成13,631,488 bytes的部分训练文件，实测约15,316 bytes/s；按配置合计112,764,504 bytes外推约需7,362秒（约123分钟）。该外推只由本机观测字节/秒得到，不是新的网络测量，也不改变固定来源、抽样或预算规则。任何后续获取都需另获批准的更长或分段窗口，并继续先通过长度+Git blob核验再审计。
 
 ## 3. 七项已由用户确认的复现决定
 

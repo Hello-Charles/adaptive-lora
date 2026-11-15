@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-15",
+  "status": "BLOCKED_TRANSFER_BUDGET_EXHAUSTED",
+  "m7_complete": false,
+  "approved_code_commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+  "environment_commit": "9051fdfe86379aa3502e66bf1a586d4eb00565ba",
+  "dataset_revision": "816657208af4db747803f87ba40a4c71383fed7a",
+  "authorization": {
+    "new_window_separately_approved": true,
+    "explicitly_approved_ssh_alias": "autodl",
+    "denied_call_executed_before_host_approval": false,
+    "maximum_seconds": 900,
+    "maximum_resource_bytes": 120000000,
+    "scope": "nine fixed JSONs plus offline audit; reuse notices; skip README",
+    "deadline_reset_or_extension": false,
+    "automatic_retries": false,
+    "model_cuda_training_install_push": false
+  },
+  "window": {
+    "started_utc": "2026-11-15T13:51:05.392667+00:00",
+    "hard_deadline_utc": "2026-11-15T14:06:05.392667+00:00",
+    "finished_utc": "2026-11-15T14:05:55.393536+00:00",
+    "elapsed_seconds": 890.000919315964,
+    "maximum_seconds": 900,
+    "maximum_resource_bytes": 120000000,
+    "new_window_separately_approved": true,
+    "old_deadline_modified": false
+  },
+  "transfer": {
+    "bytes": 13631488,
+    "average_bytes_per_second": 15316.26283091581,
+    "completed_files": 0,
+    "partial_files": 1,
+    "partial_file_path": "ft-training_set/commonsense_170k.json",
+    "partial_expected_bytes": 96529722,
+    "partial_file_sha256": "cbc102d9f126da9ea4692fa78e9ca6638267e2fada15053b0b45fdd9c960e345",
+    "partial_byte_shortfall": 82898234,
+    "partial_is_complete_file": false
+  },
+  "audit": {
+    "started": false,
+    "audit_directory_exists": false,
+    "summary_exists": false
+  },
+  "reused_notices": [
+    {
+      "path": "DATA_LICENSE",
+      "size_bytes": 19790,
+      "git_blob_sha1": "fc5b567da08fbcf8f2e2c3532b7a50a31d3de16a",
+      "sha256": "d0661a893a508739e49514a80f7629633846f1f4ac889fcf638c94a15ff92e9c",
+      "source_url": "https://raw.githubusercontent.com/AGI-Edgerunners/LLM-Adapters/816657208af4db747803f87ba40a4c71383fed7a/DATA_LICENSE"
+    },
+    {
+      "path": "LICENSE",
+      "size_bytes": 11396,
+      "git_blob_sha1": "f723680d9880aa77cdb663dd1f19e0df32148629",
+      "sha256": "df825c8e037af50d35015f3dc941f6565a7c28c3bbd8d4b85e5da4b494612024",
+      "source_url": "https://raw.githubusercontent.com/AGI-Edgerunners/LLM-Adapters/816657208af4db747803f87ba40a4c71383fed7a/LICENSE"
+    }
+  ],
+  "environment": {
+    "deployment_head": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "deployment_clean": true,
+    "environment_head": "9051fdfe86379aa3502e66bf1a586d4eb00565ba",
+    "environment_clean": true,
+    "venv_package_count": 69,
+    "source_bytes_unchanged": true,
+    "platform_package_metadata_unchanged": true,
+    "free_bytes_after": 34254114816,
+    "platform_package_count": 153,
+    "platform_package_metadata_only": true
+  },
+  "previous_attempt_result_unchanged": true,
+  "archive": {
+    "status": "PASS_CLOSEOUT_ARCHIVE_ONLY",
+    "verification_index": {
+      "size_bytes": 4704,
+      "sha256": "5310af726e3a7fa3e25571a6a2f6c52c33c6ee8575ee1df17edffa367e87c8c9"
+    },
+    "result_identity": {
+      "size_bytes": 14883,
+      "sha256": "7b9d0dbf88dc1946ddbc15c22455b3237c463b9cd9e5c227002a9c9009e6aaaf"
+    },
+    "earlier_indexes_retained": [
+      "verification-superseded-01.json",
+      "verification-superseded-02.json"
+    ]
+  },
+  "tests": {
+    "driver-tests.log": {
+      "status": "PASS",
+      "count": 7,
+      "seconds": 0.017,
+      "log": "driver-tests.log",
+      "size_bytes": 882,
+      "sha256": "c3ba8e98f69e862f77da014ff179480b06854eb6b3459b832dbfb144eac2d28c"
+    },
+    "precondition-tests.log": {
+      "status": "PASS",
+      "count": 5,
+      "seconds": 0.033,
+      "log": "precondition-tests.log",
+      "size_bytes": 592,
+      "sha256": "91a3620b2907ae56d3901bfa3beab33a4512f49c10de581e1725b1cd8f7d78b8"
+    },
+    "verification-tests.log": {
+      "status": "PASS",
+      "count": 5,
+      "seconds": 0.198,
+      "log": "verification-tests.log",
+      "size_bytes": 563,
+      "sha256": "1ccaae67f47d44666b110ac896efbee937f965939605deb3f98dd24d39fbebd5"
+    },
+    "local-regression.log": {
+      "status": "PASS",
+      "count": 207,
+      "seconds": 14.267,
+      "log": "local-regression.log",
+      "size_bytes": 38419,
+      "sha256": "84b7a97f8d9aac63d761751f52cf1134f26a0397ef0136bd3460dbd0eaad53ee"
+    }
+  },
+  "not_run": [
+    "remaining_eight_dataset_jsons",
+    "actual_row_counts_and_field_schema",
+    "actual_sampling_and_prompt_overlap",
+    "real_tokenizer_and_truncation",
+    "token_identity_overlap",
+    "real_1_5b_structure",
+    "cuda_amp_accumulation_gpu_checkpoint",
+    "pilot",
+    "calibration",
+    "training",
+    "evaluation"
+  ],
+  "outcome_classification": {
+    "network_or_budget_block": true,
+    "data_hash_mismatch_observed": false,
+    "label_or_schema_error_observed": false,
+    "text_overlap_observed": false
+  },
+  "throughput_projection": {
+    "measured_average_bytes_per_second": 15316.26283091581,
+    "projected_seconds_for_all_nine_json": 7362.4,
+    "projected_seconds_for_train_file": 6302.4,
+    "basis": "observed bytes divided by observed elapsed; not a new network measurement"
+  },
+  "paper_basis": [
+    "Section 5.1",
+    "Table 1",
+    "Appendix C.2",
+    "Appendix C.3"
+  ],
+  "engineering_assumptions": [
+    "fixed commit, local seed42 sampling and sample counts unchanged by this failure",
+    "incomplete partial file retained but unusable for integrity checks",
+    "no resampling, source switch, mirror substitution or protocol change",
+    "ODC-By covers the database layer only; individual content rights not cleared",
+    "distribution metadata comparison is not a byte audit or runtime validation"
+  ],
+  "private_evidence_root": ".cache/m7-20261115-assets-03/",
+  "raw_dataset_json_local": false
+}

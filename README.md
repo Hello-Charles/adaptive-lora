@@ -26,7 +26,9 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
 
 模型门禁仍阻塞：固定LICENSE在镜像resolve/raw返回HTTP403；本轮官方HF小请求本地超时、服务器Network is unreachable。API标签不能替代固定许可原文。**尚未下载1.5B权重/真实tokenizer或执行真实1.5B前向、CUDA、pilot、正式训练/评估，M7仍未完成**。历史证据见[资源阻塞报告](reports/m7_assets_blocked_20261115.md)。
 
-2026-11-15独立数据门禁：新增[标准库离线审计器](scripts/audit_m7_dataset.py)，固定Git blob/字段/seed42抽样/答案隔离与prompt文本交集，22项新增测试、本地全套207项通过。经单独批准，完整SHA `2df16eb07bff7990cf9daf93bb189c9d91d06deb`（连同自身共5个原未公开提交）已发布至[repro/m7-data-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-data-preflight)，服务器在另一新目录从公开origin精确检出该SHA，原环境保留。固定DATA_LICENSE（ODC-By，**不覆盖每条内容的独立权利**）及代码LICENSE共31,186 bytes匹配；辅助README读超时，操作26.456秒停止，尚未发出9个JSON请求。获批跳过README的续接随后因原13:29:24.449360 UTC截止已过，在获取前拒绝；13:37 UTC只读核查九个JSON/audit/resume目录均不存在，源码与包元数据未变。**状态为BLOCKED_NETWORK_TIMEOUT_WINDOW_EXPIRED，实际行数/样本/文本隔离审计NOT RUN**，不是发现了数据重叠。详见[数据门禁报告](reports/m7_data_gate_20261115.md)与[机器索引](reports/m7_data_gate_20261115.json)。本报告提交不自动公开推送。
+2026-11-15独立数据门禁：新增[标准库离线审计器](scripts/audit_m7_dataset.py)，固定Git blob/字段/seed42抽样/答案隔离与prompt文本交集，22项新增测试、本地全套207项通过。经单独批准，完整SHA `2df16eb07bff7990cf9daf93bb189c9d91d06deb`（连同自身共5个原未公开提交）已发布至[repro/m7-data-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-data-preflight)，服务器在另一新目录从公开origin精确检出该SHA，原环境保留。固定DATA_LICENSE（ODC-By，**不覆盖每条内容的独立权利**）及代码LICENSE共31,186 bytes匹配；辅助README读超时，操作26.456秒停止，尚未发出9个JSON请求。获批跳过README的续接随后因原13:29:24.449360 UTC截止已过，在获取前拒绝；13:37 UTC只读核查九个JSON/audit/resume目录均不存在，源码与包元数据未变。**状态为BLOCKED_NETWORK_TIMEOUT_WINDOW_EXPIRED，实际行数/样本/文本隔离审计NOT RUN**，不是发现了数据重叠。详见[数据门禁报告](reports/m7_data_gate_20261115.md)与[机器索引](reports/m7_data_gate_20261115.json)。
+
+2026-11-15独立数据门禁续轮：用户另行批准一次新的最多900秒/120,000,000 bytes窗口，并明确批准在SSH别名 `autodl` 执行。复用已部署完整SHA `2df16eb…`、只读复核两份既有许可、跳过README，在新目录启动。实际在**890.0009秒内只写入1个部分训练文件13,631,488/96,529,722 bytes**（0个完成文件），随后SIGALRM终止，**审计从未启动**；实测约15.3 KiB/s，按此速率完整九文件约需123分钟。旧结果字节、部署与环境SHA、平台153项及venv 69项元数据均未变，部分文件保留未删除。**状态为BLOCKED_TRANSFER_BUDGET_EXHAUSTED，九个JSON完整性/行数/抽样/文本交集仍全部NOT RUN**，不是hash不符或数据重叠。详见[续轮报告](reports/m7_data_gate_resume_20261115.md)与[机器索引](reports/m7_data_gate_resume_20261115.json)。本报告提交不自动push。
 
 ## 代码阅读与注释约定
 
