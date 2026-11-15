@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-15",
+  "status": "TEXT_GATE_PASS_TOKENIZER_PENDING",
+  "m7_complete": false,
+  "approved_code_commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+  "dataset_revision": "816657208af4db747803f87ba40a4c71383fed7a",
+  "window": {
+    "started_utc": "2026-11-15T15:03:11.654515+00:00",
+    "hard_deadline_utc": "2026-11-15T17:33:11.654515+00:00",
+    "finished_utc": "2026-11-15T15:25:12.445723+00:00",
+    "elapsed_seconds": 1320.7912528403103,
+    "approved_window_seconds": 9000,
+    "maximum_window_bytes": 120000000,
+    "downloaded_resource_bytes": 99399256,
+    "probe_status": 206,
+    "probe_bytes_per_second": 57930.82612848791,
+    "average_bytes_per_second": 75257.4,
+    "synthetic_or_real": "real network transfer"
+  },
+  "resume_prefix": {
+    "path": "ft-training_set/commonsense_170k.json",
+    "adopted_bytes": 13631488,
+    "sha256": "cbc102d9f126da9ea4692fa78e9ca6638267e2fada15053b0b45fdd9c960e345",
+    "overlap_bytes_verified": 4096,
+    "overlap_offset": 13627392,
+    "final_git_blob_matched": true
+  },
+  "files_verified": {
+    "ft-training_set/commonsense_170k.json": {"size_bytes": 96529722, "row_count": 170420, "sha256": "4651a3e707fbe28be03f486f96fcf57f8c38b2173f3e38812003108970793ac8", "git_blob_sha1": "529e426b33d4cdb1d0c4a275a1a7245ad081fd91"},
+    "dataset/boolq/test.json": {"size_bytes": 899151, "row_count": 3270, "sha256": "89df2397cbca81dc31adcc6f7f5b635821aa0565aafde46725b2b4bd39b4dfa9", "git_blob_sha1": "6d7edb0a8e8a6566b546ccf0d98d24e48db3fdf3"},
+    "dataset/piqa/test.json": {"size_bytes": 913157, "row_count": 1838, "sha256": "3860d11b9b42e590b6b4bbc1643214d373ed0b0d4ac62fcc7bdceb8e044ad141", "git_blob_sha1": "f7a1c260692ef31796d4763cb6334f316a754fed"},
+    "dataset/social_i_qa/test.json": {"size_bytes": 843748, "row_count": 1954, "sha256": "71543f41127451945379d106ffedaef502f1c8770dff6d2f543aca85e3080b1d", "git_blob_sha1": "eadf221799ca394367b144c0f86ee0436db409d2"},
+    "dataset/hellaswag/test.json": {"size_bytes": 11099046, "row_count": 10042, "sha256": "3ea7e99795e63a01f2f5e9ddbc4dca964d9ebb22f04201e64d1ac043be51ab61", "git_blob_sha1": "183c4920415f83ba4b793c4873a33e7e10bd1be5"},
+    "dataset/winogrande/test.json": {"size_bytes": 497409, "row_count": 1267, "sha256": "6946f5209e7114c65c6d04f8f644c5a061af20d730b1cfe158fff3dc44076fb9", "git_blob_sha1": "21257263593dd4d00546e1918c88ca0f357b08ad"},
+    "dataset/ARC-Easy/test.json": {"size_bytes": 1157216, "row_count": 2376, "sha256": "3f32a84716ca6d57d38728bf80cc8117aecd17445c2cf29a68b571b810eb82dc", "git_blob_sha1": "6c0d30aaedaeca148df6bcd7aaacf7c31e6ad70f"},
+    "dataset/ARC-Challenge/test.json": {"size_bytes": 622510, "row_count": 1172, "sha256": "4a89ce368ae01a71d268d9851686738b2a0a1d84271116bab49a1dd2b48ecad7", "git_blob_sha1": "9540685439144200b5a7e48dab9ca4655be2af09"},
+    "dataset/openbookqa/test.json": {"size_bytes": 202545, "row_count": 500, "sha256": "8479930f7b8a26052c78250280b5465a4016ca7fc806af440d0f37e243f3099e", "git_blob_sha1": "a6e69676104bcb77237388c3b5a3f0dcbb81d1e2"}
+  },
+  "selected_counts": {
+    "train": 10000,
+    "calibration": 250,
+    "evaluation": {"boolq": 1000, "piqa": 1000, "social_i_qa": 1000, "hellaswag": 1000, "winogrande": 1000, "ARC-Easy": 1000, "ARC-Challenge": 1000, "openbookqa": 500}
+  },
+  "field_schema_all_files": "answer,input,instruction,output",
+  "cross_split_overlap": {
+    "sample_id_intersections": 0,
+    "prompt_sha256_intersections": 0,
+    "tasks_checked": 8,
+    "note": "direct identity only; semantic rewrites, embedded answers and pretraining contamination not checked"
+  },
+  "within_split_duplicate_prompt_rows": {"train": 107, "calibration": 0, "social_i_qa": 8, "boolq": 0, "piqa": 0, "hellaswag": 0, "winogrande": 0, "ARC-Easy": 0, "ARC-Challenge": 0, "openbookqa": 0},
+  "identity_hashes": {
+    "sampling_sha256": "76a61e01d6e0b2400b4870ed54b6d0a5afa12347389f14d19d58b05164288c3b",
+    "audit_file_sha256": "840fba0ca65d436587c6941b89e066689682c73bbcff8be6cd179c0eb69202f9",
+    "remote_summary_sha256": "02e7b6e3a0a7a4ab57c07abf97c65098570fd20e64b20f50082e9f1b5efc863c",
+    "config_file_bytes_sha256": "6f715cef71d1fbe350541bd6b45524a4134ea2d879b1bee266468c4afb30081c",
+    "config_protocol_sha256": "d60f13752b4b8628d0ed8c8d9bb843ce92c8221b68d17cd8338a8447efa81c82",
+    "note": "config file byte hash and canonical protocol hash differ by construction; both verified locally"
+  },
+  "audit_git": {"commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb", "dirty": false},
+  "environment_unchanged": {
+    "source_bytes_unchanged": true,
+    "platform_package_metadata_unchanged": true,
+    "venv_package_count": 69,
+    "previous_result_bytes_unchanged": true
+  },
+  "flags": {
+    "tokenizer_validated": false,
+    "real_model_structure_validated": false,
+    "content_rights_individually_cleared": false,
+    "training_started": false
+  },
+  "tests": {
+    "segmented_v2_synthetic": {"status": "PASS", "count": 16},
+    "project_offline_regression": {"status": "PASS", "count": 207, "skipped": 0},
+    "window_independent_verification": {"status": "PASS_WINDOW_ARCHIVE_ONLY"}
+  },
+  "not_run": [
+    "real_tokenizer_and_truncation",
+    "token_identity_overlap",
+    "real_1_5b_structure",
+    "model_weights_download",
+    "cuda_amp_accumulation_gpu_checkpoint",
+    "pilot",
+    "calibration",
+    "training",
+    "evaluation"
+  ],
+  "limitations": [
+    "test.json naming does not prove identity with the original benchmark official test split",
+    "hash intersections cover direct identity only, not semantic or pretraining overlap",
+    "ODC-By covers the database layer; individual benchmark content rights not cleared",
+    "raw dataset JSON stays on the remote host and is not published"
+  ],
+  "paper_basis": ["Section 5.1", "Table 1", "Appendix C.2"],
+  "private_evidence_root": ".cache/m7-20261115-assets-04/",
+  "raw_dataset_json_local": false
+}

@@ -153,7 +153,9 @@ M6 按需核查 **Table 2 / Section 5.3（PDF 第 8 页）、Section 5.4（第 9
 - **[复现决策，用户已确认]** 固定LLM-Adapters提交并分别以局部seed42抽10,000训练、其内250校准、各任务1,000评估（OBQA500）；实际索引与输入身份尚待下载后验收。来源路径名test.json不自动证明与原始benchmark官方test split同一。
 - **[复现决策，用户已确认]** greedy最多32新tokens，仅解析生成续文；合法标签大小写归一化及词边界匹配，多个不同合法标签冲突判无效，失败保留分母，8任务等权宏平均。引用库无边界首匹配/4 beams并非论文明确协议，不照搬。
 - **[复现决策，用户已确认]** 候选Qwen1.5B固定revision/LFS哈希来自镜像，保留官方端点不可达、未独立认证官方来源的局限；权重未下载，实际字节仍待核对。所选数据仓库commit不是论文公开的原始commit。
-- **[待核验]** 实际数据字节/行数/样本身份、真实BPE与长输入处置、28层模块返回值、CUDA/AMP/梯度累积与GPU checkpoint/评估尚未验收。独立数据门禁已核验固定DATA_LICENSE（ODC-By，不全面覆盖内容权利）与代码LICENSE；九个JSON及实际审计仍NOT RUN——README网络超时、原窗口续接到期，以及另获批准的新900秒窗口仅写入一个部分训练文件13,631,488/96,529,722 bytes后预算耗尽，见[数据门禁报告](reports/m7_data_gate_20261115.md)与[续轮报告](reports/m7_data_gate_resume_20261115.md)。实测约15,316 bytes/s，不据此推断抽样或内容问题。新协议检查器及文本审计器仅标准库离线审查，不是正式训练入口；confirmed字段不提供推送/安装/下载/付费计算授权。
+- **[工程状态，数据文本层已通过]** 九个固定JSON已按长度+Git blob+SHA256全部核验，并实际运行离线审计：训练170,420行抽10,000、校准250、八任务各1,000（OBQA500），字段统一为`answer,input,instruction,output`；跨拆分`sample_id`与规范prompt哈希交集均为0，组内重复prompt（train 107、social_i_qa 8）仅记录未处理。状态`TEXT_GATE_PASS_TOKENIZER_PENDING`，见[数据门禁通过报告](reports/m7_data_gate_pass_20261115.md)。**不含**真实BPE/512截断/token级交集、语义去重与预训练污染检查。
+- **[复现决策，用户已放宽]** 模型许可前置门禁改以API元数据（`license: apache-2.0`、`gated: false`、`private: false`）作为许可依据，放弃"必须先取得固定LICENSE原文字节"的原条件；固定许可字节（预期11,343 bytes、blob `6634c8cc…`）**始终未取得**，该证据缺口如实保留，不声称已核验许可原文，也不声称其内容被篡改。此放宽仅解阻权重获取的许可前置，不等于授权下载、付费GPU或正式训练。
+- **[待核验]** 权重字节/1.5B真实模块返回值、CUDA/AMP/梯度累积与GPU checkpoint/评估尚未验收；权重未下载，LFS SHA256未核对。新协议检查器及文本审计器仅标准库离线审查，不是正式训练入口；confirmed字段不提供推送/安装/下载/付费计算授权。
 - **[工程状态，已通过适用Linux CPU验收]** 原候选torch2.6.0+cu124搭配Transformers5.22.2/PEFT0.21.2等11项版本已在独立Linux环境离线安装、通过pip check和导入；Linux183项CPU测试通过，2项真实tokenizer用例因缺缓存NOT RUN。原[候选直接依赖](requirements-linux-cu124-m7.in)字节未改，仍不是完整传递依赖锁；实际67项wheel官方哈希锁与freeze见[环境CPU报告](reports/m7_environment_cpu_20261115.md)所列私有证据。此状态不证明CUDA/AMP、真实1.5B模块或正式训练已通过。
 
 ## 6. 必须通过的正确性测试

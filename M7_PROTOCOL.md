@@ -31,6 +31,15 @@
 
 **来源局限：**本地官方HF API连接超时；经服务器查询官方端点也失败，报Network is unreachable。以上候选元数据和小配置来自hf-mirror.com；匹配同镜像提供的Git/LFS标识不构成独立官方来源认证。实际权重尚未下载，必须获准后核对文件大小与LFS SHA256，不启用trust_remote_code，不接收pickle/bin替代。
 
+**许可门禁现状（2026-11-15用户决定放宽）：** 原要求"先取得固定LICENSE原文字节（预期11,343 bytes、Git blob `6634c8cc3133b3848ec74b9f275acaaa1ea618ab`）再下载权重"始终未满足——镜像 `resolve`/`raw` 均返回HTTP403，官方HF本地超时、服务器Network is unreachable。同镜像固定revision API可读（8,052 bytes留存），显示 `license: apache-2.0`、`gated: false`、`private: false`，即公开、非受限的Apache-2.0模型。用户据此**决定放宽该前置门禁**，改以API元数据作为许可依据，并保留"许可原文未取得"的证据缺口。
+
+该放宽的性质必须如实记录：
+
+- 它是**本项目工程门禁的决定**，不是许可类型存在法律争议；apache-2.0标签法律上没有疑问。
+- **不声称**已核验许可原文、不声称其为镜像篡改的文本，也不把API标签当作完整许可及附加声明的审查。
+- 放宽**只解除权重获取的许可前置**，不构成下载授权、GPU 授权或训练授权；每一类仍须单独批准。
+- 配置文件 `configs/qwen2_5_1_5b_commonsense_r16.json` 未修改任何字节（仍是 `6f715cef…`），因此不破坏已运行的离线审计产物哈希链；该决定记录在此文档与 `PAPER_SPEC.md`。
+
 候选元数据：[镜像API](https://hf-mirror.com/api/models/Qwen/Qwen2.5-1.5B?blobs=true)。这次查询没有下载3GB权重。
 
 ### 2.2 数据
