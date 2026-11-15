@@ -18,11 +18,11 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
   --output-dir results/m7-protocol-review-new
 ```
 
-[Linux/CUDA候选直接依赖](requirements-linux-cu124-m7.in) 尚未安装或实测，也不是完整传递依赖锁。协议核查结果见 [M7首项报告](reports/m7_preflight_20261115.md)。
+[Linux/CUDA候选直接依赖](requirements-linux-cu124-m7.in) 尚未安装完成或实测，也不是完整传递依赖锁。协议核查结果见 [M7首项报告](reports/m7_preflight_20261115.md)。
 
-2026-11-15后续授权：用户另行批准公开推送、指定SHA部署、数据盘新隔离环境安装与离线CPU验收。已将 `9051fdfe86379aa3502e66bf1a586d4eb00565ba` 发布到 [repro/m7-run-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-run-preflight)，并查询远端引用核验一致；但当前两次SSH连接均在TCP阶段返回Connection refused，远端克隆、环境创建和安装均未执行。详见 [M7交付与环境准备报告](reports/m7_environment_20261115.md)。
+2026-11-15环境准备续轮：SSH已恢复，远端数据盘新目录已检出批准的完整SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，并创建不继承平台site-packages的独立venv；该SHA此前已发布到 [repro/m7-run-preflight](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-run-preflight)。官方源安装超时后，经单独批准使用TUNA下载并要求逐wheel匹配官方哈希。现有67个完整缓存wheel（3,179,040,252 bytes），但核验器误计setuptools内嵌vendor元数据而停止；规则已在本地修正并通过11项测试，缓存核验续接准备随后被工具权限拦截，未安装。本地185项离线回归通过；远端venv仍只有pip24.0，导入/CPU验收未执行，**环境验收仍为BLOCKED，不是PASS**。
 
-[重启后资源盘点](reports/autodl_postrestart_20261115.md)仅是同日较早的历史快照，不能替代本轮连通性/可用资源复查。模型/数据下载、CUDA调用、训练和正式评估不在本轮授权范围内。
+真实状态、原30分钟预算、失败证据与恢复门禁见 [环境恢复报告](reports/m7_environment_resume_20261115.md) 和 [机器可读索引](reports/m7_environment_resume_20261115.json)。[首轮SSH阻塞报告](reports/m7_environment_20261115.md)及[较早重启后盘点](reports/autodl_postrestart_20261115.md)保留历史，不代表当前SSH仍不可达。平台包元数据与远端源码字节未变；模型/数据下载、CUDA调用、训练和正式评估均未执行，也不在本轮授权范围内。
 
 ## 代码阅读与注释约定
 
