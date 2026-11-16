@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "protocol_config": "configs/qwen2_5_1_5b_commonsense_r16.json",
+  "python": "/root/autodl-tmp/adaptive-lora-m7-20261115-02/venv/bin/python",
+  "data_root": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04",
+  "snapshot": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04/models/qwen25_1_5b_8faed761/models--Qwen--Qwen2.5-1.5B/snapshots/8faed761d45a263340a0528343f099c05c9a4323",
+  "work_dir": "/root/autodl-tmp/adaptive-lora-m7-pretraining-20261116-01/formal-ready-01/work",
+  "audit_sha256": "840fba0ca65d436587c6941b89e066689682c73bbcff8be6cd179c0eb69202f9",
+  "sampling_sha256": "76a61e01d6e0b2400b4870ed54b6d0a5afa12347389f14d19d58b05164288c3b",
+  "attention_backend": "sdpa",
+  "checkpoint_every": 156,
+  "skip_pretraining_tests": true,
+  "backend_note": "[复现决策] 正式入口显式采用原生SDPA；旧FP16/eager的非有限基线失败保留。未运行新测试，不声称SDPA已实测修复。基础FP16、adapter FP32及FP16 AMP不变。"
+}

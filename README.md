@@ -4,21 +4,24 @@
 
 ## 当前范围：M0–M6 已验收，M7 准备中
 
-M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输入和 M3 的独立子模块 zero-ablation 均已验收。M4 在30条输入上完成固定token校准、24层重要性和Top-7，最终零基排名为 **`[0, 1, 2, 5, 3, 8, 10]`**；M5完成选择性Q/K/V LoRA的真实三步CPU训练与fresh-base checkpoint恢复。M6已完成 **Full / Random7 / Adaptive7统一训练与评估接口**：每方法从相同基础权重新加载，统一数据/配置各训练3个短合成batch，共9步；实际可训练参数为 **1,474,560 / 430,080 / 430,080**，非同参数预算。最终 **162个测试通过**，三方法合成smoke exact-match均0/3，不能当作正式任务准确率。M7已开始首项协议核查并由用户确认，尚未执行GPU pilot或正式训练/效果实验。证据见 [阶段门禁](REPRO_PLAN.md)、[M1](reports/m1_validation.md)、[M2](reports/m2_validation.md)、[M3](reports/m3_validation.md)、[M4](reports/m4_validation.md)、[M5](reports/m5_validation.md) 和 [M6验收报告](reports/m6_validation.md)。
+M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输入和 M3 的独立子模块 zero-ablation 均已验收。M4 在30条输入上完成固定token校准、24层重要性和Top-7，最终零基排名为 **`[0, 1, 2, 5, 3, 8, 10]`**；M5完成选择性Q/K/V LoRA的真实三步CPU训练与fresh-base checkpoint恢复。M6已完成 **Full / Random7 / Adaptive7统一训练与评估接口**：每方法从相同基础权重新加载，统一数据/配置各训练3个短合成batch，共9步；实际可训练参数为 **1,474,560 / 430,080 / 430,080**，非同参数预算。最终 **162个测试通过**，三方法合成smoke exact-match均0/3，不能当作正式任务准确率。M7当前按用户指令准备正式代码与数据，不再追加测试；已有一次CUDA基线失败，尚未开始正式训练/效果实验。证据见 [阶段门禁](REPRO_PLAN.md)、[M1](reports/m1_validation.md)、[M2](reports/m2_validation.md)、[M3](reports/m3_validation.md)、[M4](reports/m4_validation.md)、[M5](reports/m5_validation.md) 和 [M6验收报告](reports/m6_validation.md)。
 
-## M7：协议已确认，尚未执行 GPU 实验
+## M7：直接准备正式实验，不再追加测试
 
 用户已确认第一轮采用Qwen2.5-1.5B、N250、Top8、rank16/alpha32，比较Full/Random8/Adaptive8的8项commonsense任务。固定模型/数据来源、Alpaca纯文本前缀、答案loss mask、抽样、解析和单卡batch差异见 [M7协议](M7_PROTOCOL.md) 与 [配置JSON](configs/qwen2_5_1_5b_commonsense_r16.json)。这些复现决定不是论文未披露细节的还原声明。
 
-[离线检查器](scripts/check_m7_protocol.py) 和 [协议/评分模块](src/adaptive_lora/m7_protocol.py) 只使用标准库，可在未安装PyTorch等项目依赖时运行。它不是CUDA训练入口；已确认配置返回REVIEWED_NOT_EXECUTABLE，始终execution_authorized=false、runtime_validated=false。使用新输出目录：
+2026-11-16用户决定：**不再补单测、N1、pilot或额外诊断，不以这些作为正式实验前提**。重用已有AutoDL隔离环境、1.5B快照与固定数据，使用[正式入口](scripts/run_m7_experiment.py)、[运行配置](configs/m7_formal_autodl.json)和[启动器](scripts/m7_formal.sh)：
 
 ```bash
-.venv/Scripts/python.exe -I -S -B -X utf8 scripts/check_m7_protocol.py \
-  --config configs/qwen2_5_1_5b_commonsense_r16.json \
-  --output-dir results/m7-protocol-review-new
+bash scripts/m7_formal.sh prepare  # 仅装配数据，不使用GPU
+bash scripts/m7_formal.sh          # 仅显示命令
+# 明确启动正式实验后才执行：
+bash scripts/m7_formal.sh start    # N250 → Full/Random8/Adaptive8各3epochs → 统一评估/汇总
 ```
 
-[Linux/CUDA候选直接依赖](requirements-linux-cu124-m7.in) 的固定版本现已在独立Linux环境安装并通过适用CPU验收；该.in仍不是完整传递依赖锁，其初始“未安装”注释保留原批准字节。实际67项wheel哈希锁、安装报告和Linux freeze另存私有证据。协议核查结果见 [M7首项报告](reports/m7_preflight_20261115.md)。
+当前只准备，不自动启动。正式运行显式使用SDPA，保留FP16基础/FP32 adapter/FP16 AMP；旧eager非有限值失败不改写为成功，也不声称SDPA已测试修复。新代码测试记NOT RUN（用户要求）。当前说明以[M7协议](M7_PROTOCOL.md)为准；旧预检器与有界pilot入口不再使用。
+
+### 历史准备记录（不再作为启动前提）
 
 2026-11-15最新环境状态：另获一次最多30分钟的缓存续接授权后，**118.766秒内完成全67个缓存wheel官方核验、离线依赖/项目安装、pip check、固定版本导入与适用Linux CPU验收**，新下载wheel为0。Linux单测 **183项通过、2项真实tokenizer测试NOT RUN**（缺少固定缓存，未下载）；本地Windows185项回归通过。范围状态为 **PASS_APPLICABLE_CPU，不是185项Linux全通过、CUDA通过或M7完成**。最新证据见 [CPU环境验收报告](reports/m7_environment_cpu_20261115.md) 和 [机器索引](reports/m7_environment_cpu_20261115.json)。
 
