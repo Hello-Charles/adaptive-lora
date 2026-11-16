@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "TRAINING_CHECKPOINT_CPU_PASS_CUDA_NOT_RUN",
+  "m7_complete": false,
+  "implementation": {
+    "module": "src/adaptive_lora/m7_checkpoint.py",
+    "apis": [
+      "save_training_checkpoint",
+      "restore_training_checkpoint"
+    ],
+    "format": [
+      "state.safetensors",
+      "checkpoint.json"
+    ],
+    "optimizer": "standard AdamW, one ordered group, FP32 trainable parameters",
+    "policy_scope": "confirmed none/drop, completed accumulation groups only",
+    "saved": [
+      "ordered trainable weights",
+      "AdamW tensor and group states",
+      "GradScaler",
+      "Python global RNG",
+      "NumPy legacy RNG including Gaussian cache",
+      "Torch CPU RNG",
+      "optional current single-device CUDA RNG",
+      "experiment identity",
+      "epoch/next_micro_batch/global_step"
+    ],
+    "not_saved": [
+      "frozen base weights",
+      "model buffers",
+      "module training flags",
+      "backend deterministic flags",
+      "scheduler",
+      "independent Generators",
+      "workers",
+      "other CUDA devices"
+    ],
+    "load_requires": [
+      "caller-audited same-base LoRA whitelist",
+      "fresh empty optimizer",
+      "same named parameter order",
+      "same experiment identity/hyperparameters/device/versions",
+      "no outstanding gradients"
+    ],
+    "on_step_can_save_directly": false,
+    "on_step_note": "Existing accumulation callback runs before zero_grad; integration must explicitly establish a cleared complete-group boundary.",
+    "cuda_branch_implemented_but_not_executed": true
+  },
+  "test_results": {
+    "focused": {
+      "tests": 29,
+      "elapsed_seconds": 4.073,
+      "skipped": 0,
+      "result": "PASS"
+    },
+    "full_regression": {
+      "tests": 321,
+      "elapsed_seconds": 16.905,
+      "skipped": 0,
+      "exit_code": 0,
+      "result": "PASS",
+      "log": {
+        "sha256": "2a10f29f5caf390188c690352eae979b01c014aa5a02c5afa0233b4405b92e6c",
+        "bytes": 1251
+      }
+    },
+    "test_names": [
+      "test_checkpoint_uses_safetensors_and_json_no_base_or_pickle",
+      "test_continuous_equals_fresh_restore_and_resume",
+      "test_cpu_checkpoint_never_initializes_cuda",
+      "test_duplicate_or_frozen_whitelist_rejected",
+      "test_enabled_cpu_scaler_round_trips",
+      "test_epoch_boundary_position_round_trips",
+      "test_existing_directory_is_never_overwritten",
+      "test_extra_file_rejected",
+      "test_final_epoch_position_round_trips",
+      "test_initial_zero_step_checkpoint_can_resume",
+      "test_invalid_rng_rejected_without_modifying_live_objects",
+      "test_missing_completion_marker_rejected",
+      "test_nonfinite_optimizer_state_rejected",
+      "test_nonfinite_parameter_rejected_before_creating_directory",
+      "test_optimizer_hyperparameter_mismatch_rejected",
+      "test_real_tiny_qwen_peft_adapter_resumes_exactly_on_fresh_base",
+      "test_restore_rejects_dependency_version_drift",
+      "test_restore_rejects_rehashed_parameter_shape_mismatch",
+      "test_restore_requires_fresh_optimizer",
+      "test_rng_restoration_preserves_python_gauss_cache_and_numpy_cache",
+      "test_save_does_not_advance_rng",
+      "test_save_rejects_inconsistent_global_step",
+      "test_save_rejects_middle_of_accumulation",
+      "test_save_rejects_optimizer_parameter_reordering",
+      "test_save_rejects_pending_gradients",
+      "test_scaler_mode_mismatch_rejected",
+      "test_tensor_file_corruption_rejected",
+      "test_write_failure_leaves_no_completion_marker",
+      "test_wrong_experiment_identity_rejected_before_mutation"
+    ],
+    "continuous_vs_fresh_resume": "exact equality for weights, AdamW, loss and subsequent RNG draws",
+    "real_tiny_qwen_peft": "12 A/B tensors and optimizer/loss match; base fingerprints unchanged",
+    "enabled_cpu_grad_scaler": "state and resumed update match; not CUDA FP16 validation",
+    "windows_reader_decode_exception_in_log": true,
+    "windows_reader_decode_exception_fixed": false
+  },
+  "source_fingerprints": {
+    "module": {
+      "sha256": "c93f70f2a2f7f6f0b6c17427ad05e010b20b8eaf0d364fca1b1c0db2ec599888",
+      "bytes": 19897
+    },
+    "tests": {
+      "sha256": "06681cf64cd519a9a8cf97a8c3a0f397659b9ccf0a532ecf458bfba7254b453f",
+      "bytes": 21194
+    }
+  },
+  "git_before_commit": "d5440da4e915713c8f58b472f3c3bbdf960c38bd",
+  "config_file_bytes_sha256_unchanged": "e5e8dad366dc26198d41c9a0ffad3715a30a0c020a4146b02d3e77cb17e3c87f",
+  "local_environment": {
+    "python": "3.12.8",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.4",
+    "safetensors": "0.8.0",
+    "transformers": "5.22.2",
+    "peft": "0.21.2"
+  },
+  "synthetic_cpu_backward_tests_executed": true,
+  "cuda_used": false,
+  "remote_execution": false,
+  "formal_training_started": false,
+  "downloaded_or_installed": false,
+  "pushed": false,
+  "not_run": [
+    "real CUDA RNG/FP16 AMP save and resume",
+    "remote torch 2.6.0+cu124 acceptance",
+    "fixed 1.5B training checkpoint",
+    "formal training CLI stop/resume integration",
+    "pilot",
+    "formal training",
+    "formal evaluation"
+  ]
+}

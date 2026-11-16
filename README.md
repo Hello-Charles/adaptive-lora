@@ -48,6 +48,8 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
 
 2026-11-16真实数据装配核验通过：状态 **`REAL_BATCH_ASSEMBLY_PASS_CPU_ONLY`**。经用户明确批准在 `autodl` 新建输出目录，单次纯 CPU 执行 **8.666657 秒**，10,000 条真实样本全部构造成功、0 截断；三个 epoch 实际检查 **3,750 个 micro-batch / 30,000 个样本-次**，右 padding、监督 labels、真实 EOS 保留及样本顺序全部通过，批宽 88–472（均为8倍数）。每 epoch **计划**使用9,984条、丢弃同一批16条、156个optimizer steps；三epoch共计划468步，但**实际执行0步，无模型前向、无训练、CUDA未初始化**。丢弃身份清单仅存远端私有目录，已由独立只读核验对照原审计后缀确认，未取回题面/答案/身份列表。使用固定本地提交 `945fc410…` 的内嵌模块和新配置字节，远端repo仍为批准的 `2df16eb…` 且clean，旧部署配置未同步。全套本地 **292项测试通过、无跳过**（日志仍有Windows子进程解码异常，完整保留）；远端与本地证据独立核验通过。详见[真实装配报告](reports/m7_real_batch_assembly_20261116.md)与[机器索引](reports/m7_real_batch_assembly_20261116.json)。M7整体未完成；optimizer/RNG checkpoint、训练入口集成与CUDA/pilot仍待完成，不自动进入训练。
 
+2026-11-16训练断点机制：新增 [m7_checkpoint.py](src/adaptive_lora/m7_checkpoint.py)，与旧adapter-only推理恢复分离。safetensors+严格JSON保存有序可训练参数、AdamW、GradScaler、Python/NumPy/Torch默认RNG及epoch/下一批/global_step；要求完整累积组、已清梯度、同一身份/参数顺序/超参数/版本，不用pickle、不保存基础权重、不覆盖目录。**29项CPU测试通过**，含全新微型Qwen+真实PEFT恢复后下一组参数/优化器/loss与连续运行逐项一致；全套 **321项通过，无跳过**。状态 **`TRAINING_CHECKPOINT_CPU_PASS_CUDA_NOT_RUN`**：单CUDA设备RNG分支已写但未运行，固定1.5B与正式入口停跑续跑仍NOT RUN。现有`on_step`回调早于清梯度，不能直接保存；调用者还须审计基础模型与LoRA身份。详见[checkpoint报告](reports/m7_training_checkpoint_20261116.md)与[机器索引](reports/m7_training_checkpoint_20261116.json)。未远端操作、未改配置、未push；M7整体未完成。
+
 ## 代码阅读与注释约定
 
 源码、脚本和测试使用中文注释/docstring，重点说明预测位置、padding/截断、答案隔离、hook 生命周期、离线加载和结果保留等隐含约束。后续新增或修改代码也必须遵循 [CLAUDE.md 的代码注释规范](CLAUDE.md#代码注释规范现有代码及后续新增修改代码均适用)；关键逻辑详细解释，简单语句不逐行复述。
