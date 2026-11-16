@@ -42,6 +42,8 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
 
 2026-11-16批组装层实现：新增 `collate_supervised_examples` 与 **7项测试**（全套 **263项通过**）。既有 `build_supervised_example` 只产出单条样本，而训练侧完整序列长度实测 57–468 不等，要拼成 micro-batch 8 就必须做 padding 与批内对齐。两个陷阱：**①pad 与 EOS 同为 151643**——若用 `input_ids != pad_token_id` 推断有效位置，每个真实 EOS 都会被判成 padding、label 置 -100、mask 置 0，训练照常收敛却学不会停止；故全程只用 `attention_mask` 与 `labels` 判定，并设专测逐条断言监督区间末尾 EOS 仍可见。**②两层 padding 叠加**——单条样本已按 8 补过一次，直接追加会让中间那层边界无法从 IDs 恢复（pad==eos 无法区分），故先求真实有效长度 `prompt+supervised` 再从干净区间重补到批宽（最长有效长度向上取整到 8）。前置条件校而不改：批内 `sample_id` 唯一、单条样本自带 padding 必须自成一段、prompt 全 -100、监督区间无负值、未截断样本以 EOS 收尾（用 labels 判断）。状态 **`COLLATE_IMPLEMENTED_GPU_NOT_RUN`**：真实 CUDA、batch 前向数值、pilot 与正式训练/评估均未运行。详见[批组装报告](reports/m7_collate_20261116.md)与[机器索引](reports/m7_collate_20261116.json)。
 
+2026-11-16数据装配层实现：新增 `src/adaptive_lora/m7_batches.py` 与 **23项测试**（全套 **286项通过**）。填补"三块零件没有接起来"的缺口：`build_supervised_example` 产出单条 → `m7_batches` 按 epoch 定序并切 micro-batch → `collate_supervised_examples` 拼成批 → `run_accumulation` 消费。**两处协议空白须由你决定**：①训练顺序——论文只写"3 epochs"，未规定是否 shuffle，当前默认 `none`（按抽样顺序）；②末组余量——10,000 条与累积组 64 不整除（每 epoch 末组仅 2 个 micro-batch），`error`/`step`/`drop` 仍未选。装配层的关键约束：训练目标取 `output` 字段不取 `answer`（否则是评估答案泄漏，有专测验证），每条样本的 `sample_id` 由本层补全，坏样本让整批失败而不跳过（否则会静默得到 9,999 条）。发现并修复一个实现 bug：`random.Random((seed, epoch))` 在 Python 3.12 抛 `TypeError`，改为整数混合派生种子。状态 **`BATCH_ASSEMBLY_IMPLEMENTED_GPU_NOT_RUN`**，详见[装配层报告](reports/m7_batch_assembly_20261116.md)与[机器索引](reports/m7_batch_assembly_20261116.json)。
+
 ## 代码阅读与注释约定
 
 源码、脚本和测试使用中文注释/docstring，重点说明预测位置、padding/截断、答案隔离、hook 生命周期、离线加载和结果保留等隐含约束。后续新增或修改代码也必须遵循 [CLAUDE.md 的代码注释规范](CLAUDE.md#代码注释规范现有代码及后续新增修改代码均适用)；关键逻辑详细解释，简单语句不逐行复述。

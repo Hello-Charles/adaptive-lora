@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "BATCH_ASSEMBLY_IMPLEMENTED_GPU_NOT_RUN",
+  "m7_complete": false,
+  "implemented": {
+    "module": "src/adaptive_lora/m7_batches.py",
+    "functions": {
+      "epoch_order": "returns the sample visit order for one epoch; deterministic, independent of global random state",
+      "prepare_supervised_examples": "builds supervised examples in bulk and adds sample_id from records",
+      "iter_epoch_micro_batches": "cuts examples into micro-batches in the given epoch order",
+      "plan_epoch_accumulation": "overlays accumulation groups on top of the epoch plan"
+    }
+  },
+  "protocol_gaps_exposed": {
+    "training_order": {
+      "gap": "the paper specifies 3 epochs but does not state whether samples are shuffled",
+      "config_key_present": false,
+      "options": {"none": "follow the sampling order every epoch", "per_epoch_shuffle": "shuffle with a per-epoch derived seed"},
+      "current_default": "none",
+      "reason_for_default": "fewest additional assumptions; not claimed to be the paper original"
+    },
+    "final_partial_group_policy": {
+      "gap": "10000 samples / micro-batch 8 = 1250 micro-batches; 1250 / accumulation 8 = 156 full groups plus 2 leftover micro-batches",
+      "options": {"error": "refuse if not divisible (current default)", "step": "step on the smaller group", "drop": "discard the leftover"},
+      "still_unresolved": true
+    }
+  },
+  "key_constraints": {
+    "training_target_is_output_not_answer": true,
+    "answer_field_cannot_leak_into_training": true,
+    "sample_id_added_by_this_layer": true,
+    "bad_example_fails_the_whole_batch": true,
+    "no_silent_skip_or_resample": true
+  },
+  "implementation_bug_found_and_fixed": {
+    "description": "random.Random((seed, epoch)) raises TypeError on Python 3.12; only int/float/str/bytes/bytearray are accepted",
+    "fix": "derived_seed = ((seed * 0x9E3779B1) ^ (epoch * 0x85EBCA6B)) & 0xFFFFFFFF",
+    "tests_failed_before_fix": 6,
+    "tests_pass_after_fix": 23
+  },
+  "new_tests": {
+    "file": "tests/test_m7_batches.py",
+    "count": 23
+  },
+  "checks": {
+    "none_policy_keeps_order": "PASS",
+    "shuffle_produces_permutation": "PASS",
+    "different_epochs_shuffle_differently": "PASS",
+    "reproducible_given_same_seed_and_epoch": "PASS",
+    "independent_of_global_random_state": "PASS",
+    "even_split_and_no_sample_lost": "PASS",
+    "error_drop_refuse_at_assembly_time": "PASS",
+    "order_sha256_reflects_actual_order": "PASS",
+    "paper_shape_plan_1250_micro_156_groups_plus_2": "PASS",
+    "training_target_is_output_not_answer": "PASS",
+    "sample_id_supplement_duplicates_and_missing_rejected": "PASS",
+    "bad_example_fails_whole_batch": "PASS",
+    "local_offline_regression": {"status": "PASS", "tests_run": 286, "elapsed_seconds": 16.846, "skipped": 0}
+  },
+  "not_run": [
+    "real 10000-row batch assembly on the remote server",
+    "real CUDA / batch forward numerics",
+    "attention masking correctness inside a real Qwen forward",
+    "pilot run",
+    "formal training",
+    "formal evaluation"
+  ],
+  "cuda_used": false,
+  "training_started": false,
+  "pushed": false,
+  "gpu_allocated": false
+}

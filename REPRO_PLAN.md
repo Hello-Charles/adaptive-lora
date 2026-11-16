@@ -192,7 +192,7 @@ Full 的24层实测 **1,474,560 个可训练元素、144个A/B张量**；Random7
   - [x] **CUDA/AMP/梯度累积执行机制已实现（2026-11-16）**：新增 `src/adaptive_lora/m7_training.py` 与28项测试，填补既有 `train_smoke` 明确不支持accumulation/AMP的缺口。设备解析在CUDA不可用时报错而不静默回退CPU（否则耗时/显存/吞吐证据失真）；AMP在CPU上显式禁用并如实上报，CUDA+FP16启用GradScaler、BF16不缩放；累积数学为"组内loss除以该组实际大小再反向"，使梯度等于整组平均loss的梯度而非求和，unscale后才判量级，用真实梯度逐元素验证误差0.0。全套256项回归通过。**真实CUDA/AMP数值、1.5B前向显存与pilot均NOT RUN**，详见[训练执行层报告](reports/m7_training_engine_20261116.md)。
   - [ ] **待用户决定（阻塞正式训练）**：10,000条训练样本不能被有效batch 64整除（10,000 = 64×156 + 16），每epoch末组仅2个micro-batch。`error`/`step`/`drop`三选一必须在任何前向之前确定；本实现默认`error`，不静默少用样本或改变有效batch。
   - [x] **批组装层已实现（2026-11-16）**：新增 `collate_supervised_examples` 与7项测试（全套263项通过）。`build_supervised_example` 只产单条样本、长度57–468不等，拼成 micro-batch 8 需 padding 对齐。关键风险：`pad==eos==151643`，若用 `input_ids != pad_token_id` 判有效位置会把每个真实 EOS 当 padding（label置-100、mask置0），训练照常收敛却学不会停止；故只用 mask/labels 判定并设专测断言 EOS 仍可见。另处理两层 padding 叠加：先求真实有效长度再从干净区间重补到批宽。状态 `COLLATE_IMPLEMENTED_GPU_NOT_RUN`，真实CUDA与batch前向NOT RUN。详见[批组装报告](reports/m7_collate_20261116.md)。
-  - [ ] 数据到 micro-batch 的装配入口未实现（把已核验的10,000条按epoch/step切成`micro_batches`）；不依赖GPU，可继续推进。
+  - [x] **数据→micro-batch 装配层已实现（2026-11-16）**：新增 `src/adaptive_lora/m7_batches.py` 与23项测试（全套286项通过）。填补三块零件间的缺口：按epoch定序→切micro-batch→保留样本身份→与累积组计划对齐。关键约束：训练目标取`output`不取`answer`（防评估答案泄漏，有专测），`sample_id`由本层补全，坏样本整批失败而不跳过。**两处协议空白须用户决定**：①训练顺序（论文只写"3 epochs"未规定shuffle，当前默认`none`）；②末组余量（`error`/`step`/`drop`仍未选）。状态`BATCH_ASSEMBLY_IMPLEMENTED_GPU_NOT_RUN`，真实CUDA/真实10,000条装配/pilot均NOT RUN。详见[装配层报告](reports/m7_batch_assembly_20261116.md)。
   - [ ] GPU checkpoint（含optimizer/RNG续跑）未实现；现有 `checkpoint.py` 明确只做adapter-only推理恢复。
 - [ ] 保存训练日志、GPU 耗时和峰值显存。
 - [ ] 完成统一评估；不人为追求论文数值而改动结果。
