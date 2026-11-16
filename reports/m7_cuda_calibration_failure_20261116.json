@@ -1,0 +1,180 @@
+{
+  "status": "DEPLOY_CPU_PASS_CALIBRATION_FAIL_NONFINITE_BASELINE",
+  "date": "2026-11-16",
+  "source_commit": "397df807152a19d530fc6d1a9c5c829a0f561ebb",
+  "remote_root": "/root/autodl-tmp/adaptive-lora-m7-pretraining-20261116-01",
+  "deployment": {
+    "status": "OFFLINE_FIXED_SHA_DEPLOY_PASS",
+    "source_commit": "397df807152a19d530fc6d1a9c5c829a0f561ebb",
+    "old_commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "bundle_bytes": 213418,
+    "bundle_sha256": "5f645e24beaeb1e9c6f41212ab721e3d4a780d077c681cb73f3da4424eef48de",
+    "remote_root": "/root/autodl-tmp/adaptive-lora-m7-pretraining-20261116-01",
+    "cuda_started": false
+  },
+  "delivery_launcher_error_preserved": {
+    "interpreter": "/usr/bin/python3",
+    "exit_code": 127,
+    "payload_executed": false,
+    "correction": "Use the approved existing isolated venv"
+  },
+  "remote_cpu": {
+    "status": "PASS_APPLICABLE_CPU",
+    "tests_discovered": 335,
+    "tests_run": 333,
+    "actual_passes": 303,
+    "skipped": 30,
+    "explicit_not_run": 2,
+    "elapsed_seconds": 10.498,
+    "failures": 0,
+    "errors": 0,
+    "cuda_initialized": false,
+    "not_run_reason": "Fixed 0.5B tokenizer cache absent; no download or cache impersonation"
+  },
+  "calibration_execution": {
+    "phase": "calibration",
+    "source_commit": "397df807152a19d530fc6d1a9c5c829a0f561ebb",
+    "start_utc": "2026-11-16T06:39:08.775902+00:00",
+    "end_utc": "2026-11-16T06:39:22.409633+00:00",
+    "elapsed_seconds": 13.63377396017313,
+    "exit_code": 1,
+    "deadline_seconds": 1800,
+    "log_sha256": "86f70bfedd54651adc9fd20db012d1daa2df1b0bd2b6eb7487ba9cc8a66b7827",
+    "log_bytes": 2142,
+    "formal_training_started": false
+  },
+  "calibration_failure": {
+    "exception_type": "ValueError",
+    "elapsed_seconds": 12.721683457493782,
+    "formal_training_started": false,
+    "message": "Prediction logits must be finite",
+    "stage": "N1 first sample unablated baseline prediction",
+    "n1_complete": false,
+    "n250_started": false,
+    "top8": null,
+    "control_flow_inference": "One baseline forward reached reference_prediction; no ablation, restoration or ranking reached. Not a persisted forward counter."
+  },
+  "cpu_numeric_diagnosis": {
+    "status": "CPU_STATIC_NUMERIC_DIAGNOSIS_COMPLETE",
+    "tensor_count": 338,
+    "parameter_elements": 1543714304,
+    "original_tensor_dtypes": {
+      "torch.bfloat16": 338
+    },
+    "nonfinite_original_tensor_names": [],
+    "nonfinite_after_fp16_cast_tensor_names": [],
+    "maximum_absolute_stored_weight": 316.0,
+    "synthetic_qk": {
+      "head_dimension": 128,
+      "qk_value": 128.0,
+      "fp16_raw_dot_finite": false,
+      "fp16_after_scale_finite": false,
+      "fp32_scaled_dot_finite": true
+    },
+    "eager_attention_source_sha256": "cb34ccea28710ae8d5d94a241b704ea3d974048f85372f0b1b3c2a8a2ef1ee20",
+    "cuda_initialized": false,
+    "actual_model_forward_executed": false,
+    "limitation": "Synthetic overflow demonstrates possibility only, not localization of actual N1 failure"
+  },
+  "interpretation": {
+    "weight_nonfinite_or_fp16_cast_overflow": "RULED_OUT_FOR_STORED_TENSORS",
+    "actual_first_nonfinite_operation": "NOT_LOCALIZED",
+    "eager_fp16_qk_overflow": "PLAUSIBLE_MECHANISM_ONLY",
+    "fp32_softmax_cannot_repair_upstream_inf_nan": true,
+    "gpu_diagnostic_rerun_executed": false
+  },
+  "pilot": {
+    "status": "NOT RUN_DEPENDS_ON_CALIBRATION",
+    "attempts_started": 0,
+    "optimizer_steps": 0
+  },
+  "authorization_accounting": {
+    "calibration_attempts_started": 1,
+    "calibration_one_shot_consumed": true,
+    "pilot_attempts_started": 0,
+    "automatic_gpu_retry": false,
+    "dtype_or_backend_fallback": false,
+    "deadline_extended": false
+  },
+  "readonly_final": {
+    "observed_utc": "2026-11-16T06:44:34.598656+00:00",
+    "new_repo": {
+      "commit": "397df807152a19d530fc6d1a9c5c829a0f561ebb",
+      "dirty": false
+    },
+    "old_repo": {
+      "commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+      "dirty": false
+    },
+    "config_sha256": "e5e8dad366dc26198d41c9a0ffad3715a30a0c020a4146b02d3e77cb17e3c87f",
+    "audit_sha256": "840fba0ca65d436587c6941b89e066689682c73bbcff8be6cd179c0eb69202f9",
+    "calibration_output_files": [
+      "failure.json"
+    ],
+    "pilot_directory_exists": false,
+    "gpu_snapshot": "NVIDIA GeForce RTX 4090, 24564 MiB, 0 MiB, 0 %"
+  },
+  "logs": {
+    ".cache/m7-20261115-assets-04/ssh-bundle-deploy-01.log": {
+      "bytes": 58,
+      "sha256": "3aebc4edffe4ea0ac470fdcdaa1f64920d577bc05e26bb114d5b0627643bb426"
+    },
+    ".cache/m7-20261115-assets-04/ssh-bundle-deploy-02.log": {
+      "bytes": 999,
+      "sha256": "2ad04a6c713d54afce43076d8cca52fefa06fa90bb325a01841e5a169fea5f02"
+    },
+    ".cache/m7-20261115-assets-04/ssh-bundle-deploy-02.json": {
+      "bytes": 396,
+      "sha256": "588ff195f1deec2fa9fdf2b3c6cd0a6dfb9761a7455c2778f9b4aace3be50dda"
+    },
+    ".cache/m7-20261115-assets-04/remote-cpu-regression-01.log": {
+      "bytes": 5134,
+      "sha256": "03a17e6671d660f830e8e9b032abd167d128a65af3868b144faa55e590adcc8e"
+    },
+    ".cache/m7-20261115-assets-04/cuda-calibration-01.json": {
+      "bytes": 515,
+      "sha256": "ce8b48926f4017af20693b4b36c557cca1308abc51572b2113640201c893dfb7"
+    },
+    ".cache/m7-20261115-assets-04/calibration-failure-inspection-01.log": {
+      "bytes": 2340,
+      "sha256": "2a8e7a1cff4d11e6f417b089a2d97ca750701f08e68ededc4bb39e82aa2d5d79"
+    },
+    ".cache/m7-20261115-assets-04/calibration-cpu-numeric-diagnosis-01.json": {
+      "bytes": 1664,
+      "sha256": "2dfe53880e01cc5ab29dffbe5c87e08265e007fd9e2e990ecf10ca58e2399c1a"
+    },
+    ".cache/m7-20261115-assets-04/pretraining-remote-evidence-01/cpu-regression-01.log": {
+      "bytes": 57624,
+      "sha256": "85857dcde21da0e55ad991886145b11c3188d907ca34b91486a7611ccf625d9c"
+    },
+    ".cache/m7-20261115-assets-04/pretraining-remote-evidence-01/cpu-regression-01.json": {
+      "bytes": 5553,
+      "sha256": "1ac59a7de083b9ed1f7e238034d07ffc372e96051fc8ead8bbabbaf0ae44874c"
+    },
+    ".cache/m7-20261115-assets-04/pretraining-remote-evidence-01/calibration-01.log": {
+      "bytes": 2142,
+      "sha256": "86f70bfedd54651adc9fd20db012d1daa2df1b0bd2b6eb7487ba9cc8a66b7827"
+    },
+    ".cache/m7-20261115-assets-04/pretraining-remote-evidence-01/calibration-01-execution.json": {
+      "bytes": 418,
+      "sha256": "81922eecdaa1bf6c1f465bddb9fa9b0be20fb93e89202200d73953f2bc1b5a99"
+    },
+    ".cache/m7-20261115-assets-04/pretraining-remote-evidence-01/calibration-01/failure.json": {
+      "bytes": 114,
+      "sha256": "3f01653b61a5b81dd3536416ac70f0bc6c2a2c39e5ee4f5786fb2bfff8938dcf"
+    },
+    ".cache/m7-20261115-assets-04/pretraining-remote-evidence-01/index.json": {
+      "bytes": 1464,
+      "sha256": "07af14956f439fdeb83b20c89a19542d197343184b25a116fd112ece1d204a7d"
+    }
+  },
+  "formal_training_started": false,
+  "formal_optimizer_steps": 0,
+  "m7_complete": false,
+  "paper_basis": [
+    "Algorithm 1; Section 4.3 Eq. (4)/(5)",
+    "Appendix C.2 training precision"
+  ],
+  "paper_access": "Existing PDF extraction reread; method extraction has some encoding loss, no new PDF rendering",
+  "next_step": "Separately authorize bounded first-nonfinite-operation diagnostics; do not rerun N250 or change precision/backend silently"
+}

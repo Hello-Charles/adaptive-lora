@@ -52,6 +52,8 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
 
 2026-11-16训练前集成：新增[有界会话](src/adaptive_lora/m7_session.py)连接组后清梯度/安全断点、实际监督张量身份、跨epoch精确恢复及两层drop清单；10项真实PEFT微型Qwen CPU用例通过，加4项[训练前CLI](scripts/run_m7_pretraining.py)门禁测试，全套**335项通过**。固定源码 **`397df807152a19d530fc6d1a9c5c829a0f561ebb`** 已审查181个唯一Git文件对象并发布至[训练前门禁分支](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-pretraining-gates)。**远端部署被工具权限门禁拒绝，未执行**；只读确认新部署目录不存在、旧SHA`2df16eb…`不变且clean、4090占用0MiB。因此N250/Top8尚未实际计算、三方法CUDA/AMP pilot与GPU续跑均NOT RUN；没有启动正式训练，没有改变模型/数据或配置哈希链。详见[训练前集成报告](reports/m7_pretraining_20261116.md)。
 
+2026-11-16最新实际运行：另获批准后通过SSH增量Git bundle成功部署固定SHA **`397df807…`**，新旧repo均clean、配置/旧审计哈希未变。远端CPU **303项实际通过、30项跳过、另2项NOT RUN**（缺固定0.5B tokenizer缓存，不能称335项全通过）。随后一次N1/N250 CUDA阶段在首条N1**未消融baseline**的预测位置遇到非有限logits，13.634秒退出；N1未完成、N250/Top8/pilot/GPU续跑均未执行，optimizer steps0，GPU已释放。CPU检查全部338个存储张量及其FP16转换均有限；eager FP16 QK点积中间溢出是有合成证据的可能机制，**真实首个异常算子尚未定位**。未重跑、未换精度/backend、未启动正式训练。详见[CUDA基线失败报告](reports/m7_cuda_calibration_failure_20261116.md)与[机器索引](reports/m7_cuda_calibration_failure_20261116.json)。
+
 ## 代码阅读与注释约定
 
 源码、脚本和测试使用中文注释/docstring，重点说明预测位置、padding/截断、答案隔离、hook 生命周期、离线加载和结果保留等隐含约束。后续新增或修改代码也必须遵循 [CLAUDE.md 的代码注释规范](CLAUDE.md#代码注释规范现有代码及后续新增修改代码均适用)；关键逻辑详细解释，简单语句不逐行复述。
