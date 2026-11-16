@@ -1,0 +1,70 @@
+{
+  "status": "BLOCKED_DEPLOY_GITHUB_TLS_FAILURE",
+  "date": "2026-11-16",
+  "approved_source_commit": "397df807152a19d530fc6d1a9c5c829a0f561ebb",
+  "authorization": {
+    "host": "autodl",
+    "new_root": "/root/autodl-tmp/adaptive-lora-m7-pretraining-20261116-01",
+    "scope": "Clone pinned source; write test logs and private results; use existing venv for one calibration and one bounded three-method CUDA AMP pilot",
+    "calibration_deadline_seconds": 1800,
+    "pilot_deadline_seconds": 1800,
+    "formal_training_authorized_by_this_action": false
+  },
+  "deployment": {
+    "executed_attempts_this_authorization": 1,
+    "tool_permission_denied": false,
+    "exit_code": 128,
+    "stage": "git_clone",
+    "error": "GnuTLS recv error (-110): The TLS connection was non-properly terminated.",
+    "fixed_sha_checkout_executed": false,
+    "cli_help_executed": false,
+    "automatic_retry_executed": false,
+    "alternative_transport_executed": false,
+    "partial_root_preserved": true,
+    "new_root_mode": "700",
+    "new_root_empty": true,
+    "new_repo_exists": false
+  },
+  "readonly_verification": {
+    "status": "PASS_OBSERVATION_ONLY",
+    "observed_utc": "2026-11-16T06:27:11Z",
+    "old_deployed_commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "old_git_dirty": false,
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "gpu_total_memory_mib": 24564,
+    "gpu_used_memory_mib": 0,
+    "gpu_utilization_percent": 0,
+    "limitation": "Read-only directory/Git/GPU observation; not a new dependency, model or dataset revalidation"
+  },
+  "runtime": {
+    "remote_cpu_regression": "NOT RUN",
+    "n1_cuda_calibration": "NOT RUN",
+    "n250_cuda_calibration": "NOT RUN",
+    "top8": null,
+    "three_method_cuda_amp_pilot": "NOT RUN",
+    "cuda_checkpoint_continuation": "NOT RUN",
+    "calibration_attempts_started": 0,
+    "pilot_attempts_started": 0,
+    "pilot_optimizer_steps": 0,
+    "formal_optimizer_steps": 0,
+    "formal_training_started": false,
+    "m7_complete": false
+  },
+  "prior_local_validation": {
+    "status": "PASS_PREVIOUS_SOURCE_VALIDATION_NOT_RERUN",
+    "tests": 335,
+    "reference": "reports/m7_pretraining_20261116.json"
+  },
+  "logs": {
+    "deployment": {
+      "path": ".cache/m7-20261115-assets-04/pretraining-deploy-02.log",
+      "bytes": 234,
+      "sha256": "8cdf4aeb3832bf2aeade783a57e6d0d92557fe7a3df0c6f06629256f0c963912"
+    },
+    "readonly_verification": {
+      "path": ".cache/m7-20261115-assets-04/pretraining-deploy-readonly-02.log",
+      "bytes": 241,
+      "sha256": "7a7390d1773b9e3cb26038d32bee2df7d42d1d9f2cf219979e10a50dc5b840b3"
+    }
+  }
+}
