@@ -226,3 +226,101 @@ def token_identity_overlap(train_rows, evaluation_rows):
         "intersection_size": len(common),
         "scope": "direct exact token-sequence identity only",
     }
+
+
+def collate_supervised_examples(examples, *, pad_token_id, pad_multiple=M7_PAD_MULTIPLE,
+                                eos_token_id=M7_EOS_TOKEN_ID):
+    """把多条 `build_supervised_example` 结果拼成一个右 padding 的批，返回二维列表字段。
+
+    为什么重建 padding 而不是在已有 padding 后继续补：单条样本已按 `pad_multiple` 补过
+    一次；若直接在其后追加到批宽，两层 padding 会叠加，而中间那层的边界**无法从 IDs
+    恢复**（pad 与 EOS 同 ID）。因此这里先按 `prompt_token_count + supervised_token_count`
+    求出真实有效长度，把单条样本自带的那层 padding 视为待重建，再从干净的有效区间重新
+    补到批宽。
+
+    关键语义（判据是 mask 与 labels，不是 IDs）：
+
+    - `attention_mask`：有效区间为 1，padding 为 0。
+    - `labels`：prompt 区间为 -100，监督区间为原 token id，padding 为 -100。
+    - 本模型 `pad_token_id == eos_token_id == 151643`，所以**绝不能**用
+      `input_ids != pad_token_id` 推断有效位置——那会把每个真实 EOS 都当成 padding，
+      恰好屏蔽掉最该学的结束符。
+
+    前置条件（只校验、不修正）：所有样本来自同一 tokenizer，且 `pad_token_id` 与构造
+    样本时一致。已截断的样本允许存在，其有效区间即为截断后长度。
+
+    返回 dict：三个二维列表加批级审计字段。不返回张量（由调用者决定设备与 dtype），
+    不写文件，不修改输入。
+    """
+    if type(pad_multiple) is not int or pad_multiple < 1:
+        raise ValueError("pad_multiple must be a positive integer")
+    if type(pad_token_id) is not int or pad_token_id < 0:
+        raise ValueError("pad_token_id must be a non-negative integer")
+    if type(eos_token_id) is not int or eos_token_id < 0:
+        raise ValueError("eos_token_id must be a non-negative integer")
+    examples = list(examples)
+    if not examples:
+        raise ValueError("collate requires at least one example")
+
+    rows, identifiers, valid_lengths = [], set(), []
+    for position, example in enumerate(examples):
+        identifier = example.get("sample_id", f"index-{position}")
+        if identifier in identifiers:
+            raise ValueError(f"Duplicate sample_id in batch: {identifier}")
+        identifiers.add(identifier)
+
+        prompt_n = example["prompt_token_count"]
+        supervised_n = example["supervised_token_count"]
+        ids = list(example["input_ids"])
+        labels = list(example["labels"])
+        mask = list(example["attention_mask"])
+        if not (len(ids) == len(labels) == len(mask)):
+            raise ValueError(f"Length mismatch between ids/labels/mask for {identifier}")
+        valid = prompt_n + supervised_n
+        if not 1 <= prompt_n < valid <= len(ids):
+            raise ValueError(f"Invalid prompt/supervised boundary for {identifier}")
+
+        # 单条样本自带的 padding 必须自成一段：mask=0 且 labels=-100。
+        if mask[:valid] != [1] * valid or mask[valid:] != [0] * (len(ids) - valid):
+            raise ValueError(f"Single-example attention mask is not contiguous for {identifier}")
+        if labels[valid:] != [PROMPT_LABEL_IGNORE] * (len(ids) - valid):
+            raise ValueError(f"Single-example padding labels are not ignored for {identifier}")
+        if labels[:prompt_n] != [PROMPT_LABEL_IGNORE] * prompt_n:
+            raise ValueError(f"Prompt labels are not all ignored for {identifier}")
+        if any(value < 0 for value in labels[prompt_n:valid]):
+            raise ValueError(f"Negative label inside the supervised region for {identifier}")
+        # 未截断时监督区间必须以 EOS 收尾；用 labels 判断，不受 pad==eos 影响。
+        if not example.get("truncated", False) and labels[valid - 1] != eos_token_id:
+            raise ValueError(f"Supervised region does not end with EOS for {identifier}")
+
+        rows.append({"sample_id": identifier, "prompt_token_count": prompt_n,
+                     "supervised_token_count": supervised_n,
+                     "input_ids": ids[:valid], "labels": labels[:valid], "mask": mask[:valid]})
+        valid_lengths.append(valid)
+
+    # 批宽取最长有效长度并向上取整到 pad_multiple，保持论文的形状约束。
+    longest = max(valid_lengths)
+    batch_length = -(-longest // pad_multiple) * pad_multiple
+
+    batch_ids, batch_labels, batch_mask = [], [], []
+    for row in rows:
+        pad_n = batch_length - len(row["input_ids"])
+        batch_ids.append(row["input_ids"] + [pad_token_id] * pad_n)
+        batch_labels.append(row["labels"] + [PROMPT_LABEL_IGNORE] * pad_n)
+        batch_mask.append(row["mask"] + [0] * pad_n)
+
+    return {
+        "input_ids": batch_ids,
+        "labels": batch_labels,
+        "attention_mask": batch_mask,
+        "sample_ids": [row["sample_id"] for row in rows],
+        "batch_size": len(rows),
+        "batch_length": batch_length,
+        "longest_valid_length": longest,
+        "valid_lengths": valid_lengths,
+        "padded_positions_total": batch_length * len(rows) - sum(valid_lengths),
+        "pad_equals_eos": pad_token_id == eos_token_id,
+        "mask_authority_note": ("pad and EOS share one id here, so validity comes from "
+                                "attention_mask and labels; deriving it from token ids would "
+                                "wrongly mask every real EOS"),
+    }

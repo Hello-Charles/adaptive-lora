@@ -19,6 +19,7 @@ from adaptive_lora.m7_tokenization import (
     build_calibration_input,
     build_evaluation_input,
     build_supervised_example,
+    collate_supervised_examples,
     ids_sha256,
     token_identity_overlap,
     tokenize_ids,
@@ -246,6 +247,135 @@ class RealTokenizerTests(unittest.TestCase):
                 example = build_supervised_example(TOKENIZER, prefix, answer)
                 self.assertGreaterEqual(example["supervised_token_count"], 2)
                 self.assertEqual(example["input_ids"][example["prompt_token_count"] + example["supervised_token_count"] - 1], M7_EOS_TOKEN_ID)
+
+
+@REQUIRES_TOKENIZER
+class CollateTests(unittest.TestCase):
+    """批组装：右 padding、批宽对齐与 pad==eos 下的 mask 权威性。
+
+    使用真实 0.5B 分词器构造长度不同的样本，验证批内每条样本的有效区间都能由
+    mask/labels 精确恢复。不涉及模型前向，因此不能证明批训练数值正确。
+    """
+
+    def _examples(self, pairs):
+        """按 (instruction, input, answer) 构造样本，长度因 input 不同而不同。"""
+        return [
+            build_supervised_example(
+                TOKENIZER,
+                build_commonsense_prompt(instruction, input_text),
+                answer,
+            )
+            for instruction, input_text, answer in pairs
+        ]
+
+    def test_batch_pads_right_to_multiple_and_preserves_valid_regions(self):
+        examples = self._examples([
+            ("Answer briefly.", "", "true"),
+            ("Answer briefly.", "word " * 40, "false"),
+            ("Answer briefly.", "word " * 5, "solution1"),
+        ])
+        batch = collate_supervised_examples(examples, pad_token_id=TOKENIZER.pad_token_id)
+
+        self.assertEqual(batch["batch_size"], 3)
+        self.assertEqual(batch["batch_length"] % 8, 0)
+        self.assertGreaterEqual(batch["batch_length"], batch["longest_valid_length"])
+        # 三条样本长度不同，所以批内确实发生了 padding。
+        self.assertGreater(batch["padded_positions_total"], 0)
+        self.assertEqual(len({len(row) for row in batch["input_ids"]}), 1)
+
+        for index, valid in enumerate(batch["valid_lengths"]):
+            mask = batch["attention_mask"][index]
+            labels = batch["labels"][index]
+            ids = batch["input_ids"][index]
+            self.assertEqual(len(ids), batch["batch_length"])
+            # 有效区间 mask=1，padding 区间 mask=0，且边界单调（右侧补齐）。
+            self.assertEqual(mask[:valid], [1] * valid)
+            self.assertEqual(mask[valid:], [0] * (batch["batch_length"] - valid))
+            # padding 位置的 labels 必须被忽略，否则 loss 会学到填充。
+            self.assertEqual(labels[valid:], [PROMPT_LABEL_IGNORE] * (batch["batch_length"] - valid))
+            # padding 位置写入 pad id，而此处 pad id 与 EOS 同值。
+            self.assertEqual(ids[valid:], [TOKENIZER.pad_token_id] * (batch["batch_length"] - valid))
+
+    def test_real_eos_is_not_masked_despite_sharing_id_with_pad(self):
+        """最关键的回归：pad == eos 时，真实 EOS 的 label 必须保留，mask 必须为 1。
+
+        若实现用 `input_ids != pad_token_id` 推断有效位置，凡是 EOS 都会被判成 padding，
+        label 被置 -100、mask 置 0——恰好把最该学的结束符屏蔽掉。这里逐条断言每条样本
+        监督区间末尾的 EOS 仍然可见。
+        """
+        self.assertEqual(TOKENIZER.pad_token_id, TOKENIZER.eos_token_id)
+        examples = self._examples([
+            ("Answer briefly.", "", "true"),
+            ("Answer briefly.", "word " * 30, "false"),
+        ])
+        batch = collate_supervised_examples(examples, pad_token_id=TOKENIZER.pad_token_id)
+        self.assertTrue(batch["pad_equals_eos"])
+
+        for index, example in enumerate(examples):
+            valid = batch["valid_lengths"][index]
+            eos_position = valid - 1
+            with self.subTest(sample=index):
+                self.assertEqual(batch["input_ids"][index][eos_position], M7_EOS_TOKEN_ID)
+                self.assertEqual(batch["labels"][index][eos_position], M7_EOS_TOKEN_ID)
+                self.assertEqual(batch["attention_mask"][index][eos_position], 1)
+                # 统计每条样本监督区间内有多少个真实 EOS label，至少为 1。
+                supervised = batch["labels"][index][example["prompt_token_count"]:valid]
+                self.assertGreaterEqual(sum(value == M7_EOS_TOKEN_ID for value in supervised), 1)
+
+    def test_prompt_region_is_ignored_and_supervised_region_is_not(self):
+        examples = self._examples([("Answer briefly.", "", "true")])
+        batch = collate_supervised_examples(examples, pad_token_id=TOKENIZER.pad_token_id)
+        prompt_n = examples[0]["prompt_token_count"]
+        labels = batch["labels"][0]
+        self.assertEqual(labels[:prompt_n], [PROMPT_LABEL_IGNORE] * prompt_n)
+        supervised = labels[prompt_n:batch["valid_lengths"][0]]
+        self.assertTrue(all(value != PROMPT_LABEL_IGNORE for value in supervised))
+
+    def test_single_example_batch_has_no_cross_sample_padding(self):
+        """单条样本时批宽就等于该样本有效长度的 8 倍数上取整，无额外跨样本 padding。"""
+        examples = self._examples([("Answer briefly.", "", "true")])
+        batch = collate_supervised_examples(examples, pad_token_id=TOKENIZER.pad_token_id)
+        valid = batch["valid_lengths"][0]
+        expected = -(-valid // 8) * 8
+        self.assertEqual(batch["batch_length"], expected)
+
+    def test_rejects_duplicate_sample_ids_and_empty_batch(self):
+        with self.assertRaisesRegex(ValueError, "at least one example"):
+            collate_supervised_examples([], pad_token_id=TOKENIZER.pad_token_id)
+        example = build_supervised_example(
+            TOKENIZER, build_commonsense_prompt("Answer briefly.", ""), "true")
+        duplicated = dict(example, sample_id="same")
+        with self.assertRaisesRegex(ValueError, "Duplicate sample_id"):
+            collate_supervised_examples([duplicated, dict(duplicated)], pad_token_id=TOKENIZER.pad_token_id)
+
+    def test_rejects_broken_single_example_regions(self):
+        """单条样本内部边界被破坏时必须拒绝，而不是在批组装时静默修正。"""
+        example = build_supervised_example(
+            TOKENIZER, build_commonsense_prompt("Answer briefly.", ""), "true")
+
+        broken_mask = dict(example)
+        broken_mask["attention_mask"] = [1] * (len(example["input_ids"]) - 1) + [1]
+        with self.assertRaisesRegex(ValueError, "attention mask is not contiguous"):
+            collate_supervised_examples([broken_mask], pad_token_id=TOKENIZER.pad_token_id)
+
+        broken_labels = dict(example)
+        valid = example["prompt_token_count"] + example["supervised_token_count"]
+        labels = list(example["labels"])
+        labels[valid] = 12345  # padding 位置不应带真实 token id
+        broken_labels["labels"] = labels
+        with self.assertRaisesRegex(ValueError, "padding labels are not ignored"):
+            collate_supervised_examples([broken_labels], pad_token_id=TOKENIZER.pad_token_id)
+
+    def test_rejects_invalid_arguments(self):
+        example = build_supervised_example(
+            TOKENIZER, build_commonsense_prompt("Answer briefly.", ""), "true")
+        for kwargs, message in (
+            ({"pad_token_id": -1}, "pad_token_id"),
+            ({"pad_token_id": TOKENIZER.pad_token_id, "pad_multiple": 0}, "pad_multiple"),
+            ({"pad_token_id": TOKENIZER.pad_token_id, "eos_token_id": -5}, "eos_token_id"),
+        ):
+            with self.subTest(kwargs=kwargs), self.assertRaisesRegex(ValueError, message):
+                collate_supervised_examples([example], **kwargs)
 
 
 if __name__ == "__main__":

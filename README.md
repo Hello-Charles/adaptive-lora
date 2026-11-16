@@ -40,6 +40,8 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
 
 2026-11-15独立数据门禁续轮：用户另行批准一次新的最多900秒/120,000,000 bytes窗口，并明确批准在SSH别名 `autodl` 执行。复用已部署完整SHA `2df16eb…`、只读复核两份既有许可、跳过README，在新目录启动。实际在**890.0009秒内只写入1个部分训练文件13,631,488/96,529,722 bytes**（0个完成文件），随后SIGALRM终止，**审计从未启动**；实测约15.3 KiB/s，按此速率完整九文件约需123分钟。旧结果字节、部署与环境SHA、平台153项及venv 69项元数据均未变，部分文件保留未删除。**状态为BLOCKED_TRANSFER_BUDGET_EXHAUSTED，九个JSON完整性/行数/抽样/文本交集仍全部NOT RUN**，不是hash不符或数据重叠。详见[续轮报告](reports/m7_data_gate_resume_20261115.md)与[机器索引](reports/m7_data_gate_resume_20261115.json)。本报告提交不自动push。
 
+2026-11-16批组装层实现：新增 `collate_supervised_examples` 与 **7项测试**（全套 **263项通过**）。既有 `build_supervised_example` 只产出单条样本，而训练侧完整序列长度实测 57–468 不等，要拼成 micro-batch 8 就必须做 padding 与批内对齐。两个陷阱：**①pad 与 EOS 同为 151643**——若用 `input_ids != pad_token_id` 推断有效位置，每个真实 EOS 都会被判成 padding、label 置 -100、mask 置 0，训练照常收敛却学不会停止；故全程只用 `attention_mask` 与 `labels` 判定，并设专测逐条断言监督区间末尾 EOS 仍可见。**②两层 padding 叠加**——单条样本已按 8 补过一次，直接追加会让中间那层边界无法从 IDs 恢复（pad==eos 无法区分），故先求真实有效长度 `prompt+supervised` 再从干净区间重补到批宽（最长有效长度向上取整到 8）。前置条件校而不改：批内 `sample_id` 唯一、单条样本自带 padding 必须自成一段、prompt 全 -100、监督区间无负值、未截断样本以 EOS 收尾（用 labels 判断）。状态 **`COLLATE_IMPLEMENTED_GPU_NOT_RUN`**：真实 CUDA、batch 前向数值、pilot 与正式训练/评估均未运行。详见[批组装报告](reports/m7_collate_20261116.md)与[机器索引](reports/m7_collate_20261116.json)。
+
 ## 代码阅读与注释约定
 
 源码、脚本和测试使用中文注释/docstring，重点说明预测位置、padding/截断、答案隔离、hook 生命周期、离线加载和结果保留等隐含约束。后续新增或修改代码也必须遵循 [CLAUDE.md 的代码注释规范](CLAUDE.md#代码注释规范现有代码及后续新增修改代码均适用)；关键逻辑详细解释，简单语句不逐行复述。

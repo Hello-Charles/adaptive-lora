@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "COLLATE_IMPLEMENTED_GPU_NOT_RUN",
+  "m7_complete": false,
+  "implemented": {
+    "module": "src/adaptive_lora/m7_tokenization.py",
+    "function": "collate_supervised_examples",
+    "signature": "collate_supervised_examples(examples, *, pad_token_id, pad_multiple=8, eos_token_id=151643)",
+    "purpose": "assemble length-varying single examples into one right-padded micro-batch",
+    "returns": "three 2-D lists (input_ids, labels, attention_mask) plus batch-level audit fields; no tensors, no files written, inputs unmodified"
+  },
+  "core_risk_addressed": {
+    "hazard": "pad_token_id == eos_token_id == 151643",
+    "wrong_implementation": "deriving valid positions from input_ids != pad_token_id",
+    "consequence": "every real EOS is classified as padding, so its label becomes -100 and its mask becomes 0; training still converges numerically but never learns to stop",
+    "correct_implementation": "validity comes only from attention_mask and labels",
+    "regression_test": "test_real_eos_is_not_masked_despite_sharing_id_with_pad asserts per sample that the supervised region still ends with a visible EOS"
+  },
+  "second_hazard_addressed": {
+    "hazard": "double padding",
+    "explanation": "each single example is already padded to a multiple of 8; appending on top of that would create two padding layers whose shared boundary cannot be recovered from ids because pad and eos share one id",
+    "resolution": "recompute the true valid length as prompt_token_count + supervised_token_count, then re-pad from the clean region up to the batch width"
+  },
+  "batch_rules": {
+    "batch_width": "longest valid length rounded up to pad_multiple",
+    "input_ids_padding": "pad_token_id",
+    "attention_mask_padding": 0,
+    "label_padding": -100,
+    "padding_side": "right",
+    "padding_side_dependency": "all assertions assume right padding, where every valid region is a contiguous prefix; switching to left padding would require rewriting this function and prediction_position"
+  },
+  "preconditions_validated_not_corrected": [
+    "sample_id must be unique inside the batch",
+    "each single example's own padding must form one contiguous trailing segment (mask=0 and labels=-100)",
+    "prompt labels must all be -100",
+    "the supervised region must contain no negative labels",
+    "an untruncated example's supervised region must end with EOS, judged from labels rather than ids"
+  ],
+  "paper_basis": {
+    "appendix_c1_c2": "max 512 tokens, truncate over-long, pad short samples to a multiple of 8",
+    "reproduction_decision_confirmed": "padding_side = right"
+  },
+  "new_tests": {
+    "class": "CollateTests",
+    "file": "tests/test_m7_tokenization.py",
+    "count": 7,
+    "names": [
+      "test_batch_pads_right_to_multiple_and_preserves_valid_regions",
+      "test_real_eos_is_not_masked_despite_sharing_id_with_pad",
+      "test_prompt_region_is_ignored_and_supervised_region_is_not",
+      "test_single_example_batch_has_no_cross_sample_padding",
+      "test_rejects_duplicate_sample_ids_and_empty_batch",
+      "test_rejects_broken_single_example_regions",
+      "test_rejects_invalid_arguments"
+    ]
+  },
+  "checks": {
+    "right_padding_to_multiple": "PASS",
+    "valid_regions_recoverable_from_mask_and_labels": "PASS",
+    "real_eos_not_masked_under_pad_equals_eos": "PASS",
+    "prompt_ignored_supervised_not": "PASS",
+    "no_cross_sample_padding_for_single_example": "PASS",
+    "duplicate_ids_and_empty_batch_rejected": "PASS",
+    "broken_upstream_regions_rejected": "PASS",
+    "invalid_arguments_rejected": "PASS",
+    "local_offline_regression": {"status": "PASS", "tests_run": 263, "elapsed_seconds": 16.484, "skipped": 0}
+  },
+  "not_run": [
+    "real CUDA / batch forward numerics",
+    "attention masking correctness inside a real Qwen forward",
+    "data to micro-batch assembly entry point",
+    "optimizer state and RNG checkpoint resume",
+    "pilot run",
+    "formal training",
+    "formal evaluation"
+  ],
+  "pending_decision_carried_over": {
+    "id": "final_partial_group_policy",
+    "still_unresolved": true,
+    "detail": "10000 samples do not divide into groups of 64; the last group of each epoch holds 2 micro-batches; error/step/drop must be chosen before formal training"
+  },
+  "cuda_used": false,
+  "training_started": false,
+  "pushed": false,
+  "gpu_allocated": false
+}
