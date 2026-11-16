@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "STRUCTURE_GATE_PASS_TOKENIZER_RUN_PENDING",
+  "m7_complete": false,
+  "approved_code_commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+  "remote_git": {
+    "commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "dirty": false,
+    "rechecked_after_run": true
+  },
+  "model": {
+    "id": "Qwen/Qwen2.5-1.5B",
+    "requested_revision": "8faed761d45a263340a0528343f099c05c9a4323",
+    "resolved_revision_via_config": null,
+    "resolved_revision_via_snapshot_dir": "8faed761d45a263340a0528343f099c05c9a4323",
+    "resolved_revision_note": "model.config has no _commit_hash; revision is evidenced by the HF cache snapshot directory name, not read back from config",
+    "model_type": "Qwen2ForCausalLM",
+    "architecture_facts": {
+      "num_hidden_layers": 28,
+      "hidden_size": 1536,
+      "intermediate_size": 8960,
+      "num_attention_heads": 12,
+      "num_key_value_heads": 2,
+      "vocab_size": 151936,
+      "tie_word_embeddings": true,
+      "use_sliding_window": false,
+      "torch_dtype": "bfloat16",
+      "max_position_embeddings": 131072
+    },
+    "config_json": {
+      "git_blob_sha1": "169d606d5cf502a5628a52381586679a6d0caaab",
+      "plain_sha1": "d65a3279e240cb46430599709267e5945493f0cc",
+      "size_bytes": 684,
+      "matches_config_record": true
+    },
+    "weights": {
+      "file": "model.safetensors",
+      "size_bytes": 3087467144,
+      "sha256": "a961db72e75d52b18e6b0c9d379e51a26973b233385e0e127fdda7d648aec796",
+      "sha256_recomputed_streaming": true,
+      "sha256_independently_rechecked_on_remote_blob": true,
+      "verified": true
+    }
+  },
+  "structure_observation": {
+    "layer_index_range": [0, 27],
+    "layer_count": 28,
+    "layer_indices_contiguous": true,
+    "attention_paths_unique": true,
+    "mlp_paths_unique": true,
+    "every_layer_has_qkv": true,
+    "hook_count": 56,
+    "hooks_all_fired": true,
+    "attention_output": {"type": "tuple", "items": ["Tensor[1,4,1536] bfloat16", "NoneType"]},
+    "mlp_output": {"type": "Tensor", "shape": [1, 4, 1536], "dtype": "torch.bfloat16"},
+    "uniform_across_layers": true,
+    "first_layer_paths": {
+      "block": "model.layers.0",
+      "attention": "model.layers.0.self_attn",
+      "mlp": "model.layers.0.mlp",
+      "q_proj": "model.layers.0.self_attn.q_proj",
+      "k_proj": "model.layers.0.self_attn.k_proj",
+      "v_proj": "model.layers.0.self_attn.v_proj"
+    },
+    "last_layer_paths": {
+      "block": "model.layers.27",
+      "attention": "model.layers.27.self_attn",
+      "mlp": "model.layers.27.mlp",
+      "q_proj": "model.layers.27.self_attn.q_proj",
+      "k_proj": "model.layers.27.self_attn.k_proj",
+      "v_proj": "model.layers.27.self_attn.v_proj"
+    }
+  },
+  "forward": {
+    "device": "cpu",
+    "cuda_visible_devices": "",
+    "mode": "torch.inference_mode",
+    "text": "Hello, world!",
+    "input_ids": [9707, 11, 1879, 0],
+    "logits_shape": [1, 4, 151936],
+    "prediction_position": 3,
+    "predicted_token_id": 358,
+    "gpu_memory_used_mib_at_check": 0
+  },
+  "tokenizer": {
+    "class": "Qwen2Tokenizer",
+    "is_fast": true,
+    "padding_side": "right",
+    "truncation_side": "right",
+    "pad_token_id": 151643,
+    "eos_token_id": 151643,
+    "pad_equals_eos_hazard_confirmed_on_1_5b": true,
+    "hazard_note": "pad == eos == 151643; validity must be determined from attention mask and labels, never from token ids",
+    "end_to_end_run_on_1_5b": false
+  },
+  "packages": {
+    "torch": "2.6.0+cu124",
+    "transformers": "5.22.2",
+    "peft": "0.21.2",
+    "matches_environment_candidate": true
+  },
+  "download": {
+    "endpoint": "https://hf-mirror.com",
+    "endpoint_justification": "official HF unreachable from this server (Network is unreachable); mirror reachable HTTP 200; same source used in M1",
+    "cache_dir": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04/models/qwen25_1_5b_8faed761",
+    "cache_total_bytes": 3098973178,
+    "started_utc_approx": "2026-11-16T00:07:06",
+    "weights_complete_utc": "2026-11-16T00:10:20",
+    "report_written_utc": "2026-11-16T00:10:27",
+    "elapsed_seconds_approx": 194,
+    "effective_bytes_per_second_approx": 15962416,
+    "timing_note": "derived from filesystem mtimes, not instrumented inside the script",
+    "incomplete_files_remaining": 0,
+    "disk_free_bytes_after": 31033708544,
+    "synthetic_or_real": "real network transfer"
+  },
+  "license": {
+    "evidence": "Hugging Face API metadata label",
+    "declared_license": "apache-2.0",
+    "license_text_bytes_obtained": false,
+    "metadata_source": "mirror_only_not_independently_authenticated",
+    "gate_relaxation_is_project_engineering_decision": true
+  },
+  "config_hashes_unchanged": {
+    "config_file_bytes_sha256": "6f715cef71d1fbe350541bd6b45524a4134ea2d879b1bee266468c4afb30081c",
+    "protocol_sha256": "d60f13752b4b8628d0ed8c8d9bb843ce92c8221b68d17cd8338a8447efa81c82",
+    "note": "different by construction (raw bytes vs canonical JSON); both unchanged this round"
+  },
+  "prior_artifacts_unchanged": {
+    "audit_summary_sha256": "02e7b6e3a0a7a4ab57c07abf97c65098570fd20e64b20f50082e9f1b5efc863c",
+    "audit_json_sha256": "840fba0ca65d436587c6941b89e066689682c73bbcff8be6cd179c0eb69202f9",
+    "state_json_sha256": "b333108a56deeb63de2cabb0d3ee2ae6795b1525626c79c8b8384d65b32a56bb"
+  },
+  "artifacts": {
+    "structure_report_remote_path": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04/m7_structure_1_5b.json",
+    "structure_report_bytes": 24104,
+    "structure_report_sha256": "d6a31d62b171eca24e2641ea98bdb24f945711324580b79e4ed931fa7ad51b62",
+    "local_copy_identical": true,
+    "runner_script": ".cache/m7-20261115-assets-04/run_structure_check.py",
+    "runner_script_sha256": "afa2fcf9b1ef5a2702dcdc1769da30da9eeaa1780a01974e80ec68ad11a32d93",
+    "verifier_script": ".cache/m7-20261115-assets-04/verify_structure.py",
+    "verification_output": ".cache/m7-20261115-assets-04/structure-verification.json",
+    "failed_first_attempt_preserved": [
+      ".cache/m7-20261115-assets-04/structure-check-01.json",
+      ".cache/m7-20261115-assets-04/structure-check-01.log"
+    ]
+  },
+  "checks": {
+    "weights_size_bytes": "PASS",
+    "weights_lfs_sha256": "PASS",
+    "pinned_revision_snapshot_dir": "PASS",
+    "config_json_git_blob_sha1": "PASS",
+    "layer_count_28_contiguous_unique": "PASS",
+    "every_layer_qkv_present": "PASS",
+    "attention_and_mlp_output_contract": "PASS",
+    "single_cpu_forward_logits_shape": "PASS",
+    "remote_commit_approved_and_clean": "PASS",
+    "prior_data_audit_artifacts_unchanged": "PASS",
+    "local_independent_verification": "PASS_STRUCTURE_ARCHIVE_ONLY",
+    "local_offline_regression": {
+      "status": "PASS",
+      "tests_run": 224,
+      "elapsed_seconds": 18.357,
+      "skipped": 0
+    }
+  },
+  "not_run": [
+    "real 1.5B tokenizer end-to-end (BPE boundary, 512 truncation, answer+EOS mask)",
+    "token-level identity intersection on real sampled rows",
+    "Linux two real-tokenizer test cases (fixed 0.5B cache still absent remotely)",
+    "CUDA / AMP / gradient accumulation / GPU checkpoint",
+    "pilot run",
+    "formal training",
+    "formal evaluation"
+  ],
+  "verification_scope_limitation": "local verification is archive-only: it re-checks report self-consistency and fixed constants with the standard library; it does not re-run the forward pass. The forward is evidenced by the remote exit code, stderr log and report bytes.",
+  "training_started": false,
+  "cuda_used": false,
+  "pushed": false,
+  "raw_data_or_weights_transferred_locally": false
+}

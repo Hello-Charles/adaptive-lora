@@ -180,6 +180,8 @@ Full 的24层实测 **1,474,560 个可训练元素、144个A/B张量**；Random7
   - [x] 续轮另获批准的新900秒 `autodl` 窗口：890.0009秒仅写入一个部分训练文件13,631,488/96,529,722 bytes，审计未启动（该部分文件后续被下一窗口接管续传）。
   - [x] 已实现并本地测试**跨窗口累积获取工具**（Range续传+长度/Git blob/SHA256三重核验+state.json只登记已核验文件），17项合成测试通过、207项回归通过。
   - [x] v2 增补前缀接管与审计可重复进入；16项v2合成测试通过。首次9000秒执行曾被工具权限分类器拦截、未执行；经用户添加项目级Bash规则后按其原文执行成功。
+  - [x] **1.5B 权重与28层结构实测通过（2026-11-16）**：另获批准的固定revision下载与单次CPU结构核验实际完成。权重3,087,467,144 bytes、LFS SHA256 `a961db72…c796` 双重核验；pinned revision由HF快照目录名实证；`config.json` Git blob SHA1 `169d606d…aaab` 与配置记录一致。28层索引连续、路径唯一、Q/K/V齐全；`self_attn` 输出 `(Tensor[1,4,1536], None)`、`mlp` 输出 `Tensor[1,4,1536]`，56个hook全触发；单次前向 logits `[1,4,151936]`。依赖 torch 2.6.0+cu124 / transformers 5.22.2 / peft 0.21.2 与 `environment_candidate` 一致。状态 `STRUCTURE_GATE_PASS_TOKENIZER_RUN_PENDING`；**真实1.5B tokenizer端到端与token级交集仍未运行**。GPU 0 MiB、未训练、未push。详见[结构门禁报告](reports/m7_structure_1_5b_20261116.md)。
+  - [ ] 在1.5B真实tokenizer上端到端运行分词管线（BPE边界、512右截断、pad到8、答案+EOS mask）并对实际抽样行产出token级身份交集；模块已实现且仅在0.5B分词器上验证过，共享词表不等于行为等价。
 - [ ] 准备获批的独立Linux/CUDA环境，完成CUDA/AMP/梯度累积与GPU checkpoint实现及有界pilot。
   - [x] 环境准备范围另获用户批准；已公开发布代码SHA `9051fdfe86379aa3502e66bf1a586d4eb00565ba`，并核验GitHub分支引用。
   - [x] SSH恢复后在数据盘新目录检出完整批准SHA，创建不继承平台site-packages的隔离venv，确认平台包元数据与源码字节未变。
