@@ -42,7 +42,8 @@ class M7ConfigTests(unittest.TestCase):
         self.assertIsNone(validate_m7_config(config))
         report = build_preflight_report(config)
         self.assertEqual(report["review_status"], "PENDING_DECISIONS")
-        self.assertEqual(len(report["pending_decisions"]), 7)
+        # 8 项确认决策：原 7 项 + 2026-11-16 新增的 evaluation_truncation
+        self.assertEqual(len(report["pending_decisions"]), 8)
         self.assertFalse(report["execution_authorized"])
         self.assertFalse(report["runtime_validated"])
         self.assertFalse(report["training_started"])

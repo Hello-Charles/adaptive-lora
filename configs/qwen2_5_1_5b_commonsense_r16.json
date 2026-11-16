@@ -70,6 +70,7 @@
     "prompt_format": "alpaca_canonical_v1",
     "loss_mask": "answer_and_eos_only",
     "truncation": "right_full_sequence_fail_if_no_supervised_token",
+    "evaluation_truncation": "none_keep_full_prefix",
     "padding_side": "right",
     "calibration_mode": "frozen_eval_zero_ablation_fixed_original_token",
     "metric": "eight_task_macro_accuracy",
@@ -95,6 +96,7 @@
     {"id": "sampling", "status": "confirmed", "proposal": "训练抽10000条，再从该子集抽250条校准；各评估test抽1000条、OBQA500条；分别使用局部seed42并保存实际索引与身份哈希。"},
     {"id": "answer_parser", "status": "confirmed", "proposal": "仅解析生成续文；标签大小写不敏感且有词边界，不同标签冲突判无效，解析失败仍计入分母；8任务等权宏平均。"},
     {"id": "single_gpu_batch", "status": "confirmed", "proposal": "单卡micro-batch8、accumulation8，有效batch64；明确不同于论文4卡DDP的256，显存不足时停下申请配置变更。"},
-    {"id": "mirror_source", "status": "confirmed", "proposal": "官方HF端点不可达；候选模型版本及LFS哈希来自镜像，后续下载核对固定字节，保留未独立认证官方来源的局限。"}
+    {"id": "mirror_source", "status": "confirmed", "proposal": "官方HF端点不可达；候选模型版本及LFS哈希来自镜像，后续下载核对固定字节，保留未独立认证官方来源的局限。"},
+    {"id": "evaluation_truncation", "status": "confirmed", "proposal": "2026-11-16修订：训练仍右截断512；评估生成保留完整前缀不截断（本批最长521 token），因右截断会丢掉piqa一条样本的solution1/solution2格式提示与Response标记。不改训练/校准，不丢样本不重抽。"}
   ]
 }

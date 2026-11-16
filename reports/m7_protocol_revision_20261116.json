@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "PASS_TOKENIZATION_V2_AND_EQUIVALENCE",
+  "m7_complete": false,
+  "revision_id": "evaluation_truncation",
+  "decision": {
+    "id": "evaluation_truncation",
+    "value": "none_keep_full_prefix",
+    "confirmed_by": "user",
+    "confirmed_on": "2026-11-16",
+    "decision_index": 8,
+    "training_truncation_unchanged": "right_full_sequence_fail_if_no_supervised_token",
+    "samples_dropped": 0,
+    "samples_resampled": 0
+  },
+  "trigger": {
+    "task": "piqa",
+    "source_index": 314,
+    "prompt_tokens": 521,
+    "limit": 512,
+    "overshoot_tokens": 9,
+    "instruction_chars": 2255,
+    "input_chars": 0,
+    "would_drop_text": " solution1/solution2\\n\\n### Response:\\n",
+    "would_keep_tail": "Answer format:",
+    "affected_rows": 1,
+    "affected_share_of_eval": 0.00013333333333333334,
+    "training_or_calibration_affected": false,
+    "longest_prefix_tokens": 521,
+    "model_max_position_embeddings": 131072
+  },
+  "equivalence": {
+    "verdict": "IDENTICAL_NUMERIC_RESULT",
+    "v1_never_truncated_eval_prefixes": true,
+    "why": "v1 tokenized evaluation prefixes through tokenize_ids, which fixes truncation=False; it only counted overshoot. The revision aligns the declared policy with that behaviour and adds an explicit code path.",
+    "fields_compared": [
+      "train.full_token_counts",
+      "train.supervised_token_counts",
+      "calibration.prefix_token_counts",
+      "evaluation.*.prefix_token_counts",
+      "token_identity_overlap"
+    ]
+  },
+  "files_changed": {
+    "configs/qwen2_5_1_5b_commonsense_r16.json": [
+      "protocol.evaluation_truncation added",
+      "decisions gained the 8th confirmed entry",
+      "protocol.truncation left unchanged"
+    ],
+    "src/adaptive_lora/m7_protocol.py": ["_FIXED_PROTOCOL gained the field", "DECISION_IDS gained the id"],
+    "src/adaptive_lora/m7_tokenization.py": ["M7_EVALUATION_TRUNCATION constant", "build_evaluation_input function"],
+    "tests/test_m7_tokenization.py": ["four new tests for the evaluation path"],
+    "tests/test_m7_protocol.py": ["decision count 7 -> 8"],
+    "tests/test_check_m7_protocol.py": ["decision count 7 -> 8"],
+    "M7_PROTOCOL.md": ["section 3 title now 八项", "new decision row", "revision note", "corrected the now-invalid config hash claim"],
+    "PAPER_SPEC.md": ["decision count 8", "new evaluation truncation entry"]
+  },
+  "module": {
+    "path": "src/adaptive_lora/m7_tokenization.py",
+    "sha256_before": "d2542550c42a8e5f775707a9f7eaa724113e7f700832edf76eb4dc0766b21d4a",
+    "bytes_before": 9413,
+    "sha256_after": "a09f80f3f25ebdbb8ac67b2465897f65fe1d4981f718ecf0c5c7f484260f3b21",
+    "bytes_after": 11413,
+    "executed_remotely_via": "base64 embedded bytes verified by SHA256 then exec'd in memory",
+    "deployed_repo_modified": false
+  },
+  "config_hashes": {
+    "before": {
+      "file_bytes_sha256": "6f715cef71d1fbe350541bd6b45524a4134ea2d879b1bee266468c4afb30081c",
+      "protocol_sha256": "d60f13752b4b8628d0ed8c8d9bb843ce92c8221b68d17cd8338a8447efa81c82"
+    },
+    "after": {
+      "file_bytes_sha256": "4b0405b028abbf79d0e29cdb660d691dbbe10e96e4dc59b3792448595038e616",
+      "protocol_sha256": "bcaf19a7a5acb8a3ddcb794d8101b8cba94047adf9194ccbc023b5cb65467802"
+    },
+    "hash_chain_broken_downstream": true,
+    "affected_artifacts": ["audit/summary.json", "audit/audit.json", "structure report", "tokenizer report v1"],
+    "note": "earlier artifacts record pre-revision hashes and are historical evidence only; data audit was NOT re-run this round"
+  },
+  "deployment_inconsistency": {
+    "remote_config_bytes_sha256": "6f715cef71d1fbe350541bd6b45524a4134ea2d879b1bee266468c4afb30081c",
+    "remote_config_has_evaluation_truncation": false,
+    "reported_config_sha256_in_runs": "d60f13752b4b8628d0ed8c8d9bb843ce92c8221b68d17cd8338a8447efa81c82",
+    "runs_used_deployed_config": true,
+    "revision_carried_by": "embedded module bytes, not the deployed config",
+    "resolution_requires": "separate approval for a push or config sync"
+  },
+  "v2_run": {
+    "remote_output": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04/m7_tokenization_1_5b_v2.json",
+    "report_bytes": 8429,
+    "report_sha256": "ee175054b1388bea89d9d8c9824910ada8d502f0275e47131a97fbb7d8f86501",
+    "elapsed_seconds": 14.289,
+    "train_constructed": 10000,
+    "train_rows": 10000,
+    "train_errors": 0,
+    "train_truncated": 0,
+    "train_max_tokens": 468,
+    "calibration_rows": 250,
+    "evaluation_rows": 7500,
+    "token_identity_comparisons": 16,
+    "token_identity_total_intersections": 0,
+    "pad_equals_eos": true
+  },
+  "v1_report_preserved": {
+    "remote_output": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04/m7_tokenization_1_5b.json",
+    "report_sha256": "825488439fa3e4754237ec4771ba340667b4600e7101db7af97b8515bba9d5ab",
+    "deleted": false
+  },
+  "checks": {
+    "config_validation_with_new_field": "PASS",
+    "decision_count_assertions_updated": "PASS",
+    "evaluation_input_never_truncates": "PASS",
+    "evaluation_shares_prefix_bytes_with_calibration": "PASS",
+    "v2_remote_run": "PASS",
+    "v1_v2_numeric_equivalence": "PASS",
+    "v2_used_revised_module_bytes": "PASS",
+    "deploy_commit_approved_and_clean": "PASS",
+    "local_independent_verification": "PASS_TOKENIZATION_V2_AND_EQUIVALENCE",
+    "local_offline_regression": {"status": "PASS", "tests_run": 228, "skipped": 0}
+  },
+  "not_run": [
+    "data audit re-run under the revised config",
+    "semantic deduplication",
+    "answer embedded in prompt review",
+    "pretraining contamination check",
+    "CUDA / AMP / gradient accumulation / GPU checkpoint",
+    "pilot run",
+    "formal training",
+    "formal evaluation"
+  ],
+  "flags": {
+    "tokenizer_run_on_1_5b": true,
+    "token_identity_disjoint": true,
+    "semantic_deduplication_checked": false,
+    "prompt_embedded_answer_checked": false,
+    "pretraining_contamination_checked": false,
+    "model_forward_run": false,
+    "cuda_used": false,
+    "training_started": false
+  },
+  "cuda_used": false,
+  "training_started": false,
+  "pushed": false,
+  "raw_data_or_weights_transferred_locally": false
+}

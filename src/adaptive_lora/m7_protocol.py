@@ -22,7 +22,8 @@ TASK_LABELS = {
     "ARC-Challenge": ("answer1", "answer2", "answer3", "answer4", "answer5"),
     "openbookqa": ("answer1", "answer2", "answer3", "answer4"),
 }
-DECISION_IDS = {"scope", "prompt", "supervision", "sampling", "answer_parser", "single_gpu_batch", "mirror_source"}
+DECISION_IDS = {"scope", "prompt", "supervision", "sampling", "answer_parser", "single_gpu_batch",
+                "mirror_source", "evaluation_truncation"}
 PROMPT_WITHOUT_INPUT = (
     "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n"
     "### Instruction:\n{instruction}\n\n### Response:\n"
@@ -44,6 +45,7 @@ _FIXED_PROTOCOL = {
     "methods": ["full", "random_k", "adaptive_k"], "scope": "commonsense_only",
     "prompt_format": "alpaca_canonical_v1", "loss_mask": "answer_and_eos_only",
     "truncation": "right_full_sequence_fail_if_no_supervised_token", "padding_side": "right",
+    "evaluation_truncation": "none_keep_full_prefix",
     "calibration_mode": "frozen_eval_zero_ablation_fixed_original_token",
     "metric": "eight_task_macro_accuracy", "answer_parser": "bounded_unique_casefold_v1",
     "max_new_tokens": 32, "do_sample": False, "temperature": 0.0, "num_beams": 1, "eos_token_id": 151643,

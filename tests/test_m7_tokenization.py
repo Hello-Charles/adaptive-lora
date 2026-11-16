@@ -13,9 +13,11 @@ import unittest
 from adaptive_lora.m7_protocol import build_commonsense_prompt
 from adaptive_lora.m7_tokenization import (
     M7_EOS_TOKEN_ID,
+    M7_EVALUATION_TRUNCATION,
     M7_MAX_LENGTH,
     PROMPT_LABEL_IGNORE,
     build_calibration_input,
+    build_evaluation_input,
     build_supervised_example,
     ids_sha256,
     token_identity_overlap,
@@ -192,6 +194,49 @@ class RealTokenizerTests(unittest.TestCase):
             train, [{"sample_id": "e", "prefix_ids_sha256": build_calibration_input(TOKENIZER, prefix)["prefix_ids_sha256"]}])
         self.assertFalse(overlap["token_identity_disjoint"])
         self.assertEqual(overlap["intersection_size"], 1)
+
+    def test_evaluation_input_is_not_truncated_and_reports_overshoot(self):
+        """评估侧不截断（2026-11-16 修订）：即使超出参考训练长度也保留完整前缀。
+
+        用超长前缀构造，确认 ids 与未截断分词完全一致、truncated 恒为 False，
+        且超出参考长度只是被标注而不是被裁掉。前缀长度由实测 token 数决定，
+        不假设固定词数对应的 token 数。
+        """
+        prefix = build_commonsense_prompt("Summarize.", "word " * 700)
+        full_ids = tokenize_ids(TOKENIZER, prefix)
+        self.assertGreater(len(full_ids), M7_MAX_LENGTH)
+        record = build_evaluation_input(TOKENIZER, prefix)
+        self.assertFalse(record["truncated"])
+        self.assertEqual(record["input_ids"], full_ids)
+        self.assertEqual(record["token_count"], len(full_ids))
+        self.assertTrue(record["exceeds_training_length"])
+        self.assertEqual(record["reference_max_length"], M7_MAX_LENGTH)
+        self.assertEqual(M7_EVALUATION_TRUNCATION, "none_keep_full_prefix")
+        # 不追加 EOS、不构造 labels：生成入参与校准输入同样只含前缀
+        self.assertNotIn(M7_EOS_TOKEN_ID, record["input_ids"])
+        self.assertNotIn("labels", record)
+
+    def test_evaluation_input_shorter_than_reference_is_not_flagged(self):
+        prefix = build_commonsense_prompt("Answer the question.", "Is the sky blue?")
+        record = build_evaluation_input(TOKENIZER, prefix)
+        self.assertFalse(record["exceeds_training_length"])
+        self.assertFalse(record["truncated"])
+        self.assertEqual(record["input_ids"], tokenize_ids(TOKENIZER, prefix))
+
+    def test_evaluation_and_calibration_share_prefix_bytes_when_under_limit(self):
+        """协议要求训练/校准/生成共享同一前缀字节；未超限时两者必须逐 token 相同。"""
+        prefix = build_commonsense_prompt("Answer the question.", "Is the sky blue?")
+        evaluation = build_evaluation_input(TOKENIZER, prefix)
+        calibration = build_calibration_input(TOKENIZER, prefix)
+        self.assertEqual(evaluation["input_ids"], calibration["input_ids"])
+        self.assertEqual(evaluation["prefix_ids_sha256"], calibration["prefix_ids_sha256"])
+
+    def test_evaluation_input_rejects_empty_text_and_bad_reference_length(self):
+        with self.assertRaisesRegex(ValueError, "non-empty text"):
+            build_evaluation_input(TOKENIZER, "")
+        for bad in (0, -1, True, 1.0, "512"):
+            with self.subTest(reference_max_length=bad), self.assertRaisesRegex(ValueError, "reference_max_length"):
+                build_evaluation_input(TOKENIZER, "Q:", reference_max_length=bad)
 
     def test_real_answer_boundary_strings(self):
         """真实任务答案串在前缀后不得产生空或异常 token。"""

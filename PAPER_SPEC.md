@@ -146,11 +146,12 @@ M6 按需核查 **Table 2 / Section 5.3（PDF 第 8 页）、Section 5.4（第 9
 
 ### M7 首轮协议核查（2026-11-15）
 
-本轮已重新核查PDF第7–9页Section 4.5/5.1、Table 1及Section 5.4，第18–19页Appendix C.1–C.3，以及参考文献[14]。首轮选择Table 1的1.5B/28层/N250/Top8/rank16，而非Table 2的N30；用户已确认 [M7_PROTOCOL.md](M7_PROTOCOL.md) 中7项复现决定，机器可读配置见 [配置JSON](configs/qwen2_5_1_5b_commonsense_r16.json)。
+本轮已重新核查PDF第7–9页Section 4.5/5.1、Table 1及Section 5.4，第18–19页Appendix C.1–C.3，以及参考文献[14]。首轮选择Table 1的1.5B/28层/N250/Top8/rank16，而非Table 2的N30；用户已确认 [M7_PROTOCOL.md](M7_PROTOCOL.md) 中8项复现决定（原7项 + 2026-11-16新增的评估截断修订），机器可读配置见 [配置JSON](configs/qwen2_5_1_5b_commonsense_r16.json)。
 
 - **[论文]** 训练10,000条commonsense、3 epochs、max512、pad到8倍数，AdamW lr1e-4/weight_decay0.01/betas(0.9,0.999)/eps1e-8，无warmup；Q/K/V LoRA rank16/alpha32；冻结FP16基础权重、FP32 adapter初始化及FP16 AMP；每卡batch8、accumulation8。单卡64不同于4卡DDP256。
 - **[复现决策，用户已确认]** 第一轮仅做8项commonsense的Full/Random8/Adaptive8；规范化Alpaca纯文本前缀，不使用M2–M6的Qwen chat/system模板；只监督答案+显式EOS，完整序列右截断512，无可预测监督token即报错，不静默丢弃或重抽。
 - **[复现决策，用户已确认]** 固定LLM-Adapters提交并分别以局部seed42抽10,000训练、其内250校准、各任务1,000评估（OBQA500）；实际索引与输入身份尚待下载后验收。来源路径名test.json不自动证明与原始benchmark官方test split同一。
+- **[复现决策，用户已确认；2026-11-16修订]** 训练与校准沿用完整序列右截断512；**评估生成保留完整前缀不截断**（`evaluation_truncation = none_keep_full_prefix`）。论文只给出训练最大512与超长截断，未规定评估前缀是否截断；本次修订起因是实测 1 条 piqa 评估前缀为 521 token，右截断会丢掉 `solution1/solution2` 格式提示与 `### Response:` 标记。不丢样本、不重抽、不改训练与校准，实际最长 521 token 远低于模型 131072 上下文。该修订改动了配置字节，详见[协议修订报告](reports/m7_protocol_revision_20261116.md)。
 - **[复现决策，用户已确认]** greedy最多32新tokens，仅解析生成续文；合法标签大小写归一化及词边界匹配，多个不同合法标签冲突判无效，失败保留分母，8任务等权宏平均。引用库无边界首匹配/4 beams并非论文明确协议，不照搬。
 - **[复现决策，用户已确认]** 候选Qwen1.5B固定revision/LFS哈希来自镜像，保留官方端点不可达、未独立认证官方来源的局限；权重未下载，实际字节仍待核对。所选数据仓库commit不是论文公开的原始commit。
 - **[工程状态，数据文本层已通过]** 九个固定JSON已按长度+Git blob+SHA256全部核验，并实际运行离线审计：训练170,420行抽10,000、校准250、八任务各1,000（OBQA500），字段统一为`answer,input,instruction,output`；跨拆分`sample_id`与规范prompt哈希交集均为0，组内重复prompt（train 107、social_i_qa 8）仅记录未处理。状态`TEXT_GATE_PASS_TOKENIZER_PENDING`，见[数据门禁通过报告](reports/m7_data_gate_pass_20261115.md)。**不含**真实BPE/512截断/token级交集、语义去重与预训练污染检查。

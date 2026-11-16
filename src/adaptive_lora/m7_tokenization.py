@@ -24,6 +24,10 @@ M7_EOS_TOKEN_ID = 151643
 M7_MAX_LENGTH = 512
 M7_PAD_MULTIPLE = 8
 PROMPT_LABEL_IGNORE = -100
+# 评估侧不截断（2026-11-16 协议修订）：训练仍右截断 512，但生成入参保留完整前缀。
+# 起因：1 条 piqa 评估前缀 521 token，右截断会丢掉 " solution1/solution2\n\n### Response:\n"，
+# 使模型在 "Answer format:" 之后续写而非规范的 Response 标记之后。
+M7_EVALUATION_TRUNCATION = "none_keep_full_prefix"
 
 
 def _flat_ids(encoded, label):
@@ -172,6 +176,36 @@ def build_calibration_input(tokenizer, prefix, *, max_length=M7_MAX_LENGTH):
         "original_token_count": len(prefix_ids),
         "truncated": truncated,
         "prefix_ids_sha256": ids_sha256(prefix_ids[:max_length]),
+    }
+
+
+def build_evaluation_input(tokenizer, prefix, *, reference_max_length=M7_MAX_LENGTH):
+    """返回生成用的完整评估前缀，**不截断**；只把是否超过训练长度作为信息报出。
+
+    2026-11-16 协议修订（`evaluation_truncation = none_keep_full_prefix`）：训练仍右截断
+    到 reference_max_length，但生成入参保留完整前缀。原因是 1 条 piqa 评估前缀为 521
+    token，右截断到 512 会丢掉末尾 " solution1/solution2\\n\\n### Response:\\n"，使模型在
+    "Answer format:" 之后续写，而不是在规范的 Response 标记之后续写。
+
+    本函数不追加 EOS、不构造 labels、不 padding；调用者负责把整个前缀交给生成接口，并在
+    任何位置超出模型上下文上限时自行报错（不得在此静默截断）。`exceeds_training_length`
+    只是如实标注该样本比训练样本长，不是错误条件。
+    """
+    if not isinstance(prefix, str) or not prefix:
+        raise ValueError("prefix must be non-empty text")
+    if type(reference_max_length) is not int or reference_max_length < 1:
+        raise ValueError("reference_max_length must be a positive integer")
+    ids = tokenize_ids(tokenizer, prefix, "evaluation prefix")
+    if not ids:
+        raise ValueError("evaluation input has no tokens")
+    return {
+        "input_ids": ids,
+        "attention_mask": [1] * len(ids),
+        "truncated": False,
+        "token_count": len(ids),
+        "exceeds_training_length": len(ids) > reference_max_length,
+        "reference_max_length": reference_max_length,
+        "prefix_ids_sha256": ids_sha256(ids),
     }
 
 
