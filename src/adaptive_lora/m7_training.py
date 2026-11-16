@@ -32,8 +32,8 @@ FINAL_GROUP_POLICIES = ("error", "step", "drop")
 
 # 已确认的复现决策（2026-11-16，用户选择 drop）：末组余量丢弃。
 # 事实依据：10,000 条 / micro-batch 8 = 1,250 个 micro-batch；1,250 / 累积 8 = 156 组余 2 个
-# micro-batch（16 条样本）。drop 意味着**每个 epoch 都固定少用末尾 16 条**，3 epochs 共 48 条
-# 样本从未参与训练。这不是四舍五入，必须在报告中如实记录，不能写成"已使用全部 10,000 条"。
+# micro-batch（16 条样本）。drop意味着每epoch固定少用同一批16条，3 epochs合计48个
+# 样本-次未参与训练（不是48条不同样本）。不能写成"已使用全部10,000条"。
 CONFIRMED_FINAL_PARTIAL_GROUP = "drop"
 
 
@@ -119,7 +119,7 @@ def describe_batch_plan(total_samples, micro_batch_size, accumulation, *, epochs
 
     已确认策略为 `drop`，故 `samples_used_*` 与 `samples_dropped_*` 按"末尾不足一组的
     micro-batch 被丢弃"计算。3 epochs 下 10,000 条中有 9,984 条/epoch 参与训练，
-    共 **48 条样本从未被用于更新权重**。这个数字必须写进实验记录。
+    共48个样本-次未用于更新权重；none顺序下是同一批16条不同样本。必须写入实验记录。
     """
     for name, value, minimum in (("total_samples", total_samples, 1),
                                  ("micro_batch_size", micro_batch_size, 1),

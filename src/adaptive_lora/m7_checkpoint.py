@@ -258,6 +258,16 @@ def save_training_checkpoint(directory, *, named_trainable, optimizer, scaler, i
     return manifest
 
 
+def validate_training_boundary(*, named_trainable, optimizer, identity, position):
+    """在会话开始/恢复后只读校验完整边界，不写盘、不消费RNG、不初始化GradScaler。
+
+    用于第一次更新前拒绝非法身份/优化器顺序；scaler的已初始化状态仍在实际保存时校验。
+    """
+    _identity(identity, position)
+    _, parameters, _ = _parameters(named_trainable, optimizer)
+    _check_optimizer(optimizer.state_dict(), parameters, position['global_step'])
+
+
 def _pairs(pairs):
     """严格JSON拒绝重复键，避免完成标记存在多个互相覆盖的身份或路径字段。"""
     result = {}

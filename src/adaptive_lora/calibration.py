@@ -1,7 +1,8 @@
 """冻结基础模型上的逐样本校准与论文公式 (5)；不选层、不注入 LoRA、不训练。
 
-仅支持本项目已核验的串行 CPU eager 路径。输入是已固定的 IDs/mask，而非答案文本；
-每个输入先测未消融预测，再独立消融每层两个模块，始终读取同一个原始 token。
+仅支持串行eager路径，默认保留CPU门禁；M7必须显式指定CUDA设备。
+输入是已固定的IDs/mask，而非答案文本；每个输入先测未消融预测，再独立消融两个模块，
+始终读取同一个原始token。设备迁移不改变公式，真实CUDA数值仍须独立验收。
 """
 
 import hashlib
@@ -102,21 +103,21 @@ def aggregate_importance(records, *, layer_count):
     ]
 
 
-def parameter_fingerprint(model):
-    """流式读取 CPU 参数名/dtype/shape/原始字节，不修改参数；不覆盖 buffers。
+def parameter_fingerprint(model, *, allow_cuda=False):
+    """流式读取参数名/dtype/shape/原始字节，不覆盖buffers；默认仍限CPU。
 
-    uint8 view 能读取 BF16 的原始字节，memoryview 避免 embedding 再复制成巨大 bytes。
-    仅当参数非连续时 contiguous 会复制；只在整次校准前后使用，不放入逐层热循环。
+    M7显式allow_cuda时逐参数同步拷回CPU，保持与旧CPU指纹编码相同，不将设备迁移记为
+    权重变化。只在整次校准前后执行，不能放进逐层热循环。
     """
     digest = hashlib.sha256()
     count = 0
     for name, parameter in model.named_parameters():
-        if parameter.device.type != "cpu":
-            raise ValueError("Current calibration supports CPU parameters only")
+        if parameter.device.type != "cpu" and not (allow_cuda and parameter.device.type == "cuda"):
+            raise ValueError("Calibration requires CPU parameters unless CUDA is explicitly allowed")
         header = json.dumps([name, str(parameter.dtype), list(parameter.shape)], ensure_ascii=False).encode("utf-8")
         digest.update(len(header).to_bytes(8, "big"))
         digest.update(header)
-        raw = parameter.detach().contiguous().reshape(-1).view(torch.uint8).numpy()
+        raw = parameter.detach().to('cpu').contiguous().reshape(-1).view(torch.uint8).numpy()
         digest.update(memoryview(raw).cast("B"))
         count += parameter.numel()
     return {"sha256": digest.hexdigest(), "parameter_elements": count}
@@ -141,10 +142,10 @@ def _assert_base(model):
         raise ValueError("Calibration requires a fresh base model without local forward hooks")
 
 
-def _prepare_samples(samples, vocab_size):
+def _prepare_samples(samples, vocab_size, *, device='cpu'):
     """在任何前向前验证全部 JSON 样本；固定 mask/预测位置，不重新分词或重新抽样。
 
-    IDs/mask 是一维列表，转换为 CPU long [1, sequence]。预测位置必须是连续二值 mask
+    IDs/mask是一维列表，转换为指定设备的long [1, sequence]，默认仍为CPU。预测位置必须是连续二值mask
     的最后一个有效 token，支持左右 padding；position 不是待插入 next token 的下标。
     source index 可缺省，sample_id 必须唯一；vocab_size 可用时还检查 token 上界。
     """
@@ -168,8 +169,8 @@ def _prepare_samples(samples, vocab_size):
         if type(sample["prediction_position"]) is not int or sample["prediction_position"] != position:
             raise ValueError("prediction_position must equal the last active input-token position")
         prepared.append((sample, position, {
-            "input_ids": torch.tensor([ids], dtype=torch.long),
-            "attention_mask": torch.tensor([mask], dtype=torch.long),
+            "input_ids": torch.tensor([ids], dtype=torch.long, device=device),
+            "attention_mask": torch.tensor([mask], dtype=torch.long, device=device),
         }))
     return prepared
 
@@ -189,7 +190,7 @@ def _forward_logits(model, inputs):
     return logits
 
 
-def calibrate_model(model, samples, *, layers=None, on_sample=None):
+def calibrate_model(model, samples, *, layers=None, on_sample=None, device='cpu'):
     """逐样本冻结校准，返回原 token 概率轨迹、全层均值、调用统计及参数审计。
 
     调用者须提前 eval/freeze 并保持串行；本函数覆盖 inference_mode，但不改 requires_grad
@@ -202,6 +203,18 @@ def calibrate_model(model, samples, *, layers=None, on_sample=None):
     直接传播，不会留下活跃消融。任何前向/概率异常均由 M3 scope 清理；失败不返回成功结果。
     """
     _assert_base(model)
+    # GPU必须由调用者先迁移模型并显式指定，不能因CPU数据被默认创建而悄悄回退。
+    device = torch.device(device)
+    if device.type not in ('cpu', 'cuda'):
+        raise ValueError('Calibration supports only CPU or explicit CUDA')
+    devices = {p.device for p in model.parameters()}
+    if device.type == 'cuda':
+        if not torch.cuda.is_available():
+            raise ValueError('CUDA requested but unavailable; refusing CPU fallback')
+        if device.index is None:
+            device = torch.device('cuda', torch.cuda.current_device())
+    if devices != {device}:
+        raise ValueError('Calibration model parameters differ from the requested device')
     if layers is None:
         layers = list(discover_layer_modules(model))
     else:
@@ -212,8 +225,8 @@ def calibrate_model(model, samples, *, layers=None, on_sample=None):
             raise ValueError("layers must describe all layers of this model in zero-based order")
     if not layers or [layer.index for layer in layers] != list(range(len(layers))):
         raise ValueError("layers must cover contiguous zero-based layer indices")
-    prepared = _prepare_samples(samples, getattr(model.config, "vocab_size", None))
-    before = parameter_fingerprint(model)
+    prepared = _prepare_samples(samples, getattr(model.config, "vocab_size", None), device=device)
+    before = parameter_fingerprint(model, allow_cuda=device.type == 'cuda')
     records = []
     evaluations = 0
     logits_dtype = None
@@ -255,7 +268,7 @@ def calibrate_model(model, samples, *, layers=None, on_sample=None):
             if on_sample is not None:
                 on_sample(record)
     _assert_base(model)
-    after = parameter_fingerprint(model)
+    after = parameter_fingerprint(model, allow_cuda=device.type == 'cuda')
     if before != after:
         raise RuntimeError("Base model parameters changed during calibration")
     return {

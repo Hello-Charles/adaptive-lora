@@ -1,7 +1,7 @@
 """M5 的选择性标准 LoRA 与短训练工具，不负责正式数据实验或自动下载。
 
-仅支持已由模块发现器核验的 CPU Qwen 风格层栈。基础参数冻结与启用 autograd 是不同
-约束：训练仍需通过冻结的运算传播 adapter 梯度，不能沿用校准的 inference_mode。
+注入与M5短训练限于经发现器核验的CPU Qwen层栈；M7可显式允许迁移后的CUDA审计。
+基础参数冻结与启用autograd是不同约束：adapter梯度仍需穿过冻结运算，不能沿用校准的inference_mode。
 """
 
 from dataclasses import dataclass
@@ -36,22 +36,22 @@ class LoraSetup:
     base_fingerprint: dict
 
 
-def fingerprint_parameters(named_parameters):
-    """按给定名称/顺序流式计算 CPU 参数原始字节 SHA-256，不修改权重或读取 buffers。
+def fingerprint_parameters(named_parameters, *, allow_cuda=False):
+    """按名称/顺序流式计算参数原始字节SHA-256，不修改权重或读取buffers。
 
-    编码与 M4 parameter_fingerprint 一致；传入注入前保存的名称/引用即可跨 PEFT 重命名比较。
-    uint8 view 保留 BF16 字节，memoryview 避免为整个 embedding 再创建 bytes 副本。
-    指纹是完整性证据，不是模型来源认证；非连续参数会在 contiguous 时临时复制。
+    默认仍限CPU（M5门禁）；M7显式allow_cuda时逐参数拷回CPU散列，避免一次复制整个模型。
+    名称/dtype/shape编码与旧CPU算法相同，因此迁移设备不会改变指纹；GPU拷贝会同步，
+    必须放在阶段边界而非逐micro-batch热循环。非连续参数的contiguous可能额外分配。
     """
     digest = hashlib.sha256()
     count = 0
     for name, parameter in named_parameters:
-        if parameter.device.type != "cpu":
-            raise ValueError("M5 smoke supports CPU parameters only")
+        if parameter.device.type != "cpu" and not (allow_cuda and parameter.device.type == "cuda"):
+            raise ValueError("M5 smoke supports CPU parameters only; CUDA requires explicit allow_cuda")
         header = json.dumps([name, str(parameter.dtype), list(parameter.shape)], ensure_ascii=False).encode("utf-8")
         digest.update(len(header).to_bytes(8, "big"))
         digest.update(header)
-        raw = parameter.detach().contiguous().reshape(-1).view(torch.uint8).numpy()
+        raw = parameter.detach().to('cpu').contiguous().reshape(-1).view(torch.uint8).numpy()
         digest.update(memoryview(raw).cast("B"))
         count += parameter.numel()
     return {"sha256": digest.hexdigest(), "parameter_elements": count}
@@ -111,12 +111,13 @@ def attach_selective_lora(model, selected_layers, *, rank=16, alpha=32, expected
     return setup
 
 
-def audit_lora(setup, *, trainable=True):
+def audit_lora(setup, *, trainable=True, allow_cuda=False):
     """核对实际 adapter 模块、A/B 形状、基础参数身份及唯一可训练白名单，返回 JSON 统计。
 
     不用名称含 lora 的启发式放行参数；任何多余参数、丢失基础参数、merge、禁用 adapter 或
     requires_grad 不符均报错。trainable=False 用于只读恢复检查，此时包括 adapter 在内全部冻结。
-    不计算基础字节指纹，避免每步扫描 0.5B；字节检查由 assert_base_unchanged 显式负责。
+    不计算基础字节指纹，避免每步扫描基础模型；字节检查由assert_base_unchanged负责。
+    默认保留M5的CPU限定；M7显式allow_cuda时允许同一设备的CUDA参数，不自动迁移设备。
     """
     model = setup.model
     if set(model.peft_config) != {"default"}:
@@ -153,8 +154,10 @@ def audit_lora(setup, *, trainable=True):
             raise ValueError(f"Unexpected requires_grad for {name}")
         if id(parameter) in base_ids and parameter.grad is not None:
             raise ValueError(f"Frozen base parameter has a gradient: {name}")
-        if parameter.device.type != "cpu":
-            raise ValueError("M5 smoke requires CPU parameters")
+        if parameter.device.type != "cpu" and not (allow_cuda and parameter.device.type == "cuda"):
+            raise ValueError("M5 smoke requires CPU parameters; CUDA requires explicit allow_cuda")
+    if len({parameter.device for _, parameter in named}) != 1:
+        raise ValueError("LoRA audit requires all parameters on one device")
     adapters = [(name, parameter) for name, parameter in named if id(parameter) in adapter_ids]
     expected_elements = sum(item["adapter_elements"] for item in dimensions)
     if len(adapters) != 2 * len(setup.targets) or sum(parameter.numel() for _, parameter in adapters) != expected_elements:
@@ -172,9 +175,9 @@ def audit_lora(setup, *, trainable=True):
     }
 
 
-def assert_base_unchanged(setup):
-    """重新扫描同一批规范基础参数，要求字节指纹与注入前一致；不把 PEFT 新名字算作权重改变。"""
-    current = fingerprint_parameters(setup.base_parameters)
+def assert_base_unchanged(setup, *, allow_cuda=False):
+    """重扫规范基础参数名，要求字节未变；M7须显式允许CUDA同步拷回CPU散列。"""
+    current = fingerprint_parameters(setup.base_parameters, allow_cuda=allow_cuda)
     if current != setup.base_fingerprint:
         raise ValueError("Frozen base parameter fingerprint changed")
     return current
