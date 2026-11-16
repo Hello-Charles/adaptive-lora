@@ -50,6 +50,8 @@ M0 的工程骨架与环境、M1 的真实模型结构、M2 的固定校准输�
 
 2026-11-16训练断点机制：新增 [m7_checkpoint.py](src/adaptive_lora/m7_checkpoint.py)，与旧adapter-only推理恢复分离。safetensors+严格JSON保存有序可训练参数、AdamW、GradScaler、Python/NumPy/Torch默认RNG及epoch/下一批/global_step；要求完整累积组、已清梯度、同一身份/参数顺序/超参数/版本，不用pickle、不保存基础权重、不覆盖目录。**29项CPU测试通过**，含全新微型Qwen+真实PEFT恢复后下一组参数/优化器/loss与连续运行逐项一致；全套 **321项通过，无跳过**。状态 **`TRAINING_CHECKPOINT_CPU_PASS_CUDA_NOT_RUN`**：单CUDA设备RNG分支已写但未运行，固定1.5B与正式入口停跑续跑仍NOT RUN。现有`on_step`回调早于清梯度，不能直接保存；调用者还须审计基础模型与LoRA身份。详见[checkpoint报告](reports/m7_training_checkpoint_20261116.md)与[机器索引](reports/m7_training_checkpoint_20261116.json)。未远端操作、未改配置、未push；M7整体未完成。
 
+2026-11-16训练前集成：新增[有界会话](src/adaptive_lora/m7_session.py)连接组后清梯度/安全断点、实际监督张量身份、跨epoch精确恢复及两层drop清单；10项真实PEFT微型Qwen CPU用例通过，加4项[训练前CLI](scripts/run_m7_pretraining.py)门禁测试，全套**335项通过**。固定源码 **`397df807152a19d530fc6d1a9c5c829a0f561ebb`** 已审查181个唯一Git文件对象并发布至[训练前门禁分支](https://github.com/Hello-Charles/adaptive-lora/tree/repro/m7-pretraining-gates)。**远端部署被工具权限门禁拒绝，未执行**；只读确认新部署目录不存在、旧SHA`2df16eb…`不变且clean、4090占用0MiB。因此N250/Top8尚未实际计算、三方法CUDA/AMP pilot与GPU续跑均NOT RUN；没有启动正式训练，没有改变模型/数据或配置哈希链。详见[训练前集成报告](reports/m7_pretraining_20261116.md)。
+
 ## 代码阅读与注释约定
 
 源码、脚本和测试使用中文注释/docstring，重点说明预测位置、padding/截断、答案隔离、hook 生命周期、离线加载和结果保留等隐含约束。后续新增或修改代码也必须遵循 [CLAUDE.md 的代码注释规范](CLAUDE.md#代码注释规范现有代码及后续新增修改代码均适用)；关键逻辑详细解释，简单语句不逐行复述。

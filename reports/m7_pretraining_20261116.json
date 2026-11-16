@@ -1,0 +1,110 @@
+{
+  "status": "CPU_SESSION_PASS_REMOTE_DEPLOY_BLOCKED",
+  "date": "2026-11-16",
+  "source_commit": "397df807152a19d530fc6d1a9c5c829a0f561ebb",
+  "published_ref": "refs/heads/repro/m7-pretraining-gates",
+  "publication_scan": {
+    "commits": 18,
+    "unique_blobs": 181,
+    "limitation": "finite secret/path scan, not full DLP"
+  },
+  "tests": {
+    "full": {
+      "status": "PASS",
+      "count": 335,
+      "elapsed_seconds": 20.92,
+      "skips": 0
+    },
+    "session_focused": {
+      "status": "PASS",
+      "count": 10,
+      "elapsed_seconds": 2.407
+    },
+    "cli_guards_in_full_suite": 4
+  },
+  "remote_deploy": {
+    "status": "BLOCKED_TOOL_PERMISSION_NOT_EXECUTED",
+    "attempts_executed": 0,
+    "reason": "Classifier requires explicit autodl host and remote write scope",
+    "intended_root": "/root/autodl-tmp/adaptive-lora-m7-pretraining-20261116-01",
+    "readonly_verification": "PASS_NEW_DIRECTORY_ABSENT",
+    "old_commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "old_git_dirty": false,
+    "gpu_memory_used_mib": 0
+  },
+  "runtime": {
+    "n1_cuda": "NOT RUN",
+    "n250_cuda": "NOT RUN",
+    "top8": null,
+    "three_method_amp_pilot": "NOT RUN",
+    "cuda_rng_resume": "NOT RUN",
+    "formal_training_started": false,
+    "formal_optimizer_steps": 0,
+    "pilot_optimizer_steps": 0
+  },
+  "config_sha256_unchanged": "e5e8dad366dc26198d41c9a0ffad3715a30a0c020a4146b02d3e77cb17e3c87f",
+  "protocol_sha256": "230a07b8314fc87faa4b59fa1b7025751ecc41ecd0d57f0837e0a8b9f72d528f",
+  "source_fingerprints": {
+    "src/adaptive_lora/m7_session.py": {
+      "git_bytes_sha256": "4742db1a36ee6fbcc22fff4cedabfcd3e0426745ab8eb0abeeb7f9deabd23e9e",
+      "bytes": 12101
+    },
+    "src/adaptive_lora/m7_checkpoint.py": {
+      "git_bytes_sha256": "affc7ec3419b934710aeccafd165d9b742e17a92779aec797a93f1ca734d1cc9",
+      "bytes": 20405
+    },
+    "src/adaptive_lora/calibration.py": {
+      "git_bytes_sha256": "c6f7ee34bdf50b575ad6eaab01d96d4e7aa64d946c375f1b71b084a8a752f67f",
+      "bytes": 15528
+    },
+    "src/adaptive_lora/trainer.py": {
+      "git_bytes_sha256": "b892030bce112bfa8a4d55a89d66301b9f6df4d66c77db97d36cd0d2ddcb0433",
+      "bytes": 22297
+    },
+    "src/adaptive_lora/m7_training.py": {
+      "git_bytes_sha256": "2d35d5daa9a41eab34562dcc0068d75af63574cd56e27667860f543e3c25b96b",
+      "bytes": 17293
+    },
+    "scripts/run_m7_pretraining.py": {
+      "git_bytes_sha256": "54e569543e606941be3d87dfbfa4b12bbcf9c58cc1fb0f87058713c4e0ea290e",
+      "bytes": 22234
+    },
+    "tests/test_m7_session.py": {
+      "git_bytes_sha256": "63c3fc1f369820cc1a3a1bcf348a4cb0cf95887255f75e36d28052c04655984a",
+      "bytes": 11585
+    },
+    "tests/test_run_m7_pretraining.py": {
+      "git_bytes_sha256": "de3bfdefbc507696d299cd5b066fa284a795a6a8ff647ca31885886ea82b3729",
+      "bytes": 1527
+    }
+  },
+  "logs": {
+    "pretraining-regression-01.log": {
+      "path": ".cache/m7-20261115-assets-04/pretraining-regression-01.log",
+      "bytes": 57585,
+      "sha256": "1b6dab2a3e6304638ea474ee422625db0745e1f4723fc291602d7e37ff103272"
+    },
+    "pretraining-readonly-01.log": {
+      "path": ".cache/m7-20261115-assets-04/pretraining-readonly-01.log",
+      "bytes": 116,
+      "sha256": "97c4ff0a9c71be036c7f32f8dd1a70bf553463eab57bb87d9ec7ab85888e0c9c"
+    },
+    "pretraining-publication-scan-01.json": {
+      "path": ".cache/m7-20261115-assets-04/pretraining-publication-scan-01.json",
+      "bytes": 38490,
+      "sha256": "7249cbbb7c950a8a77d16784874a7fca5bb2701e3402a8ce134a7a8bb0717cde"
+    }
+  },
+  "m7_complete": false,
+  "decisions": [
+    "Explicit CUDA opt-in; CPU defaults retained",
+    "One 1800-second attempt per future calibration/pilot gate",
+    "No automatic retry, OOM fallback or formal training mode",
+    "Private traces remain remote; no model/data transfer"
+  ],
+  "paper_basis": [
+    "Section 4.5/5.1 QKV comparison",
+    "Appendix C.2 training configuration"
+  ],
+  "paper_access": "Existing extracted PDF C.2 text lines 50-70 reread; no new PDF rendering or installation"
+}
