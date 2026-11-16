@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "REAL_BATCH_ASSEMBLY_PASS_CPU_ONLY",
+  "m7_complete": false,
+  "local_regression_log_warning": {
+    "observed": "Windows subprocess reader thread UnicodeDecodeError in full regression log",
+    "unittest_exit_code": 0,
+    "unittest_final_result": "OK: 292 tests; no skips",
+    "fixed_this_task": false,
+    "remote_stderr_empty": true
+  },
+  "approval_scope": {
+    "host_alias": "autodl",
+    "operation": "one bounded CPU-only assembly verification with new output directory",
+    "deadline_seconds": 600,
+    "actual_executions": 1,
+    "permission_denied_before_execution": 2,
+    "retry_after_runtime_failure": false,
+    "authorized_new_remote_files": [
+      "summary.json",
+      "dropped_manifest.private.json"
+    ],
+    "raw_text_or_private_identity_list_returned": false,
+    "push_download_install_training_cuda_authorized": false
+  },
+  "remote_run": {
+    "schema_version": 1,
+    "status": "REAL_BATCH_ASSEMBLY_PASS_CPU_ONLY",
+    "recorded_at_utc": "2026-11-16T04:11:31.377738+00:00",
+    "elapsed_seconds": 8.666656617075205,
+    "source_commit": "945fc4101500fe93a0da4def35ef122071d6c184",
+    "embedded_modules": {
+      "m7_protocol": {
+        "sha256": "589b442cafe67d3e0a41ccccc63dd6b2990e0cddd5270645c9fa9e7a010d6f09",
+        "bytes": 19726
+      },
+      "m7_tokenization": {
+        "sha256": "68a87b89f2e31349740a6dac1d34f158b5b53f3faa491b04a1e9e2a5cf3b8ab8",
+        "bytes": 16889
+      },
+      "m7_training": {
+        "sha256": "bff73fc940f0b91e691e5ab63d4998d53f1ecc0b880a64aa86130d01f5c24e1f",
+        "bytes": 17309
+      },
+      "m7_batches": {
+        "sha256": "7a87ecac697c8f27094014a03b9fc1fa1edb49f75c863366cbe5593e9525642e",
+        "bytes": 13001
+      }
+    },
+    "deploy_git_before_after": {
+      "commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+      "dirty": false
+    },
+    "config_file_bytes_sha256": "e5e8dad366dc26198d41c9a0ffad3715a30a0c020a4146b02d3e77cb17e3c87f",
+    "protocol_sha256": "230a07b8314fc87faa4b59fa1b7025751ecc41ecd0d57f0837e0a8b9f72d528f",
+    "remote_deployed_config_sha256": "6f715cef71d1fbe350541bd6b45524a4134ea2d879b1bee266468c4afb30081c",
+    "remote_config_synced": false,
+    "audit_file_sha256": "840fba0ca65d436587c6941b89e066689682c73bbcff8be6cd179c0eb69202f9",
+    "sampling_sha256": "76a61e01d6e0b2400b4870ed54b6d0a5afa12347389f14d19d58b05164288c3b",
+    "train_provenance": {
+      "path": "ft-training_set/commonsense_170k.json",
+      "size_bytes": 96529722,
+      "git_blob_sha1": "529e426b33d4cdb1d0c4a275a1a7245ad081fd91",
+      "sha256": "4651a3e707fbe28be03f486f96fcf57f8c38b2173f3e38812003108970793ac8",
+      "row_count": 170420
+    },
+    "tokenizer_snapshot": "8faed761d45a263340a0528343f099c05c9a4323",
+    "tokenizer_file_sha256": {
+      "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+      "tokenizer_config.json": "c91efca15ceff6e9ee9424db58a6f59cd41294e550a86cbd07e3c1fb500b34f9",
+      "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "merges.txt": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "config.json": "0e8c8aa86468aba09c9d32157ff4bc2301c7e6c50e4398960425b2ea71e66f77"
+    },
+    "training_order": "none",
+    "final_partial_group": "drop",
+    "prepared_examples": 10000,
+    "truncated_examples": 0,
+    "epochs": [
+      {
+        "epoch": 1,
+        "used_sample_ids_sha256": "31892a2391a9033e35df93b8e696297583af4e6ae3c0835bb54d9e1b732cdfb2",
+        "dropped_sample_ids_sha256": "546748eb23cd1f1e9361ad0525c4255162a8e3ef6365eef63ffda1924547f108",
+        "micro_batches_collated": 1250,
+        "micro_batches_planned_used": 1248,
+        "micro_batches_planned_dropped": 2,
+        "optimizer_steps_planned": 156,
+        "samples_planned_used": 9984,
+        "samples_planned_dropped": 16,
+        "order_sha256": "4c1986a8e04c0b21d1c1bdec9bf9b90015da41fe3fbb9b47a0cbca09416fface"
+      },
+      {
+        "epoch": 2,
+        "used_sample_ids_sha256": "31892a2391a9033e35df93b8e696297583af4e6ae3c0835bb54d9e1b732cdfb2",
+        "dropped_sample_ids_sha256": "546748eb23cd1f1e9361ad0525c4255162a8e3ef6365eef63ffda1924547f108",
+        "micro_batches_collated": 1250,
+        "micro_batches_planned_used": 1248,
+        "micro_batches_planned_dropped": 2,
+        "optimizer_steps_planned": 156,
+        "samples_planned_used": 9984,
+        "samples_planned_dropped": 16,
+        "order_sha256": "4c1986a8e04c0b21d1c1bdec9bf9b90015da41fe3fbb9b47a0cbca09416fface"
+      },
+      {
+        "epoch": 3,
+        "used_sample_ids_sha256": "31892a2391a9033e35df93b8e696297583af4e6ae3c0835bb54d9e1b732cdfb2",
+        "dropped_sample_ids_sha256": "546748eb23cd1f1e9361ad0525c4255162a8e3ef6365eef63ffda1924547f108",
+        "micro_batches_collated": 1250,
+        "micro_batches_planned_used": 1248,
+        "micro_batches_planned_dropped": 2,
+        "optimizer_steps_planned": 156,
+        "samples_planned_used": 9984,
+        "samples_planned_dropped": 16,
+        "order_sha256": "4c1986a8e04c0b21d1c1bdec9bf9b90015da41fe3fbb9b47a0cbca09416fface"
+      }
+    ],
+    "collated_micro_batches_total": 3750,
+    "collated_sample_visits_checked": 30000,
+    "collated_batch_width_min": 88,
+    "collated_batch_width_max": 472,
+    "optimizer_steps_planned_total": 468,
+    "samples_planned_used_total_visits": 29952,
+    "samples_planned_dropped_total_visits": 48,
+    "samples_planned_dropped_distinct": 16,
+    "dropped_manifest_file_sha256": "0b13cdfba75ae0b581c6bbee31940feb553ebb702a1605f96a77231f71e12f12",
+    "private_manifest_path": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04/m7_batch_assembly_20261116_01/dropped_manifest.private.json",
+    "cuda_initialized": false,
+    "training_started": false,
+    "model_loaded": false,
+    "optimizer_steps_executed": 0,
+    "m7_complete": false,
+    "raw_text_exported": false,
+    "python_version": "3.12.3",
+    "torch_version": "2.6.0+cu124",
+    "not_validated": [
+      "model attention masking in forward",
+      "CUDA/AMP",
+      "optimizer/RNG checkpoint resume",
+      "pilot",
+      "formal training",
+      "formal evaluation",
+      "semantic deduplication or pretraining contamination"
+    ]
+  },
+  "read_only_archive_verification": {
+    "status": "PASS_READ_ONLY_ARCHIVE_VERIFICATION",
+    "summary_file_sha256": "c3a94077188e1f23436226b2362bc958319e3238dccbc9163834b81cdad08b47",
+    "private_manifest_file_sha256": "0b13cdfba75ae0b581c6bbee31940feb553ebb702a1605f96a77231f71e12f12",
+    "epochs": 3,
+    "dropped_distinct_samples": 16,
+    "deployed_head": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "deployed_dirty": false,
+    "permissions": {
+      "output_directory": "0o700",
+      "summary": "0o600",
+      "private_manifest": "0o600"
+    },
+    "identities_exported": false,
+    "raw_text_exported": false,
+    "reran_tokenization": false,
+    "wrote_remote_files": false
+  },
+  "local_evidence_verification": {
+    "status": "PASS_LOCAL_BATCH_EVIDENCE_VERIFICATION",
+    "source_commit": "945fc4101500fe93a0da4def35ef122071d6c184",
+    "driver": {
+      "sha256": "b1f63359dd154b640e418507fb50f7b9e2d0a15d3cae78d0c87cc68d7939964d",
+      "bytes": 113587
+    },
+    "remote_summary_file_sha256": "c3a94077188e1f23436226b2362bc958319e3238dccbc9163834b81cdad08b47",
+    "private_manifest_file_sha256": "0b13cdfba75ae0b581c6bbee31940feb553ebb702a1605f96a77231f71e12f12",
+    "embedded_source_round_trip_matches_git": true,
+    "raw_text_or_identity_list_present": false,
+    "local_regression": {
+      "tests": 292,
+      "seconds": 16.639,
+      "skipped": 0,
+      "log": {
+        "sha256": "f5414ddd928f16cc58395c9becb659dc9336ff3c2b617140094cc51873c39bd0",
+        "bytes": 1222
+      }
+    },
+    "remote_stdout": {
+      "sha256": "60a6be1f68da1b9c69105aaa7ba559e9ed861543bb2871899242177528877039",
+      "bytes": 4611
+    },
+    "remote_archive_verification": {
+      "sha256": "a2aa278e718dc5655ec8d399ab39d9166d0171cc28f328ea26b991e10db86165",
+      "bytes": 583
+    }
+  },
+  "driver_build": {
+    "driver_sha256": "b1f63359dd154b640e418507fb50f7b9e2d0a15d3cae78d0c87cc68d7939964d",
+    "config_sha256": "e5e8dad366dc26198d41c9a0ffad3715a30a0c020a4146b02d3e77cb17e3c87f",
+    "module_hashes": {
+      "m7_protocol": "589b442cafe67d3e0a41ccccc63dd6b2990e0cddd5270645c9fa9e7a010d6f09",
+      "m7_tokenization": "68a87b89f2e31349740a6dac1d34f158b5b53f3faa491b04a1e9e2a5cf3b8ab8",
+      "m7_training": "bff73fc940f0b91e691e5ab63d4998d53f1ecc0b880a64aa86130d01f5c24e1f",
+      "m7_batches": "7a87ecac697c8f27094014a03b9fc1fa1edb49f75c863366cbe5593e9525642e"
+    },
+    "source_commit": "945fc4101500fe93a0da4def35ef122071d6c184"
+  },
+  "result_scope": {
+    "real_tokenizer_preparation": "PASS: 10000 examples; any invalid example would have failed the whole run",
+    "collation": "PASS: 3750 micro-batches and 30000 sample-visits; includes batches planned for drop",
+    "attention_mask_scope": "data-level masks and EOS retention only; no real-model attention forward",
+    "drop_manifest_scope": "derived from trailing accumulation-group batches; micro-batch-level drop list is empty for 10000 / 8",
+    "planned_optimizer_steps_not_executed": 468,
+    "optimizer_steps_executed": 0,
+    "same_distinct_samples_planned_dropped_each_epoch": 16,
+    "sample_visits_planned_dropped_across_three_epochs": 48,
+    "formal_training_not_performed": true,
+    "sampling_unchanged_from_audit": true,
+    "existing_remote_repository_and_config_unchanged": true,
+    "hashes_are_not_anonymization_or_source_authentication": true
+  },
+  "regression": {
+    "tests": 292,
+    "seconds": 16.639,
+    "skipped": 0,
+    "log": {
+      "sha256": "f5414ddd928f16cc58395c9becb659dc9336ff3c2b617140094cc51873c39bd0",
+      "bytes": 1222
+    }
+  },
+  "artifacts": {
+    "local_remote_stdout": ".cache/m7-20261115-assets-04/batch-assembly-remote-03.json",
+    "local_remote_stderr": ".cache/m7-20261115-assets-04/batch-assembly-remote-03.log",
+    "local_archive_verification": ".cache/m7-20261115-assets-04/batch-assembly-archive-verification-01.json",
+    "local_local_verification": ".cache/m7-20261115-assets-04/batch-assembly-local-verification-01.json",
+    "local_driver": ".cache/m7-20261115-assets-04/run_batch_assembly_01.py",
+    "local_driver_builder": ".cache/m7-20261115-assets-04/build_batch_assembly_runner_01.py",
+    "local_driver_template": ".cache/m7-20261115-assets-04/run_batch_assembly_template_01.py",
+    "local_regression_log": ".cache/m7-20261115-assets-04/real-batch-assembly-regression-01.log",
+    "remote_directory": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04/m7_batch_assembly_20261116_01"
+  },
+  "cuda_used": false,
+  "training_started": false,
+  "pushed": false,
+  "production_code_changed": false,
+  "config_changed_or_synced": false
+}
