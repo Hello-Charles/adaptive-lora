@@ -189,6 +189,9 @@ Full 的24层实测 **1,474,560 个可训练元素、144个A/B张量**；Random7
   - [x] SSH恢复后在数据盘新目录检出完整批准SHA，创建不继承平台site-packages的隔离venv，确认平台包元数据与源码字节未变。
   - [x] 隔离环境依赖/项目安装、导入与适用CPU验收：另获有限缓存续接授权后，67个wheel全批官方哈希通过，离线安装/pip check/11项固定版本导入通过；Linux183项CPU单测通过、2项真实tokenizer用例NOT RUN，不含CUDA/pilot。
   - [ ] 补验Linux两项真实tokenizer用例（固定0.5B缓存缺失，本轮未下载，不将183项通过写成185项全通过）。
+  - [x] **CUDA/AMP/梯度累积执行机制已实现（2026-11-16）**：新增 `src/adaptive_lora/m7_training.py` 与28项测试，填补既有 `train_smoke` 明确不支持accumulation/AMP的缺口。设备解析在CUDA不可用时报错而不静默回退CPU（否则耗时/显存/吞吐证据失真）；AMP在CPU上显式禁用并如实上报，CUDA+FP16启用GradScaler、BF16不缩放；累积数学为"组内loss除以该组实际大小再反向"，使梯度等于整组平均loss的梯度而非求和，unscale后才判量级，用真实梯度逐元素验证误差0.0。全套256项回归通过。**真实CUDA/AMP数值、1.5B前向显存与pilot均NOT RUN**，详见[训练执行层报告](reports/m7_training_engine_20261116.md)。
+  - [ ] **待用户决定（阻塞正式训练）**：10,000条训练样本不能被有效batch 64整除（10,000 = 64×156 + 16），每epoch末组仅2个micro-batch。`error`/`step`/`drop`三选一必须在任何前向之前确定；本实现默认`error`，不静默少用样本或改变有效batch。
+  - [ ] GPU checkpoint（含optimizer/RNG续跑）未实现；现有 `checkpoint.py` 明确只做adapter-only推理恢复。
 - [ ] 保存训练日志、GPU 耗时和峰值显存。
 - [ ] 完成统一评估；不人为追求论文数值而改动结果。
 

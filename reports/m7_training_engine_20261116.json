@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "ENGINE_IMPLEMENTED_GPU_NOT_RUN",
+  "m7_complete": false,
+  "blocked_on_user_decision": true,
+  "pending_decision": {
+    "id": "final_partial_group_policy",
+    "question": "10000 training samples do not divide into groups of 64; how should the leftover micro-batch group be handled",
+    "samples_per_epoch": 10000,
+    "effective_batch_size": 64,
+    "micro_batches_per_epoch": 1250,
+    "full_groups_per_epoch": 156,
+    "leftover_micro_batches_per_epoch": 2,
+    "samples_in_leftover_per_epoch": 16,
+    "options": {
+      "error": "refuse to run when not divisible (current default)",
+      "step": "step once on the smaller group, effective batch becomes 16 for that step, gradients stay a mean",
+      "drop": "discard the leftover group, 16 samples unused per epoch (48 across 3 epochs)"
+    },
+    "default_chosen_by_implementer": "error",
+    "reason": "silently using fewer samples or silently changing the effective batch would corrupt the reproducibility record"
+  },
+  "implemented": {
+    "module": "src/adaptive_lora/m7_training.py",
+    "functions": {
+      "resolve_device": "errors instead of silently falling back to CPU when CUDA is requested but unavailable",
+      "resolve_amp": "returns (autocast kwargs, GradScaler); disables AMP explicitly on CPU and reports what was requested vs what took effect",
+      "plan_groups": "splits micro-batches into accumulation groups; rejects a partial final group unless the policy says otherwise",
+      "describe_batch_plan": "surfaces the 10000 vs 64 non-divisibility at plan time",
+      "run_accumulation": "scaled backward, group-end stepping, unscale before finite checks"
+    },
+    "math_contract": "loss divided by the actual group size before backward, so accumulated gradients equal the gradient of the mean loss over the group, not the sum",
+    "amp_contract": "scale -> backward -> unscale_ -> finite check -> step -> update"
+  },
+  "paper_basis": {
+    "appendix_c1_c2": "FP16 base weights, FP32 adapter init, FP16 AMP; batch 8 per device with accumulation 8; 3 epochs, lr 1e-4, wd 0.01, betas (0.9,0.999), eps 1e-8, no warmup",
+    "single_gpu_effective_batch": 64,
+    "paper_four_gpu_effective_batch": 256,
+    "note": "the paper 4-GPU batch 256 is explicitly not treated as equivalent to single-GPU 64"
+  },
+  "checks": {
+    "device_no_silent_fallback": "PASS",
+    "amp_explicitly_disabled_on_cpu": "PASS",
+    "group_planning_and_three_policies": "PASS",
+    "batch_plan_surfaces_nondivisibility": "PASS",
+    "accumulated_gradient_equals_mean_loss_gradient": "PASS",
+    "reported_loss_is_unscaled_mean": "PASS",
+    "steps_only_at_group_end": "PASS",
+    "partial_group_uses_actual_size": "PASS",
+    "all_zero_gradient_rejected": "PASS",
+    "guards_whitelist_empty_nonscalar_nonfinite_inference": "PASS",
+    "gradients_cleared_on_success_and_failure": "PASS",
+    "local_offline_regression": {"status": "PASS", "tests_run": 256, "elapsed_seconds": 18.092, "skipped": 0}
+  },
+  "new_tests": {
+    "file": "tests/test_m7_training.py",
+    "count": 28
+  },
+  "implementation_bug_found_and_fixed": {
+    "description": "the zero-gradient branch was unreachable because the norm check (norm <= 0) matched first",
+    "fix": "check for an all-zero gradient before computing the norm, so the more specific diagnostic is reachable",
+    "affects_math_correctness": false
+  },
+  "test_authoring_mistakes": [
+    "forward_loss helper returned a closure factory instead of a micro->scalar function; six tests failed with 'must return a scalar tensor' before the helper was fixed",
+    "the partial-group assertion compared a reference gradient computed at the initial weights against a group that ran after the first optimizer step; fixed by pinning lr=0 so grouping semantics are compared in isolation"
+  ],
+  "not_run": [
+    "real CUDA / AMP numerics",
+    "real Qwen2.5-1.5B forward and peak memory",
+    "optimizer state and RNG checkpoint resume",
+    "semantic deduplication",
+    "answer embedded in prompt review",
+    "pretraining contamination check",
+    "pilot run",
+    "formal training",
+    "formal evaluation"
+  ],
+  "environment": {
+    "torch": "2.15.0+cpu",
+    "cuda_available": false,
+    "device_used": "cpu"
+  },
+  "cuda_used": false,
+  "training_started": false,
+  "pushed": false,
+  "gpu_allocated": false
+}
