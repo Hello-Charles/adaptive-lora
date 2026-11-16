@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-16",
+  "status": "TOKENIZATION_PASS_TOKEN_IDENTITY_DISJOINT",
+  "m7_complete": false,
+  "blocked_on_user_decision": true,
+  "pending_decision": {
+    "id": "eval_prefix_over_512_piqa",
+    "task": "piqa",
+    "source_index": 314,
+    "prompt_tokens": 521,
+    "limit": 512,
+    "dropped_tokens": 9,
+    "dropped_text": " solution1/solution2\\n\\n### Response:\\n",
+    "kept_tail": "Answer format:",
+    "instruction_chars": 2255,
+    "input_chars": 0,
+    "affected_rows_in_eval_sampling": 1,
+    "affected_share_of_eval": 0.00013333333333333334,
+    "training_or_calibration_affected": false,
+    "not_self_resolved": true,
+    "protocol_reference": "M7_PROTOCOL.md requires reporting and requesting a protocol revision rather than dropping samples"
+  },
+  "approved_code_commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+  "deploy_git": {
+    "commit": "2df16eb07bff7990cf9daf93bb189c9d91d06deb",
+    "dirty": false,
+    "asserted_at_script_start": true
+  },
+  "embedded_module": {
+    "path": "src/adaptive_lora/m7_tokenization.py",
+    "sha256": "d2542550c42a8e5f775707a9f7eaa724113e7f700832edf76eb4dc0766b21d4a",
+    "bytes": 9413,
+    "source_commit": "45d6278",
+    "never_pushed": true,
+    "execution_method": "base64 embedded in the driver script, SHA256 verified, exec'd in memory",
+    "deployed_repo_modified": false,
+    "note": "deployed commit 2df16eb does not contain this module; embedding avoids a push while keeping the executed logic identical to the committed file"
+  },
+  "sampling": {
+    "sampling_sha256": "76a61e01d6e0b2400b4870ed54b6d0a5afa12347389f14d19d58b05164288c3b",
+    "matches_prior_audit": true,
+    "prompt_identity_mismatches": 0,
+    "rows_identity_checked": 18750
+  },
+  "config_hashes_unchanged": {
+    "config_file_bytes_sha256": "6f715cef71d1fbe350541bd6b45524a4134ea2d879b1bee266468c4afb30081c",
+    "protocol_sha256": "d60f13752b4b8628d0ed8c8d9bb843ce92c8221b68d17cd8338a8447efa81c82",
+    "note": "different by construction; both unchanged this round"
+  },
+  "tokenizer": {
+    "class": "Qwen2Tokenizer",
+    "is_fast": true,
+    "pad_token_id": 151643,
+    "eos_token_id": 151643,
+    "pad_equals_eos_observed": true,
+    "padding_side": "right",
+    "truncation_side": "right",
+    "tokenizer_vocab_size": 151643,
+    "model_embedding_vocab_size": 151936,
+    "vocab_size_note": "tokenizer vocab size (151643) and model embedding size (151936) are different quantities and must not be conflated",
+    "snapshot_dir_name": "8faed761d45a263340a0528343f099c05c9a4323"
+  },
+  "train": {
+    "rows": 10000,
+    "constructed": 10000,
+    "error_count": 0,
+    "truncated_count": 0,
+    "full_token_counts": {"count": 10000, "min": 57, "p50": 91.0, "p95": 307.0, "p99": 332.0, "max": 468, "mean": 125.9334},
+    "supervised_token_counts": {"count": 10000, "min": 6, "p50": 7.0, "p95": 7.0, "p99": 7.0, "max": 7, "mean": 6.9507},
+    "mask_invariants_checked_per_row": true,
+    "predicate": "prompt labels=-100; supervised labels>=0; pad labels=-100 and mask=0; length multiple of 8; untruncated rows end with EOS in the supervised region"
+  },
+  "calibration": {
+    "rows": 250,
+    "prefix_over_max_length": 0,
+    "prefix_token_counts": {"count": 250, "min": 51, "p50": 84.0, "p95": 310.4, "p99": 332.53, "max": 340, "mean": 124.884},
+    "prediction_position_is_last_valid_token": true
+  },
+  "evaluation": {
+    "rows_total": 7500,
+    "per_task_prefix_over_512": {
+      "boolq": 0, "piqa": 1, "social_i_qa": 0, "hellaswag": 0,
+      "winogrande": 0, "ARC-Easy": 0, "ARC-Challenge": 0, "openbookqa": 0
+    },
+    "total_over_512": 1,
+    "longest_per_task_tokens": {
+      "boolq": 62, "piqa": 521, "social_i_qa": 134, "hellaswag": 361,
+      "winogrande": 94, "ARC-Easy": 194, "ARC-Challenge": 237, "openbookqa": 152
+    }
+  },
+  "token_identity_overlap": {
+    "comparisons": 16,
+    "total_intersections": 0,
+    "all_disjoint": true,
+    "scope": "direct exact token-sequence identity only",
+    "not_checked": ["semantic paraphrase", "answer embedded in the prompt", "pretraining contamination"]
+  },
+  "tokenizer_byte_identity": {
+    "claim": "pinned Qwen2.5-0.5B and pinned Qwen2.5-1.5B ship byte-identical tokenizer files",
+    "files": {
+      "tokenizer.json": {"size_bytes": 7031645, "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"},
+      "tokenizer_config.json": {"size_bytes": 7228, "sha256": "c91efca15ceff6e9ee9424db58a6f59cd41294e550a86cbd07e3c1fb500b34f9"},
+      "vocab.json": {"size_bytes": 2776833, "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"},
+      "merges.txt": {"size_bytes": 1671839, "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"}
+    },
+    "libraries_identical": {"tokenizers": "0.23.3", "transformers": "5.22.2"},
+    "control": "model config.json differs between the two revisions, proving the comparison discriminates",
+    "scope_limitation": "covers the four tokenizer files only; says nothing about weights, hidden size, layers or heads"
+  },
+  "environment": {
+    "python_version": "3.12.3",
+    "packages": {"torch": "2.6.0+cu124", "transformers": "5.22.2", "tokenizers": "0.23.3", "peft": "0.21.2"}
+  },
+  "checks": {
+    "train_construction": "PASS",
+    "mask_and_pad_invariants": "PASS",
+    "train_truncation_not_triggered": "PASS",
+    "calibration_no_truncation": "PASS",
+    "evaluation_tokenized": "PASS",
+    "token_identity_disjoint": "PASS",
+    "sampling_replay_matches_audit": "PASS",
+    "pad_equals_eos_confirmed": "PASS",
+    "tokenizer_byte_identity_0_5b_vs_1_5b": "PASS",
+    "deploy_commit_approved_and_clean": "PASS",
+    "local_independent_verification": "PASS_TOKENIZATION_ARCHIVE_ONLY",
+    "local_offline_regression": {"status": "PASS", "tests_run": 224, "skipped": 0}
+  },
+  "flags": {
+    "tokenizer_run_on_1_5b": true,
+    "token_identity_disjoint": true,
+    "semantic_deduplication_checked": false,
+    "prompt_embedded_answer_checked": false,
+    "pretraining_contamination_checked": false,
+    "model_forward_run": false,
+    "cuda_used": false,
+    "training_started": false
+  },
+  "not_run": [
+    "semantic deduplication",
+    "answer embedded in prompt review",
+    "pretraining contamination check",
+    "CUDA / AMP / gradient accumulation / GPU checkpoint",
+    "pilot run",
+    "formal training",
+    "formal evaluation"
+  ],
+  "artifacts": {
+    "remote_output": "/root/autodl-tmp/adaptive-lora-m7-data-20261115-04/m7_tokenization_1_5b.json",
+    "report_bytes": 8318,
+    "report_sha256": "825488439fa3e4754237ec4771ba340667b4600e7101db7af97b8515bba9d5ab",
+    "local_copy_identical": true,
+    "runner": ".cache/m7-20261115-assets-04/run_tokenization_15b.py",
+    "builder": ".cache/m7-20261115-assets-04/build_tokenization_runner.py",
+    "verifier": ".cache/m7-20261115-assets-04/verify_tokenization_run.py",
+    "verification_output": ".cache/m7-20261115-assets-04/tokenization-verification.json",
+    "failed_first_attempt_preserved": [
+      ".cache/m7-20261115-assets-04/tokenization-01.json",
+      ".cache/m7-20261115-assets-04/tokenization-01.log"
+    ],
+    "first_attempt_failure_cause": "own invariant check misclassified the padding region as supervised; aborted on the first row, wrote no output"
+  },
+  "verification_scope_limitation": "local verification is archive-only: it re-checks report self-consistency, fixed constants and tokenizer file bytes; it does not re-tokenize or re-run any forward pass",
+  "cuda_used": false,
+  "training_started": false,
+  "pushed": false,
+  "raw_data_or_weights_transferred_locally": false
+}
