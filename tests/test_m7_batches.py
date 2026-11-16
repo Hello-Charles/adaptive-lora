@@ -116,19 +116,45 @@ class MicroBatchTests(unittest.TestCase):
         self.assertEqual(len(seen), len(set(seen)))
 
     def test_error_policy_rejects_short_final_batch(self):
+        # error 必须仍然可用：默认已改为 drop，因此这里显式传入。
         with self.assertRaisesRegex(ValueError, "short micro-batch|would hold"):
-            iter_epoch_micro_batches(fake_examples(10), epoch=1, micro_batch_size=8)
-
-    def test_drop_policy_also_refuses_silent_discard(self):
-        with self.assertRaisesRegex(ValueError, "dropping the final"):
             iter_epoch_micro_batches(
-                fake_examples(10), epoch=1, micro_batch_size=8, final_partial_group="drop")
+                fake_examples(10), epoch=1, micro_batch_size=8, final_partial_group="error")
+
+    def test_drop_policy_discards_with_an_auditable_list(self):
+        """已确认决策：drop 真正丢弃末尾不足一批的样本，并留下完整清单。
+
+        "丢了哪几条"必须能事后追溯，否则"用了 10,000 条"无法核对。
+        """
+        examples = fake_examples(10)
+        batches, plan = iter_epoch_micro_batches(
+            examples, epoch=1, micro_batch_size=8, final_partial_group="drop")
+        self.assertEqual([len(batch) for batch in batches], [8])
+        self.assertEqual(plan["samples_used"], 8)
+        self.assertEqual(plan["samples_dropped"], 2)
+        # 抽样顺序策略下被丢的是末尾两条。
+        self.assertEqual(plan["dropped_sample_ids"], ["sample-008", "sample-009"])
+        seen = [example["sample_id"] for batch in batches for example in batch]
+        self.assertEqual(seen, ["sample-000", "sample-001", "sample-002", "sample-003",
+                                "sample-004", "sample-005", "sample-006", "sample-007"])
+        # 清单本身也要有指纹，便于与训练日志交叉核对。
+        self.assertEqual(len(plan["dropped_sample_ids_sha256"]), 64)
+        self.assertNotEqual(plan["used_order_sha256"], plan["order_sha256"])
+
+    def test_drop_is_the_confirmed_default(self):
+        batches, plan = iter_epoch_micro_batches(fake_examples(10), epoch=1, micro_batch_size=8)
+        self.assertEqual([len(batch) for batch in batches], [8])
+        self.assertEqual(plan["final_partial_group"], "drop")
+        self.assertEqual(plan["samples_dropped"], 2)
 
     def test_step_policy_allows_short_final_batch(self):
         batches, plan = iter_epoch_micro_batches(
             fake_examples(10), epoch=1, micro_batch_size=8, final_partial_group="step")
         self.assertEqual([len(batch) for batch in batches], [8, 2])
         self.assertEqual(plan["short_micro_batch_sizes"], [2])
+        # step 不丢样本，清单必须为空。
+        self.assertEqual(plan["samples_dropped"], 0)
+        self.assertEqual(plan["dropped_sample_ids"], [])
 
     def test_order_sha256_reflects_the_actual_order(self):
         examples = fake_examples(8)
@@ -151,6 +177,39 @@ class MicroBatchTests(unittest.TestCase):
         self.assertEqual(accumulation["last_group_micro_batches"], 2)
         self.assertFalse(accumulation["divides_evenly"])
         self.assertEqual(accumulation["samples_effective_batch_nominal"], 64)
+
+    def test_paper_shape_under_confirmed_drop_policy(self):
+        """已确认 drop 下的论文形状：每 epoch 156 步、丢 16 条，3 epochs 共丢 48 条。"""
+        _, plan = iter_epoch_micro_batches(fake_examples(10000), epoch=1, micro_batch_size=8)
+        # 10,000 条正好切成 1,250 个满 micro-batch，micro-batch 层不丢样本。
+        self.assertEqual(plan["micro_batches"], 1250)
+        self.assertEqual(plan["samples_dropped"], 0)
+        accumulation = plan_epoch_accumulation(plan, accumulation=8)
+        self.assertEqual(accumulation["final_partial_group"], "drop")
+        self.assertEqual(accumulation["accumulation_groups"], 156)
+        self.assertEqual(accumulation["optimizer_steps"], 156)
+        self.assertEqual(accumulation["micro_batches_dropped"], 2)
+        self.assertEqual(accumulation["samples_used_by_accumulation"], 156 * 8 * 8)
+        self.assertEqual(accumulation["samples_dropped_by_accumulation"], 16)
+        # 训练实际使用的样本数必须与"10,000 条"分开陈述。
+        self.assertNotEqual(accumulation["samples_used_by_accumulation"], accumulation["samples"])
+
+    def test_accumulation_counts_actual_batch_sizes_not_nominal(self):
+        """`step` 策略下末尾是短批，样本数必须按实际大小求和。
+
+        10 条 / micro 8 → 批大小 [8,2]。若用"批数 × 名义批大小"估算会得到 16 条，
+        把参与训练的样本数多算 6 条；这里断言三项守恒：已用 + 已丢 + 未记账 = 总数。
+        """
+        examples = fake_examples(10)
+        _, plan = iter_epoch_micro_batches(
+            examples, epoch=1, micro_batch_size=8, final_partial_group="step")
+        self.assertEqual(plan["micro_batch_sizes"], [8, 2])
+        accumulation = plan_epoch_accumulation(plan, accumulation=8, final_partial_group="step")
+        self.assertEqual(accumulation["samples_used_by_accumulation"], 10)
+        self.assertEqual(accumulation["samples_dropped_by_accumulation"], 0)
+        self.assertEqual(accumulation["samples_unaccounted"], 0)
+        # 与"名义批大小 × 批数"的错误算法明确区分。
+        self.assertNotEqual(accumulation["samples_used_by_accumulation"], len(plan["micro_batch_sizes"]) * 8)
 
     def test_accumulation_error_policy_surfaces_leftover(self):
         examples = fake_examples(10000)

@@ -46,8 +46,8 @@ class M7ProtocolCLITests(unittest.TestCase):
             self.assertEqual(result, 2)
             self.assertIn("PENDING_DECISIONS", stdout)
             saved = json.loads((root / "output/preflight.json").read_text(encoding="utf-8"))
-            # 8 项确认决策：原 7 项 + 2026-11-16 新增的 evaluation_truncation
-            self.assertEqual(len(saved["pending_decisions"]), 8)
+            # 10 项确认决策：原 7 项 + evaluation_truncation + training_order + final_partial_group
+            self.assertEqual(len(saved["pending_decisions"]), 10)
             self.assertFalse(saved["execution_authorized"])
             self.assertFalse(saved["training_started"])
             self.assertEqual(set(path.name for path in (root / "output").iterdir()), {"config.json", "preflight.json"})

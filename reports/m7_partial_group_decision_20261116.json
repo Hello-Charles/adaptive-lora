@@ -1,0 +1,109 @@
+{
+  "accounting_fix_found_and_fixed": {
+    "description": "plan_epoch_accumulation computed samples used as used_micro_batches * nominal batch size, which over-counts under the step policy where the trailing batch is short (10 samples reported as 16)",
+    "fix": "sums epoch_plan micro_batch_sizes per batch and adds samples_unaccounted as a conservation check",
+    "why_it_matters": "it would not crash training; it would silently misreport how many samples were actually used"
+  },
+  "auditability": {
+    "distinctness_note_reported": true,
+    "dropped_sample_ids_reported": true,
+    "dropped_sample_ids_sha256_reported": true,
+    "rationale": "without a per-epoch list of which samples were dropped, the claim 'trained on 10000 samples' cannot be checked after the fact",
+    "used_order_sha256_reported": true
+  },
+  "bug_found_and_fixed": {
+    "description": "a loss not connected to the trainable parameters leaves .grad as None, and torch.count_nonzero(None) raised TypeError, misreporting 'loss never reached the adapter' as a tensor type error",
+    "fix": "an explicit missing-gradient check now runs before any norm or non-zero statistic",
+    "test": "test_missing_gradient_is_reported_not_crashed"
+  },
+  "checks": {
+    "config_fixed_value_gate_covers_new_keys": "PASS",
+    "decision_count_8_to_10_synced": "PASS",
+    "drop_is_the_module_default": "PASS",
+    "drop_returns_full_groups_only": "PASS",
+    "dropped_counts_reported_by_run_accumulation": "PASS",
+    "dropped_list_has_own_sha256": "PASS",
+    "dropped_sample_id_list_emitted": "PASS",
+    "error_policy_still_available_explicitly": "PASS",
+    "gradients_cleared_on_failure": "PASS",
+    "local_offline_regression": {
+      "elapsed_seconds": 16.732,
+      "skipped": 0,
+      "status": "PASS",
+      "tests_run": 292
+    },
+    "missing_gradient_reported_not_crashed": "PASS",
+    "paper_shape_numbers_under_drop": "PASS",
+    "run_accumulation_never_forwards_dropped_batch": "PASS",
+    "sample_visits_distinguished_from_distinct_samples": "PASS",
+    "samples_counted_by_actual_batch_sizes": "PASS",
+    "step_policy_uses_remainder_with_zero_drop": "PASS"
+  },
+  "cuda_used": false,
+  "date": "2026-11-16",
+  "decisions_confirmed": {
+    "final_partial_group": {
+      "config_key": "training.final_partial_group",
+      "confirmed_by_user": true,
+      "meaning": "the trailing incomplete accumulation group is discarded and never stepped on",
+      "paper_position": "the paper does not say how a non-divisible final group is handled",
+      "value": "drop"
+    },
+    "training_order": {
+      "config_key": "training.training_order",
+      "confirmed_by_user": true,
+      "meaning": "every epoch follows the fixed seed-42 sampling order; no per-epoch shuffle",
+      "paper_position": "the paper states 3 epochs but does not state whether samples are shuffled",
+      "value": "none"
+    }
+  },
+  "gpu_allocated": false,
+  "hash_chain": {
+    "config_file_bytes_sha256_after": "e5e8dad366dc26198d41c9a0ffad3715a30a0c020a4146b02d3e77cb17e3c87f",
+    "config_file_bytes_sha256_before": "4b0405b0",
+    "protocol_sha256_after": "230a07b8314fc87faa4b59fa1b7025751ecc41ecd0d57f0837e0a8b9f72d528f",
+    "protocol_sha256_before": "bcaf19a7",
+    "remote_deployed_config": "6f715cef (pre-revision, not synced)"
+  },
+  "m7_complete": false,
+  "new_tests": {
+    "test_m7_batches.py": 26,
+    "test_m7_training.py": 31
+  },
+  "not_run": [
+    "real 10000-row batch assembly on the remote server",
+    "real CUDA / AMP numerics",
+    "attention masking correctness inside a real Qwen forward",
+    "pilot run",
+    "formal training",
+    "formal evaluation",
+    "GPU checkpoint with optimizer/RNG resume"
+  ],
+  "paper_shape_numbers": {
+    "accumulation": 8,
+    "claim_boundary": "48 is a count of sample-visits, not of distinct samples; because training_order is none the same 16 samples are dropped every epoch. Never state that all 10000 samples were trained.",
+    "effective_batch_size": 64,
+    "epochs": 3,
+    "full_groups_per_epoch": 156,
+    "micro_batch_size": 8,
+    "micro_batches_dropped_per_epoch": 2,
+    "micro_batches_per_epoch": 1250,
+    "optimizer_steps_per_epoch": 156,
+    "optimizer_steps_total": 468,
+    "samples_dropped_distinct_under_order_none": 16,
+    "samples_dropped_per_epoch": 16,
+    "samples_dropped_total_visits": 48,
+    "samples_used_per_epoch": 9984,
+    "train_samples": 10000
+  },
+  "pushed": false,
+  "schema_version": 1,
+  "semantic_change": {
+    "after": "drop returns only full groups; run_accumulation never forwards the discarded micro-batches and reports how many were dropped",
+    "before": "drop was treated identically to error and raised before any forward; selecting drop produced a crash",
+    "decision_count_after": 10,
+    "decision_count_before": 8
+  },
+  "status": "PARTIAL_GROUP_AND_ORDER_CONFIRMED_GPU_NOT_RUN",
+  "training_started": false
+}

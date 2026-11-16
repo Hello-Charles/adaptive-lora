@@ -23,7 +23,7 @@ TASK_LABELS = {
     "openbookqa": ("answer1", "answer2", "answer3", "answer4"),
 }
 DECISION_IDS = {"scope", "prompt", "supervision", "sampling", "answer_parser", "single_gpu_batch",
-                "mirror_source", "evaluation_truncation"}
+                "mirror_source", "evaluation_truncation", "training_order", "final_partial_group"}
 PROMPT_WITHOUT_INPUT = (
     "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n"
     "### Instruction:\n{instruction}\n\n### Response:\n"
@@ -40,6 +40,10 @@ _FIXED_TRAINING = {
     "lora_bias": "none", "micro_batch_size": 8, "gradient_accumulation": 8, "world_size": 1,
     "base_dtype": "float16", "adapter_master_dtype": "float32", "amp_dtype": "float16",
     "max_length": 512, "pad_to_multiple_of": 8, "quantization": None, "use_cache": False,
+    # 2026-11-16 用户确认的两项训练循环决策。论文对这两点均未作规定，因此必须固定取值，
+    # 而不是留给运行时默认：不同的 shuffle 与末组策略会改变每个 epoch 实际参与更新的样本，
+    # 进而让同一份配置产出不同的模型。
+    "training_order": "none", "final_partial_group": "drop",
 }
 _FIXED_PROTOCOL = {
     "methods": ["full", "random_k", "adaptive_k"], "scope": "commonsense_only",
@@ -155,7 +159,8 @@ def validate_m7_config(config):
     for key, expected in candidate.items():
         _same(environment[key], expected, "environment_candidate." + key)
     decisions = config["decisions"]
-    _require(isinstance(decisions, list) and len(decisions) == len(DECISION_IDS), "Expected seven review decisions")
+    _require(isinstance(decisions, list) and len(decisions) == len(DECISION_IDS),
+             f"Expected {len(DECISION_IDS)} review decisions")
     seen = set()
     for row in decisions:
         _keys(row, ("id", "status", "proposal"), "decision")

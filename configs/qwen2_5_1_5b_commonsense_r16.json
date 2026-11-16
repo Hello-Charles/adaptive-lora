@@ -62,7 +62,9 @@
     "max_length": 512,
     "pad_to_multiple_of": 8,
     "quantization": null,
-    "use_cache": false
+    "use_cache": false,
+    "training_order": "none",
+    "final_partial_group": "drop"
   },
   "protocol": {
     "methods": ["full", "random_k", "adaptive_k"],
@@ -97,6 +99,8 @@
     {"id": "answer_parser", "status": "confirmed", "proposal": "仅解析生成续文；标签大小写不敏感且有词边界，不同标签冲突判无效，解析失败仍计入分母；8任务等权宏平均。"},
     {"id": "single_gpu_batch", "status": "confirmed", "proposal": "单卡micro-batch8、accumulation8，有效batch64；明确不同于论文4卡DDP的256，显存不足时停下申请配置变更。"},
     {"id": "mirror_source", "status": "confirmed", "proposal": "官方HF端点不可达；候选模型版本及LFS哈希来自镜像，后续下载核对固定字节，保留未独立认证官方来源的局限。"},
-    {"id": "evaluation_truncation", "status": "confirmed", "proposal": "2026-11-16修订：训练仍右截断512；评估生成保留完整前缀不截断（本批最长521 token），因右截断会丢掉piqa一条样本的solution1/solution2格式提示与Response标记。不改训练/校准，不丢样本不重抽。"}
+    {"id": "evaluation_truncation", "status": "confirmed", "proposal": "2026-11-16修订：训练仍右截断512；评估生成保留完整前缀不截断（本批最长521 token），因右截断会丢掉piqa一条样本的solution1/solution2格式提示与Response标记。不改训练/校准，不丢样本不重抽。"},
+    {"id": "training_order", "status": "confirmed", "proposal": "2026-11-16确认：论文只写3 epochs，未规定样本顺序；每个epoch沿用seed42不放回抽样得到的固定顺序，不做per-epoch shuffle。这是可审计的工程选择，不是论文原样。"},
+    {"id": "final_partial_group", "status": "confirmed", "proposal": "2026-11-16确认：10,000条不能被有效batch64整除（10,000=64x156+16），每epoch末组仅2个micro-batch；选择drop，即丢弃末尾不足一组的2个micro-batch。代价是每epoch少用16条、3 epochs共48条样本从未参与权重更新，必须写入实验记录，不得声称已使用全部10,000条。"}
   ]
 }

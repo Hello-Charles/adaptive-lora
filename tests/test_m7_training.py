@@ -15,6 +15,7 @@ import unittest
 import torch
 
 from adaptive_lora.m7_training import (
+    CONFIRMED_FINAL_PARTIAL_GROUP,
     FINAL_GROUP_POLICIES,
     describe_batch_plan,
     plan_groups,
@@ -110,10 +111,18 @@ class GroupPlanTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "do not divide into groups"):
             plan_groups(1250, 8, "error")
 
-    def test_drop_policy_also_rejects_before_running(self):
-        # drop 在计划阶段就报错，避免"跑完才发现样本被丢"。
-        with self.assertRaisesRegex(ValueError, "do not divide into groups"):
-            plan_groups(10, 8, "drop")
+    def test_drop_policy_confirmed_discards_leftover(self):
+        """已确认决策：drop 丢弃末尾不足一组的 micro-batch，而不是报错。
+
+        `plan_groups` 的返回值只覆盖完整组，因此调用方必须用 `count - sum(groups)`
+        自行记账；本测试把这个数字钉死在论文形状上（1,250 → 丢 2）。
+        """
+        self.assertEqual(plan_groups(10, 8, "drop"), [8])
+        self.assertEqual(plan_groups(1250, 8, "drop"), [8] * 156)
+        self.assertEqual(1250 - sum(plan_groups(1250, 8, "drop")), 2)
+        # 已确认策略是该模块的默认值，不需要调用方额外传参。
+        self.assertEqual(plan_groups(1250, 8), plan_groups(1250, 8, "drop"))
+        self.assertEqual(CONFIRMED_FINAL_PARTIAL_GROUP, "drop")
 
     def test_step_policy_allows_smaller_final_group(self):
         self.assertEqual(plan_groups(10, 8, "step"), [8, 2])
@@ -142,21 +151,43 @@ class BatchPlanTests(unittest.TestCase):
         self.assertEqual(plan["samples_left_over_per_epoch"], 16)
         self.assertEqual(plan["samples_never_used_per_epoch"], 0)
         self.assertFalse(plan["divides_evenly"])
-        # 不整除时不给出乐观的步数，也不假装 drop 无代价。
-        self.assertIsNone(plan["optimizer_steps_if_error_policy"])
-        self.assertEqual(plan["samples_dropped_total_if_drop_policy"], 2 * 8 * 3)
+        # 已确认 drop：156 组完整步进，末尾 2 个 micro-batch 被丢弃。
+        self.assertEqual(plan["final_partial_group_policy"], "drop")
+        self.assertEqual(plan["optimizer_steps_per_epoch"], 156)
+        self.assertEqual(plan["samples_used_per_epoch"], 9984)
+        self.assertEqual(plan["samples_dropped_per_epoch"], 16)
+        # 三个 epoch 累计：48 条样本从未参与任何权重更新，必须如实暴露。
+        self.assertEqual(plan["optimizer_steps_total"], 468)
+        self.assertEqual(plan["optimizer_steps_total"], 468)
+        # 计数单位是"样本-次"：3 epochs × 16 条。在已确认的 training_order='none' 下，
+        # 每 epoch 顺序相同，因此这 48 个"样本-次"其实是同一批 16 条样本被重复丢弃，
+        # 而不是 48 条不同样本。
+        self.assertEqual(plan["samples_used_total_visits"], 29952)
+        self.assertEqual(plan["samples_dropped_total_visits"], 48)
+        self.assertIn("same samples", plan["dropped_distinctness_note"])
+        self.assertAlmostEqual(plan["samples_dropped_fraction_total"], 48 / 30000, places=12)
+
+    def test_step_policy_uses_the_remainder_instead_of_dropping(self):
+        """对照：step 策略下末尾 2 个 micro-batch 照常步进，总计 157 步、零丢弃。"""
+        plan = describe_batch_plan(10000, 8, 8, epochs=1, policy="step")
+        self.assertEqual(plan["optimizer_steps_per_epoch"], 157)
+        self.assertEqual(plan["samples_used_per_epoch"], 10000)
+        self.assertEqual(plan["samples_dropped_per_epoch"], 0)
 
     def test_divisible_case(self):
         plan = describe_batch_plan(9984, 8, 8, epochs=1)
         self.assertTrue(plan["divides_evenly"])
         self.assertEqual(plan["leftover_micro_batches_per_epoch"], 0)
-        self.assertEqual(plan["optimizer_steps_if_error_policy"], 156)
+        self.assertEqual(plan["optimizer_steps_total"], 156)
+        self.assertEqual(plan["samples_dropped_total_visits"], 0)
 
     def test_micro_batch_remainder_is_reported_separately(self):
         # 10003 条：每 epoch 有 3 条样本连一个 micro-batch 都凑不满。
         plan = describe_batch_plan(10003, 8, 8)
         self.assertEqual(plan["samples_never_used_per_epoch"], 3)
         self.assertEqual(plan["micro_batches_per_epoch"], 1250)
+        # 两层余量叠加：3 条不完整批 + 2 个被 drop 的 micro-batch（16 条）= 19 条。
+        self.assertEqual(plan["samples_dropped_per_epoch"], 19)
 
     def test_invalid_values_rejected(self):
         for args in ((0, 8, 8), (100, 0, 8), (100, 8, 0)):
@@ -166,6 +197,8 @@ class BatchPlanTests(unittest.TestCase):
         for epochs in (0, -1, True, 1.0):
             with self.subTest(epochs=epochs), self.assertRaises(ValueError):
                 describe_batch_plan(100, 8, 8, epochs=epochs)
+        with self.assertRaises(ValueError):
+            describe_batch_plan(100, 8, 8, policy="ignore")
 
 
 class AccumulationMathTests(unittest.TestCase):
@@ -320,9 +353,63 @@ class AccumulationMathTests(unittest.TestCase):
             run_accumulation(
                 optimizer=optimizer, trainable=trainable, micro_batches=[0, 1, 2],
                 forward_loss=factory, accumulation=2, device=torch.device("cpu"),
-                autocast=autocast, scaler=scaler,
+                autocast=autocast, scaler=scaler, final_partial_group="error",
             )
         self.assertEqual(calls["n"], 0, "no forward should run when the plan is invalid")
+
+    def test_missing_gradient_is_reported_not_crashed(self):
+        """前向未连到可训练参数时必须给出明确报错，而不是在范数统计处以 TypeError 崩掉。
+
+        这不是纯理论风险：若 loss 计算错误地漏掉 adapter（例如误用冻结的基础输出），
+        梯度从未生成，`.grad is None` 一旦进入 `count_nonzero` 就会抛 TypeError，
+        把"loss 没接上参数"误报成张量类型错误。
+        """
+        model, _ = self._fixtures()
+        trainable = list(model.parameters())
+        optimizer = torch.optim.AdamW(trainable, lr=1e-4)
+        autocast, scaler = resolve_amp(torch.device("cpu"), "float16")
+
+        def disconnected(_micro):
+            # 常数 loss：requires_grad 为真但与被优化参数无关，因此不会产生梯度。
+            return torch.tensor(1.0, requires_grad=True)
+
+        with self.assertRaisesRegex(ValueError, "Missing gradient"):
+            run_accumulation(
+                optimizer=optimizer, trainable=trainable, micro_batches=[0, 1],
+                forward_loss=disconnected, accumulation=2, device=torch.device("cpu"),
+                autocast=autocast, scaler=scaler, final_partial_group="error",
+            )
+        # 失败路径也必须清空梯度，不把半成品状态留给调用方。
+        self.assertTrue(all(parameter.grad is None for parameter in trainable))
+
+    def test_drop_policy_skips_the_leftover_and_reports_it(self):
+        """已确认 drop：末尾 1 个 micro-batch 既不前向也不步进，且被如实计数。
+
+        3 个 micro-batch / 累积 2 → 只有 1 次 step（覆盖前 2 个），第 3 个被丢弃。
+        关键断言是被丢弃的那个**从未进入 forward_loss**：静默多算一次前向会让"用了多少样本"
+        与优化器步数对不上。
+        """
+        model, batches = self._fixtures()
+        factory = make_forward_loss(model, batches[:3])
+        trainable = list(model.parameters())
+        optimizer = torch.optim.AdamW(trainable, lr=1e-4)
+        autocast, scaler = resolve_amp(torch.device("cpu"), "float16")
+
+        visited = []
+        result = run_accumulation(
+            optimizer=optimizer, trainable=trainable, micro_batches=[0, 1, 2],
+            forward_loss=factory, accumulation=2, device=torch.device("cpu"),
+            autocast=autocast, scaler=scaler, final_partial_group="drop",
+            on_micro_batch=lambda record: visited.append(record["offset"]),
+        )
+        self.assertEqual(result["final_partial_group_policy"], "drop")
+        self.assertEqual(result["optimizer_steps"], 1)
+        self.assertEqual(result["micro_batches_supplied"], 3)
+        self.assertEqual(result["micro_batches_used"], 2)
+        self.assertEqual(result["micro_batches_dropped"], 1)
+        self.assertEqual(visited, [0, 1], "the dropped micro-batch must never be forwarded")
+        # 默认策略即为已确认的 drop，无需显式传参。
+        self.assertEqual(CONFIRMED_FINAL_PARTIAL_GROUP, "drop")
 
 
 class GuardTests(unittest.TestCase):
